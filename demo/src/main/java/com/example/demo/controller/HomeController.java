@@ -10,8 +10,8 @@ public class HomeController {
         return "index";
     }
     
-    @GetMapping("/go")
-    public String go() {
-    	return "testHtml";
+    @GetMapping("/example")
+    public String example() {
+    	return "example/example";
     }
 }
