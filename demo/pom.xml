@@ -61,6 +61,10 @@
 		    <artifactId>jstl</artifactId>
 		</dependency>
 
+	    <dependency>
+	        <groupId>nz.net.ultraq.thymeleaf</groupId>
+	        <artifactId>thymeleaf-layout-dialect</artifactId>
+	    </dependency>
 		
 	</dependencies>
 	<build>
@@ -70,6 +74,16 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		
+		<!-- 추가 -->
+	    <resources>
+	        <resource>
+	            <directory>src/main/resources</directory>
+	            <includes>
+	                <include>**/*.html</include>
+	            </includes>
+	        </resource>
+	    </resources>
 	</build>
 
 </project>
