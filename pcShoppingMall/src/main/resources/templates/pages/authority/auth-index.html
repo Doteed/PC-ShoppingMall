@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/default}">
+<head>
+	<title>관리자 인덱스</title>
+	<script th:src="@{/js/chart.js}"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+	        // 캔버스 컨텍스트 가져오기
+	        const ctx = document.getElementById('myChart').getContext('2d');
+	
+	        // 라벨 정의
+	        const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+	
+	        // 차트 생성
+	        new Chart(ctx, {
+	            type: 'line',
+	            data: {
+	                labels: labels,
+	                datasets: [{
+	                    label: '월 매출',
+	                    data: [65, 59, 80, 81, 56, 55, 40],
+	                    fill: false,
+	                    borderColor: 'rgb(75, 192, 192)',
+	                    tension: 0.1
+	                }]
+	            }
+	        });
+		});
+    </script>
+</head>
+<body>
+	<section layout:fragment="content" class="content-box d-flex" style="gap: 30px; padding-top: 30px;">
+		<div class="text-center bg-body-secondary" style="width: 200px;">
+			<h6 class="m-0 py-3 border-bottom border-secondary-subtle text-body-emphasis">
+				<a href="javascript: void(0)">관리자 메뉴</a>
+			</h6>
+			<ul class="p-0 text-center">
+				<li class="mt-2 text-body-emphasis">
+					<a href="javascript: void(0)">회원 관리</a>
+				</li>
+				<li class="mt-2 text-body-emphasis">
+					<a href="javascript: void(0)">게시판 관리</a>
+				</li>
+				<li class="mt-2 text-body-emphasis">
+					<a href="javascript: void(0)">상품 관리</a>
+				</li>
+				<li class="mt-2 text-body-emphasis">
+					<a href="javascript: void(0)">주문 관리</a>
+				</li>
+				<li class="mt-2 text-body-emphasis">
+					<a href="javascript: void(0)">배너 관리</a>
+				</li>
+			</ul>
+		</div>
+		<div class="d-flex flex-column gap-3 w-100">
+			<div>
+				<p>오늘 할일</p>
+				<div class="d-flex gap-5">
+					<p>신규주문</p>
+					<p>취소관리</p>
+					<p>반품관리</p>
+					<p>교환관리</p>
+					<p>댑변대기문의</p>
+				</div>
+			</div>
+			<div>
+				<canvas id="myChart"></canvas>
+			</div>
+			<div class="d-flex gap-5">
+				<div>
+					<p>월별 매출</p>
+					<table>
+						<thead>
+							<tr>
+								<th>일자</th>
+								<th>주문수</th>
+								<th>매출액</th>
+								<th>문의</th>
+								<th>후기</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>2024-12-10</td>
+								<td>11</td>
+								<td>1,000,000원</td>
+								<td>10</td>
+								<td>6</td>
+							</tr>
+							<tr>
+								<td>2024-12-10</td>
+								<td>20</td>
+								<td>2,000,000원</td>
+								<td>5</td>
+								<td>17</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div>
+					<p>문의/구매평</p>
+					<table>
+						<thead>
+							<tr>
+								<th>제목</th>
+								<th>작성자</th>
+								<th>평점</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>잘 받았습니다.</td>
+								<td>유저1</td>
+								<td>★★★★☆</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div>기타 등등...</div>
+		</div>
+	</section>
+</body>
+</html>
