@@ -119,6 +119,38 @@
 					</table>
 				</div>
 			</div>
+			<div>
+				<p>테스트 테이블</p>
+				<table>
+					<thead>
+						<tr>
+							<th>상품 아이디</th>
+							<th>유저 아이디</th>
+							<th>카테고리 아이디</th>
+							<th>권한 식별자</th>
+							<th>가격</th>
+							<th>상품명</th>
+							<th>재고</th>
+							<th>등록일</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${#lists.isEmpty(list)}">
+							<td colspan="8">----게시물이 없습니다.----</td>
+						</tr>
+						<tr th:each="list : ${list}" th:unless="${#lists.isEmpty(list)}">
+							<td th:text="${list.productId}"></td>
+							<td th:text="${list.userId}"></td>
+							<td th:text="${list.categoryId}"></td>
+							<td th:text="${list.authId}"></td>
+							<td th:text="${list.pPrice}"></td>
+							<td th:text="${list.pName}"></td>
+							<td th:text="${list.pStock}"></td>
+							<td th:text="${list.pEnroll}"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 			<div>기타 등등...</div>
 		</div>
 	</section>
