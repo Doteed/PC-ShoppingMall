@@ -14,4 +14,9 @@ public class HomeController {
     public String example() {
     	return "example/example";
     }
+    
+    @GetMapping("/auth-index")
+    public String authIndex() {
+    	return "pages/authority/auth-index";
+    }
 }
