@@ -33,9 +33,17 @@ public class HomeController {
     public String authIndex(Model model) {
     	
 		List<ProductDto> res = productbiz.listAll();
-		res.add(new ProductDto(1, "유저1", 1, 1, 1, "제품1", 1, new Date()));
 		model.addAttribute("list",res);
 
     	return "pages/authority/auth-index";
     }
+
+    
+    @GetMapping("/auth-product")
+    public String authProduct(Model model) {
+        List<ProductDto> products = productbiz.listAll();
+        model.addAttribute("products", products);
+        return "pages/authority/auth-product";
+    }
+
 }
