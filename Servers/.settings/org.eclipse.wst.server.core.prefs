@@ -1,3 +1,8 @@
+<<<<<<< HEAD
 #Mon Dec 09 10:22:17 KST 2024
 org.eclipse.wst.server.core.isServerProject=true
+=======
+#Mon Dec 09 11:22:07 KST 2024
+>>>>>>> 2e8e3720fdd24653fd08e9a9815756d44afb98f1
 eclipse.preferences.version=1
+org.eclipse.wst.server.core.isServerProject=true
