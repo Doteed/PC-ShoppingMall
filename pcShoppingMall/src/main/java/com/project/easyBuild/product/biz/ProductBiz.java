@@ -8,7 +8,9 @@ public interface ProductBiz {
 
 	public List<ProductDto> listAll();
 	
-	int updateStockStatus(int productId, int stock);
+	public int updateStockStatus(int productId, int stock);
 	
-	void decreaseStock(int productId, int quantity);
+	public void decreaseStock(int productId, int quantity);
+	
+	public int insert(ProductDto dto);
 }
