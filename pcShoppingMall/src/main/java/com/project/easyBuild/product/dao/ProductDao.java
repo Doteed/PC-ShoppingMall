@@ -5,9 +5,13 @@ import java.util.List;
 import com.project.easyBuild.product.dto.ProductDto;
 
 public interface ProductDao {
+	String NAMESPACE = "product.";
+	
 	public List<ProductDto> listAll();
 
-	int updateStockStatus(int productId, int stock);
+	public int updateStockStatus(int productId, int stock);
 
-	void decreaseStock(int productId, int quantity);
+	public void decreaseStock(int productId, int quantity);
+	
+	public int insert(ProductDto dto);
 }

@@ -31,10 +31,8 @@ public class HomeController {
     
     @GetMapping("/auth-index")
     public String authIndex(Model model) {
-    	
 		List<ProductDto> res = productbiz.listAll();
 		model.addAttribute("list",res);
-
     	return "pages/authority/auth-index";
     }
 
@@ -46,4 +44,8 @@ public class HomeController {
         return "pages/authority/auth-product";
     }
 
+    @GetMapping("/auth-product-insert")
+    public String authProductInsert() {
+    	return "pages/authority/auth-product-insert";
+    }
 }
