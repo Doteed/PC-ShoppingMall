@@ -83,6 +83,7 @@
 					<table>
 						<colgroup>
 							<col width="8%" />
+							<col width="8%" />
 							<col width="*" />
 							<col width="8%" />
 							<col width="8%" />
@@ -91,12 +92,13 @@
 							<col width="8%" />
 							<col width="8%" />
 							<col width="8%" />
-							<col width="8%" />
+							<!-- <col width="8%" /> -->
 							<col width="10%" />
 						</colgroup>
 						<thead>
 							<tr>
 								<th>상품코드</th>
+								<th>상품이미지</th>
 								<th>상품명</th>
 								<th>창고재고</th>
 								<th>주문대기</th>
@@ -105,7 +107,7 @@
 								<th>통보수량</th>
 								<th>판매</th>
 								<th>품절</th>
-								<th>재입고알림</th>
+								<!-- <th>재입고알림</th> -->
 								<th>관리</th>
 							</tr>
 						</thead>
@@ -114,6 +116,9 @@
 							 판매 품절 재입고 알람 필요 없는 체크박스 삭제 -->
 							<tr th:each="product : ${products}">
 								<td th:text="${product.productId}">20151224</td>
+								<td>
+									<img th:src="${product.imageUrl}" style="display:block;width:60px;" />
+								</td>
 								<td th:text="${product.pName}">일괄등록 상품</td>
 								<td th:text="${product.pStock}">100</td>
 								<td th:text="${product.productId}">0</td>
@@ -145,12 +150,12 @@
 										<label class="form-check-label" th:for="${'outOfStock-' + (product != null ? product.productId : '')}"></label>
 									</div>
 								</td>
-								<td>
+								<!-- <td>
 									<div class="form-check">
 										<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault3" />
 										<label class="form-check-label" for="flexCheckDefault3"></label>
 									</div>
-								</td>
+								</td> -->
 								<td>
 									<div class="d-flex">
 										<button type="button" class="btn btn-primary">수정</button>
