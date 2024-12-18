@@ -60,15 +60,24 @@ public class ProductController {
     }
 
     @PostMapping("/auth-product-insert")
-    public String authProductInsert(@ModelAttribute ProductDto dto, RedirectAttributes redirectAttributes) {
-        logger.info("Inserting new product: {}", dto);
-        int res = productBiz.insert(dto);
-
-        if (res > 0) {
-            redirectAttributes.addFlashAttribute("successMessage", "Product inserted successfully.");
-            return "redirect:/auth-product";
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to insert product.");
+    public String authProductInsert(@ModelAttribute ProductDto dto, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+        try {
+            String repoName = "Doteed/PC-ShoppingMall";
+            String path = "pcShoppingMall/src/main/resources/static/images/products";  // 끝에 슬래시 제거
+            String imageUrl = gitHubService.uploadImage(repoName, path, file);
+            dto.setImageUrl(imageUrl);
+            
+            int res = productBiz.insert(dto);
+            if (res > 0) {
+                redirectAttributes.addFlashAttribute("successMessage", "Product inserted successfully.");
+                return "redirect:/auth-product";
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Failed to insert product.");
+                return "redirect:/auth-product-insert";
+            }
+        } catch (IOException e) {
+            logger.error("Image upload error", e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to upload image.");
             return "redirect:/auth-product-insert";
         }
     }
@@ -76,8 +85,8 @@ public class ProductController {
     @PostMapping("/upload-image")
     public ResponseEntity<Map<String, String>> uploadProductImage(@RequestParam("file") MultipartFile file, @RequestParam("productId") Integer productId) {
         try {
-            String repoName = "Doteed/PC-ShoppingMall";
-            String path = "images/products/" + file.getOriginalFilename();
+        	String repoName = "Doteed/PC-ShoppingMall";
+        	String path = "pcShoppingMall/src/main/resources/static/images/products/" + file.getOriginalFilename();
             String imageUrl = gitHubService.uploadImage(repoName, path, file);
 
             // 새 이미지 URL로 제품 정보 업데이트

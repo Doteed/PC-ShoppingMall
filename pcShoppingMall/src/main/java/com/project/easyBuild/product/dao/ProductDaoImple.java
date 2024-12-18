@@ -55,8 +55,8 @@ public class ProductDaoImple implements ProductDao {
     @Override
     public int insert(ProductDto dto) {
         return jdbcTemplate.update(
-            "INSERT INTO PRODUCT (PRODUCT_ID, USER_ID, CATEGORY_ID, AUTH_ID, P_PRICE, P_NAME, P_STOCK, P_ENROLL) VALUES (SEQ_PRODUCT.NEXTVAL, ?, ?, ?, ?, ?, ?, CURRENT_DATE)",
-            dto.getUserId(), dto.getCategoryId(), dto.getAuthId(), dto.getpPrice(), dto.getpName(), dto.getpStock()
+            "INSERT INTO PRODUCT (PRODUCT_ID, USER_ID, CATEGORY_ID, AUTH_ID, P_PRICE, P_NAME, P_STOCK, P_ENROLL, IMAGE_URL) VALUES (SEQ_PRODUCT.NEXTVAL, ?, ?, ?, ?, ?, ?, CURRENT_DATE, ?)",
+            dto.getUserId(), dto.getCategoryId(), dto.getAuthId(), dto.getpPrice(), dto.getpName(), dto.getpStock(), dto.getImageUrl()
         );
     }
     
