@@ -1,5 +1,6 @@
 package com.project.easyBuild.product.dao;
 
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,7 @@ public class ProductDaoImple implements ProductDao {
         dto.setpName(rs.getString("P_NAME"));
         dto.setpStock(rs.getInt("P_STOCK"));
         dto.setpEnroll(rs.getDate("P_ENROLL"));
+        dto.setImageUrl(rs.getString("IMAGE_URL"));
         return dto;
     };
 
@@ -57,4 +59,19 @@ public class ProductDaoImple implements ProductDao {
             dto.getUserId(), dto.getCategoryId(), dto.getAuthId(), dto.getpPrice(), dto.getpName(), dto.getpStock()
         );
     }
+    
+    @Override
+    public int updateProductImage(Integer productId, String imageUrl) {
+        return jdbcTemplate.update(
+            "UPDATE PRODUCT SET IMAGE_URL = ? WHERE PRODUCT_ID = ?",
+            imageUrl, productId
+        );
+    }
+
+    @Override
+    public String getProductImageUrl(Integer productId) {
+    	String result = jdbcTemplate.queryForObject("SELECT column FROM table WHERE condition = ?", String.class, rowMapper);
+		return result;
+    }
+
 }

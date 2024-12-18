@@ -35,4 +35,14 @@ public class ProductBizImpl implements ProductBiz {
 		return dao.insert(dto);
 	}
 
+    @Override
+    public int updateProductImage(Integer productId, String imageUrl) {
+        return dao.updateProductImage(productId, imageUrl);
+    }
+
+    @Override
+    public String getProductImageUrl(Integer productId) {
+        return dao.getProductImageUrl(productId);
+    }
+
 }
