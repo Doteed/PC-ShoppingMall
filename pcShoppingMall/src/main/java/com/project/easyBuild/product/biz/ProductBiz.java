@@ -13,4 +13,8 @@ public interface ProductBiz {
 	public void decreaseStock(int productId, int quantity);
 	
 	public int insert(ProductDto dto);
+	
+	public int updateProductImage(Integer productId, String imageUrl);
+	
+	public String getProductImageUrl(Integer productId);
 }
