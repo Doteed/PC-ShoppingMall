@@ -1,4 +1,4 @@
-package com.project.easyBuild.product.controller;
+package com.project.easyBuild.authority.controller;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
 
-import com.project.easyBuild.product.biz.GitHubService;
-import com.project.easyBuild.product.biz.ProductBiz;
-import com.project.easyBuild.product.dto.ProductDto;
+import com.project.easyBuild.authority.biz.GitHubService;
+import com.project.easyBuild.authority.biz.ProductBiz;
+import com.project.easyBuild.authority.dto.ProductDto;
 
 @Controller
 @RequestMapping("/api/product")

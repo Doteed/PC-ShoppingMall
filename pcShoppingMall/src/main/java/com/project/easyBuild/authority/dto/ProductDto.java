@@ -1,4 +1,4 @@
-package com.project.easyBuild.product.dto;
+package com.project.easyBuild.authority.dto;
 
 import java.util.Date;
 

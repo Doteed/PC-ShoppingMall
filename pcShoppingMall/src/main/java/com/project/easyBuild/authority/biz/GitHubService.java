@@ -1,4 +1,4 @@
-package com.project.easyBuild.product.biz;
+package com.project.easyBuild.authority.biz;
 
 import org.kohsuke.github.*;
 import org.springframework.beans.factory.annotation.Value;

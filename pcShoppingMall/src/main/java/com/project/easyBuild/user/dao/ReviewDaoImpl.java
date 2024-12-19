@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.project.easyBuild.product.dto.ProductDto;
+import com.project.easyBuild.authority.dto.ProductDto;
 import com.project.easyBuild.user.dto.ReviewDto;
 
 @Repository

@@ -9,9 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.project.easyBuild.product.biz.ProductBiz;
-import com.project.easyBuild.product.dao.ProductDao;
-import com.project.easyBuild.product.dto.ProductDto;
+import com.project.easyBuild.authority.biz.ProductBiz;
+import com.project.easyBuild.authority.dao.ProductDao;
+import com.project.easyBuild.authority.dto.ProductDto;
 import com.project.easyBuild.user.biz.QABiz;
 import com.project.easyBuild.user.biz.ReviewBiz;
 import com.project.easyBuild.user.dto.QADto;
@@ -32,10 +32,10 @@ public class HomeController {
     	return "example/example";
     }
     
+    //관리자페이지 관련
 	@Autowired
 	private ProductBiz productbiz;
 	
-    
     @GetMapping("/auth-index")
     public String authIndex(Model model) {
 		List<ProductDto> res = productbiz.listAll();
@@ -43,7 +43,6 @@ public class HomeController {
     	return "pages/authority/auth-index";
     }
 
-    
     @GetMapping("/auth-product")
     public String authProduct(Model model) {
         List<ProductDto> products = productbiz.listAll();
@@ -55,6 +54,12 @@ public class HomeController {
     public String authProductInsert() {
     	return "pages/authority/auth-product-insert";
     }
+    
+    @GetMapping("/auth-order")
+    public String authIndex() {
+    	return "pages/authority/auth-order";
+    }
+    
     
     @Autowired
 	private ReviewBiz reviewbiz;

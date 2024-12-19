@@ -1,4 +1,4 @@
-package com.project.easyBuild.product.dao;
+package com.project.easyBuild.authority.dao;
 
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.project.easyBuild.product.dto.ProductDto;
+import com.project.easyBuild.authority.dto.ProductDto;
 
 @Repository
 public class ProductDaoImple implements ProductDao {
