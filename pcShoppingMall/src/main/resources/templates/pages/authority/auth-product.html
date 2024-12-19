@@ -165,6 +165,24 @@
 						<button type="button" class="btn btn-primary">일괄수정</button>
 						<button type="button" class="btn btn-secondary" onclick="location.href='auth-product-insert'">상품등록</button>
 					</div>
+					<nav aria-label="Page navigation" th:if="${totalPages > 1}">
+					    <ul class="pagination justify-content-center">
+					        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+					            <a class="page-link" th:href="@{/auth-product(page=${currentPage - 1})}" aria-label="Previous">
+					                <span aria-hidden="true">&laquo;</span>
+					            </a>
+					        </li>
+					        <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}" 
+					            th:classappend="${pageNum == currentPage} ? 'active'">
+					            <a class="page-link" th:href="@{/auth-product(page=${pageNum})}" th:text="${pageNum + 1}"></a>
+					        </li>
+					        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+					            <a class="page-link" th:href="@{/auth-product(page=${currentPage + 1})}" aria-label="Next">
+					                <span aria-hidden="true">&raquo;</span>
+					            </a>
+					        </li>
+					    </ul>
+					</nav>
 				</div>
 			</div>
 	</section>
