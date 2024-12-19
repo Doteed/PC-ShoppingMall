@@ -1,4 +1,4 @@
-package com.project.easyBuild.product.biz;
+package com.project.easyBuild.authority.biz;
 
 import java.util.List;
 
@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.project.easyBuild.product.dao.ProductDao;
-import com.project.easyBuild.product.dto.ProductDto;
+import com.project.easyBuild.authority.dao.ProductDao;
+import com.project.easyBuild.authority.dto.ProductDto;
 
 @Service
 public class ProductBizImpl implements ProductBiz {

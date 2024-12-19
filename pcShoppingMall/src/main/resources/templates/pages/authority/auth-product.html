@@ -48,7 +48,7 @@
 						<a href="auth-product">상품 관리</a>
 					</li>
 					<li class="mt-2 text-body-emphasis">
-						<a href="javascript: void(0)">주문 관리</a>
+						<a href="auth-order">주문 관리</a>
 					</li>
 					<li class="mt-2 text-body-emphasis">
 						<a href="javascript: void(0)">배너 관리</a>
@@ -126,19 +126,16 @@
 								<td>
 									<div>
 										<input type="email" class="form-control" id="exampleFormControlInput1" />
-										<label for="exampleFormControlInput1" class="form-label"></label>
 									</div>
 								</td>
 								<td>
 									<div>
 										<input type="email" class="form-control" id="exampleFormControlInput2" />
-										<label for="exampleFormControlInput2" class="form-label"></label>
 									</div>
 								</td>
 								<td>
 									<div class="form-check">
 										<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1" />
-										<label class="form-check-label" for="flexCheckDefault1"></label>
 									</div>
 								</td>
 								<td>
@@ -147,7 +144,6 @@
 										    th:id="${'outOfStock-' + (product != null ? product.productId : '')}"
 										    th:checked="${product != null && product.pStock <= 0}"
 										    th:onchange="'updateStockStatus(' + (${product != null ? product.productId : 'null'}) + ', this.checked)'"/>
-										<label class="form-check-label" th:for="${'outOfStock-' + (product != null ? product.productId : '')}"></label>
 									</div>
 								</td>
 								<!-- <td>
