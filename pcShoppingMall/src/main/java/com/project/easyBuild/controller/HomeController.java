@@ -5,9 +5,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.easyBuild.authority.biz.ProductBiz;
 import com.project.easyBuild.authority.dao.ProductDao;
@@ -44,9 +48,16 @@ public class HomeController {
     }
 
     @GetMapping("/auth-product")
-    public String authProduct(Model model) {
-        List<ProductDto> products = productbiz.listAll();
-        model.addAttribute("products", products);
+    public String authProduct(Model model, @RequestParam(defaultValue = "0") int page) {
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<ProductDto> productPage = productbiz.listAllPaginated(pageable);
+        
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", productPage.getNumber());
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("totalItems", productPage.getTotalElements());
+        
         return "pages/authority/auth-product";
     }
 

@@ -6,6 +6,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -73,5 +76,24 @@ public class ProductDaoImple implements ProductDao {
     	String result = jdbcTemplate.queryForObject("SELECT column FROM table WHERE condition = ?", String.class, rowMapper);
 		return result;
     }
-
+    
+    @Override
+    public Page<ProductDto> listAllPaginated(Pageable pageable) {
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        String countQuery = "SELECT COUNT(*) FROM PRODUCT";
+        String query = "SELECT * FROM ("
+        		+ "    SELECT A.*, ROWNUM RN FROM ("
+        		+ "        SELECT * FROM PRODUCT ORDER BY P_ENROLL DESC"
+        		+ "    ) A WHERE ROWNUM <= :limit"
+        		+ ") WHERE RN > :offset"
+        		+ "";
+        
+        long total = jdbcTemplate.queryForObject(countQuery, Long.class);
+        
+        List<ProductDto> products = jdbcTemplate.query(query, rowMapper, startItem + pageSize, startItem);
+        
+        return new PageImpl<>(products, pageable, total);
+    }
 }

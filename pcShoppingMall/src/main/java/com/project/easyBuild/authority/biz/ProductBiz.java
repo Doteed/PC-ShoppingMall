@@ -2,6 +2,9 @@ package com.project.easyBuild.authority.biz;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.project.easyBuild.authority.dto.ProductDto;
 
 public interface ProductBiz {
@@ -17,4 +20,7 @@ public interface ProductBiz {
 	public int updateProductImage(Integer productId, String imageUrl);
 	
 	public String getProductImageUrl(Integer productId);
+	
+	public Page<ProductDto> listAllPaginated(Pageable pageable);
+
 }
