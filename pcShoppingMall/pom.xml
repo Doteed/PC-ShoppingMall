@@ -94,11 +94,18 @@
         </dependency>
 
         <!-- Lombok -->
-        <dependency>
+       <!-- <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-        </dependency>
+        </dependency>-->
+		<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <version>1.18.36</version> <!-- 최신 버전으로 변경 -->
+		    <scope>provided</scope>
+		</dependency>
+
     </dependencies>
 
     <build>
