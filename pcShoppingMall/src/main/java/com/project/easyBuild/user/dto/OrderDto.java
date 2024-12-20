@@ -7,21 +7,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
 @Setter
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
-public class ReviewDto {
-	private int reviewId;
-	private int productId;
+@NoArgsConstructor
+public class OrderDto {
+	private int orderId;
+	private int deliveryId;
 	private String userId;
-	private int authId;
-	private String title;
-	private String content;
-	private Date date;
-	private int rating;
+	private int productId;
+	private int totalPrice;
+	private Boolean cartStatus;
+	private String paymentMethod;
+	private Date orderDate;
 	
 	private String productName;
 }
-
-
