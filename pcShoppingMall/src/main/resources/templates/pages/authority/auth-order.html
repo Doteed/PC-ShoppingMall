@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/default}">
+<head>
+<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+		    var addressSearchBtn = document.getElementById('addressSearchBtn');
+		    addressSearchBtn.addEventListener('click', execDaumPostcode);
+		});
+	
+		function execDaumPostcode() {
+		    new daum.Postcode({
+		        oncomplete: function(data) {
+		            var addr = '';
+		            var extraAddr = '';
+	
+		            if (data.userSelectedType === 'R') {
+		                addr = data.roadAddress;
+		            } else {
+		                addr = data.jibunAddress;
+		            }
+	
+		            if(data.userSelectedType === 'R'){
+		                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+		                    extraAddr += data.bname;
+		                }
+		                if(data.buildingName !== '' && data.apartment === 'Y'){
+		                    extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+		                }
+		                if(extraAddr !== ''){
+		                    extraAddr = ' (' + extraAddr + ')';
+		                }
+		                document.getElementById("extraAddress").value = extraAddr;
+		            } else {
+		                document.getElementById("extraAddress").value = '';
+		            }
+	
+		            document.getElementById('postcode').value = data.zonecode;
+		            document.getElementById("address").value = addr;
+		            document.getElementById("detailAddress").focus();
+		        }
+		    }).open();
+		}
+	</script>
+</head>
+<body>
+	<section layout:fragment="content" class="content-box d-flex side-menu">
+		<div class="text-center bg-body-secondary side-nav">
+			<h6 class="m-0 py-3 border-bottom border-secondary-subtle text-body-emphasis">
+				<a href="auth-index">관리자 메뉴</a>
+			</h6>
+			<ul class="p-0 text-center">
+				<li class="mt-2 text-body-emphasis">
+					<a href="javascript: void(0)">회원 관리</a>
+				</li>
+				<li class="mt-2 text-body-emphasis">
+					<a href="javascript: void(0)">게시판 관리</a>
+				</li>
+				<li class="mt-2 text-body-emphasis">
+					<a href="auth-product">상품 관리</a>
+				</li>
+				<li class="mt-2 text-body-emphasis">
+					<a href="auth-order">주문 관리</a>
+				</li>
+				<li class="mt-2 text-body-emphasis">
+					<a href="javascript: void(0)">배너 관리</a>
+				</li>
+			</ul>
+		</div>
+		<div class="d-flex flex-column gap-3 w-100">
+			<h5>주문리스트</h5>
+			<div>
+				<table>
+					<thead>
+						<tr>
+							<th>주문ID</th>
+							<th>주문일자</th>
+							<th>상품명</th>
+							<th>주문자</th>
+							<th>수령자</th>
+							<th>요금</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td data-bs-toggle="modal" data-bs-target="#exampleModal">123456789</td>
+							<td>2024-12-19 00:00:00</td>
+							<td>상품명01</td>
+							<td>주문자01</td>
+							<td>수령자01</td>
+							<td>1,000,000원</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<!-- Modal -->
+		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-lg">
+	      	<form action="/api/order/auth-order-modal" method="post">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h1 class="modal-title fs-5" id="exampleModalLabel">주문 정보</h1>
+			        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			      </div>
+			      <div class="modal-body">
+			        <table>
+			        	<tr>
+			        		<th>주문번호</th>
+		        			<td>
+	        					<div>
+									<input type="email" class="form-control" id="exampleFormControlInput1" />
+								</div>
+							</td>
+			        		<th rowspan="2">배송주소<button type="button" class="btn btn-primary" id="addressSearchBtn">주소찾기</button></th>
+							<td rowspan="2">
+								<div>
+								    <input type="text" id="postcode" class="form-control" placeholder="우편번호" readonly>
+								</div>
+								<div>
+								    <input type="text" id="address" class="form-control" placeholder="주소" readonly>
+								</div>
+								<div>
+									<input type="text" id="detailAddress" class="form-control" placeholder="상세주소">
+								</div>
+								<div>
+									<input type="text" id="extraAddress" class="form-control" placeholder="참고항목" readonly>
+								</div>								
+							</td>
+			        	</tr>
+			        	<tr>
+			        		<th>주문일자</th>
+			        		<td>
+				        		<div>
+									<input type="email" class="form-control" id="exampleFormControlInput1" />
+								</div>
+			        		</td>
+			        	</tr>
+			        	<tr>
+			        		<th>주문자</th>
+			        		<td>
+			        			<div>
+									<input type="email" class="form-control" id="exampleFormControlInput1" />
+								</div>
+			        		</td>
+			        		<th>연락처</th>
+			        		<td>
+			        			<div>
+									<input type="email" class="form-control" id="exampleFormControlInput1" />
+								</div>
+			        		</td>
+			        	</tr>
+			        	<tr>
+			        		<th>주문상태</th>
+			        		<td>
+				        		<select class="form-select" aria-label="Default select example" name="categoryId">
+									<option selected>Open this select menu</option>
+									<option value="1">One</option>
+									<option value="2">Two</option>
+									<option value="3">Three</option>
+								</select>
+							</td>
+			        		<th>택배회사</th>
+			        		<td>
+				        		<select class="form-select" aria-label="Default select example" name="categoryId">
+									<option selected>Open this select menu</option>
+									<option value="1">One</option>
+									<option value="2">Two</option>
+									<option value="3">Three</option>
+								</select>
+			        		</td>
+			        	</tr>
+			        	<tr>
+			        		<th>인증전화번호</th>
+			        		<td>
+			        			<div>
+									<input type="email" class="form-control" id="exampleFormControlInput1" />
+								</div>
+			        		</td>
+			        		<th>운송장번호</th>
+			        		<td>
+			        			<div>
+									<input type="email" class="form-control" id="exampleFormControlInput1" />
+								</div>
+			        		</td>
+			        	</tr>
+			        </table>
+			        <table>
+			        	<tr>
+			        		<th>주문금액</th>
+			        		<td>
+			        			<div>
+									<input type="email" class="form-control" id="exampleFormControlInput1" />
+								</div>
+			        		</td>
+			        		<th>배송비</th>
+			        		<td>
+			        			<div>
+									<input type="email" class="form-control" id="exampleFormControlInput1" />
+								</div>
+			        		</td>
+			        	</tr>
+			        </table>
+			        <div>
+						<ul class="nav nav-tabs" id="myTab" role="tablist">
+							<li class="nav-item" role="presentation">
+								<button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home</button>
+							</li>
+							<li class="nav-item" role="presentation">
+								<button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Profile</button>
+							</li>
+							<li class="nav-item" role="presentation">
+								<button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Contact</button>
+							</li>
+							<li class="nav-item" role="presentation">
+								<button class="nav-link" id="disabled-tab" data-bs-toggle="tab" data-bs-target="#disabled-tab-pane" type="button" role="tab" aria-controls="disabled-tab-pane" aria-selected="false" disabled>Disabled</button>
+							</li>
+						</ul>
+						<div class="tab-content" id="myTabContent">
+							<div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">...</div>
+							<div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">...</div>
+							<div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">...</div>
+							<div class="tab-pane fade" id="disabled-tab-pane" role="tabpanel" aria-labelledby="disabled-tab" tabindex="0">...</div>
+						</div>
+			        </div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			        <button type="submit" class="btn btn-primary">Save changes</button>
+			      </div>
+			    </div>
+	      	</form>
+		  </div>
+		</div>
+	</section>
+</body>
+</html>

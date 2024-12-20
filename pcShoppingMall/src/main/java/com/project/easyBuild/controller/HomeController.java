@@ -5,15 +5,19 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import com.project.easyBuild.product.biz.ProductBiz;
-import com.project.easyBuild.product.dao.ProductDao;
-import com.project.easyBuild.product.dto.ProductDto;
+import com.project.easyBuild.authority.biz.ProductBiz;
+import com.project.easyBuild.authority.dao.ProductDao;
+import com.project.easyBuild.authority.dto.ProductDto;
 import com.project.easyBuild.user.biz.QABiz;
 import com.project.easyBuild.user.biz.ReviewBiz;
 import com.project.easyBuild.user.dto.QADto;
@@ -52,9 +56,44 @@ public class HomeController {
 		model.addAttribute("products", products);
 		return "pages/authority/auth-product";
 	}
-	
-	//----------mypage----------
+    
+    //관리자페이지 관련
 	@Autowired
+	private ProductBiz productbiz;
+	
+    @GetMapping("/auth-index")
+    public String authIndex(Model model) {
+		List<ProductDto> res = productbiz.listAll();
+		model.addAttribute("list",res);
+    	return "pages/authority/auth-index";
+    }
+
+    @GetMapping("/auth-product")
+    public String authProduct(Model model, @RequestParam(defaultValue = "0") int page) {
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<ProductDto> productPage = productbiz.listAllPaginated(pageable);
+        
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", productPage.getNumber());
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("totalItems", productPage.getTotalElements());
+        
+        return "pages/authority/auth-product";
+    }
+
+    @GetMapping("/auth-product-insert")
+    public String authProductInsert() {
+    	return "pages/authority/auth-product-insert";
+    }
+    
+    @GetMapping("/auth-order")
+    public String authIndex() {
+    	return "pages/authority/auth-order";
+    }
+    
+  //----------mypage----------
+  @Autowired
 	private ReviewBiz reviewbiz;
 
 	@GetMapping("/my/review")
