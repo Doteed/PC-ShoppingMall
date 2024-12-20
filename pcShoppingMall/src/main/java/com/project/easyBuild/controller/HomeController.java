@@ -38,18 +38,6 @@ public class HomeController {
 		return "example/example";
 	}
 
-	@Autowired
-	private ProductBiz productbiz;
-
-	@GetMapping("/auth-index")
-	public String authIndex(Model model) {
-
-		List<ProductDto> res = productbiz.listAll();
-		model.addAttribute("list", res);
-
-		return "pages/authority/auth-index";
-	}
-
 	@GetMapping("/auth-product")
 	public String authProduct(Model model) {
 		List<ProductDto> products = productbiz.listAll();
