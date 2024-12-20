@@ -1,8 +1,8 @@
 //수정 팝업
-window.openEditPopup = function(qaId) {
+window.openEditPopup = function(entityType, entityId) {
 	const userId = 'user01'; //임시 userId
 
-	fetch(`/qa/detail/${qaId}?userId=${userId}`)
+	fetch(`/${entityType}/detail/${entityId}?userId=${userId}`)
 		.then(response => response.json())
 		.then(data => {
 			const title = data.title;
@@ -76,7 +76,7 @@ window.openEditPopup = function(qaId) {
 					});
 
 
-					fetch('/qa/update', {
+					fetch(`/${entityType}/update`, {
 						method: 'PUT',
 						headers: {
 							'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ window.openEditPopup = function(qaId) {
 							userId,
 							title,
 							content,
-							qaId: qaId,
+							[`${entityType}Id`]: entityId,
 						})
 					})
 						.then(response => response.json())
@@ -111,10 +111,10 @@ window.openEditPopup = function(qaId) {
 };
 
 //삭제
-window.deleteQA = function(qaId) {
+window.deleteEntity = function(entityType, entityId) {
 	const userId = 'user01'; //임시 userId
 	if (confirm("정말 삭제하시겠습니까?")) {
-		fetch(`/qa/delete?qaId=${qaId}&userId=${userId}`, {
+		fetch(`/${entityType}/delete?${entityType}Id=${entityId}&userId=${userId}`, {
 			method: 'DELETE',
 		})
 			.then(response => response.json())

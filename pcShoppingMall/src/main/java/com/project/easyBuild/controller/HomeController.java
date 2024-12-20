@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.project.easyBuild.authority.biz.ProductBiz;
 import com.project.easyBuild.authority.dao.ProductDao;
 import com.project.easyBuild.authority.dto.ProductDto;
+import com.project.easyBuild.user.biz.OrderBiz;
 import com.project.easyBuild.user.biz.QABiz;
 import com.project.easyBuild.user.biz.ReviewBiz;
+import com.project.easyBuild.user.dto.OrderDto;
 import com.project.easyBuild.user.dto.QADto;
 import com.project.easyBuild.user.dto.ReviewDto;
 
@@ -92,5 +94,15 @@ public class HomeController {
 		List<QADto> qas = qabiz.mylistAll("user01");
 		model.addAttribute("qas", qas);
 		return "pages/mypage/my-qa";
+	}
+	
+	@Autowired
+	private OrderBiz orderbiz;
+
+	@GetMapping("/my/order")
+	public String myOrder(Model model) {
+		List<OrderDto> orders = orderbiz.mylistAll("user01");
+		model.addAttribute("orders", orders);
+		return "pages/mypage/my-order";
 	}
 }
