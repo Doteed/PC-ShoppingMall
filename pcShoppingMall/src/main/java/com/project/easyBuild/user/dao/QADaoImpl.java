@@ -3,6 +3,7 @@ package com.project.easyBuild.user.dao;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -45,7 +46,14 @@ public class QADaoImpl implements QADao {
 	@Override
 	public QADto listOne(int qaId, String userId) {
 	    String sql = "SELECT * FROM QA WHERE QA_ID = ? AND USER_ID = ?";
-	    return jdbcTemplate.queryForObject(sql, new Object[]{qaId, userId}, rowMapper);
+	    try {
+	        return jdbcTemplate.queryForObject(sql, new Object[]{qaId, userId}, rowMapper);
+	    } catch (EmptyResultDataAccessException e) {
+	        return null; //데이터 못 찾았을 때
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw new RuntimeException("Q&A 조회 중 오류가 발생했습니다.");
+	    }
 	}
 
 

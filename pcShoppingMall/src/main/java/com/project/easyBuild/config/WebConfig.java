@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 @Configuration
 @EnableWebMvc
@@ -23,6 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
 	}
 
+	//로그인 세션 체크
 	@Autowired
 	private SessionInterceptor sessionInterceptor;
 
@@ -36,5 +38,7 @@ public class WebConfig implements WebMvcConfigurer {
 	@Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(new FormHttpMessageConverter());
+        //Jackson HttpMessageConverter를 추가
+        converters.add(new MappingJackson2HttpMessageConverter());
     }
 }

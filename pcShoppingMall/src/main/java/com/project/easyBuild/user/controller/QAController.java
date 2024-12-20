@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,12 +27,19 @@ public class QAController {
     private QABiz qabiz;
 
     @GetMapping("/detail/{qaId}")
-    public ResponseEntity<QADto> getQaDetail(@PathVariable int qaId, @RequestParam String userId){//@RequestAttribute("userId") String userId) {
-        QADto qa = qabiz.listOne(qaId, userId);
-        if (qa != null) {
-            return ResponseEntity.ok(qa);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    public ResponseEntity<QADto> getQaDetail(@PathVariable int qaId, @RequestParam String userId) {
+        try {
+            QADto qa = qabiz.listOne(qaId, userId);
+            
+            if (qa != null) {
+                System.out.println("QA Detail Response: " + qa);
+                return ResponseEntity.ok(qa);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
