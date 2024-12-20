@@ -38,50 +38,43 @@ public class HomeController {
 		return "example/example";
 	}
 
-	@GetMapping("/auth-product")
-	public String authProduct(Model model) {
-		List<ProductDto> products = productbiz.listAll();
-		model.addAttribute("products", products);
-		return "pages/authority/auth-product";
-	}
-    
-    //관리자페이지 관련
+	//관리자페이지 관련
 	@Autowired
 	private ProductBiz productbiz;
-	
-    @GetMapping("/auth-index")
-    public String authIndex(Model model) {
+
+	@GetMapping("/auth-index")
+	public String authIndex(Model model) {
 		List<ProductDto> res = productbiz.listAll();
-		model.addAttribute("list",res);
-    	return "pages/authority/auth-index";
-    }
+		model.addAttribute("list", res);
+		return "pages/authority/auth-index";
+	}
 
-    @GetMapping("/auth-product")
-    public String authProduct(Model model, @RequestParam(defaultValue = "0") int page) {
-        int pageSize = 10;
-        Pageable pageable = PageRequest.of(page, pageSize);
-        Page<ProductDto> productPage = productbiz.listAllPaginated(pageable);
-        
-        model.addAttribute("products", productPage.getContent());
-        model.addAttribute("currentPage", productPage.getNumber());
-        model.addAttribute("totalPages", productPage.getTotalPages());
-        model.addAttribute("totalItems", productPage.getTotalElements());
-        
-        return "pages/authority/auth-product";
-    }
+	@GetMapping("/auth-product")
+	public String authProduct(Model model, @RequestParam(defaultValue = "0") int page) {
+		int pageSize = 10;
+		Pageable pageable = PageRequest.of(page, pageSize);
+		Page<ProductDto> productPage = productbiz.listAllPaginated(pageable);
 
-    @GetMapping("/auth-product-insert")
-    public String authProductInsert() {
-    	return "pages/authority/auth-product-insert";
-    }
-    
-    @GetMapping("/auth-order")
-    public String authIndex() {
-    	return "pages/authority/auth-order";
-    }
-    
-  //----------mypage----------
-  @Autowired
+		model.addAttribute("products", productPage.getContent());
+		model.addAttribute("currentPage", productPage.getNumber());
+		model.addAttribute("totalPages", productPage.getTotalPages());
+		model.addAttribute("totalItems", productPage.getTotalElements());
+
+		return "pages/authority/auth-product";
+	}
+
+	@GetMapping("/auth-product-insert")
+	public String authProductInsert() {
+		return "pages/authority/auth-product-insert";
+	}
+
+	@GetMapping("/auth-order")
+	public String authIndex() {
+		return "pages/authority/auth-order";
+	}
+
+	//마이페이지 관련
+	@Autowired
 	private ReviewBiz reviewbiz;
 
 	@GetMapping("/my/review")
