@@ -24,7 +24,17 @@ public class QABizImpl implements QABiz {
 	}
 
 	@Override
-	public QADto listOne(int qaId) {
-		return dao.listOne(qaId);
+	public QADto listOne(int qaId, String userId) {
+		return dao.listOne(qaId, userId);
+	}
+
+	@Override
+	public int update(QADto dto) {
+		return dao.update(dto);
+	}
+
+	@Override
+	public int delete(int qaId, String userId) {
+		return dao.delete(qaId, userId);
 	}
 }
