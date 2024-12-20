@@ -22,6 +22,14 @@ public class QADto {
 		this.content = content;
 		this.date = date;
 	}
+	//update용 생성자
+	public QADto(int qaId, String title, String content, String userId) {
+		super();
+		this.qaId = qaId;
+		this.userId = userId;
+		this.title = title;
+		this.content = content;
+	}
 	public int getQaId() {
 		return qaId;
 	}
@@ -64,4 +72,14 @@ public class QADto {
 	public void setDate(Date date) {
 		this.date = date;
 	}
+	
+	 @Override
+	    public String toString() {
+	        return "QADto{" +
+	                "qaId='" + qaId + '\'' +
+	                ", title='" + title + '\'' +
+	                ", content='" + content + '\'' +
+	                ", userId='" + userId + '\'' +
+	                '}';
+	    }
 }
