@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/default}">
+<head>
+    <title layout:fragment="title">Faq Detail</title>
+	<link rel="stylesheet" th:href="@{/css/announcement-detail.css}">
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container mt-5 content-wrapper">
+            <h1 th:text="${faq.title}"></h1>
+			<p class="date">
+			    <strong>날짜:</strong> 
+			    <span th:text="${#temporals.format(faq.createdDate, 'yyyy-MM-dd')}"></span>
+			</p>
+
+            <div class="content-box">
+                <p th:utext="${faq.content}"></p>
+            </div>
+            <div class="button-container">
+				<a th:href="@{'/faqs/edit/' + ${faq.faqId}}" class="btn btn-warning btn-sm">수정</a>
+				<a th:href="@{'/faqs/delete/' + ${faq.faqId}}" class="btn btn-danger btn-sm">삭제</a>
+                <a href="/faqs" class="btn btn-secondary">목록</a>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
