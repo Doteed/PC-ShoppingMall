@@ -105,4 +105,15 @@ public class HomeController {
 		model.addAttribute("orders", orders);
 		return "pages/mypage/my-order";
 	}
+	
+	//제품 카테고리 관련
+	@GetMapping("/cpuproducts")
+    public String cpuproducts() {
+    	return "product/category/cpuproducts";
+    }
+    
+    @GetMapping("/cpu01")
+    public String cpu01() {
+    	return "product/detail/cpu01";
+    }
 }
