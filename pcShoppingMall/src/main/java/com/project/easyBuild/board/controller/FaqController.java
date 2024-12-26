@@ -60,7 +60,7 @@ public class FaqController {
         if (result.hasErrors()) {
             return TEMPLATE_DIR + "create";
         }
-        faq.setAuthId(1L); // 권한 번호 1로 설정
+        faq.setAuthId(2L); // 관리자 권한 2 설정
         faq.setBoardId(102L); // BOARD_ID 102으로 설정
         faqService.saveFaq(faq);
         return "redirect:/faqs";
