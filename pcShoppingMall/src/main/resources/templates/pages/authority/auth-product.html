@@ -3,32 +3,55 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/default}">
 <head>
+<!-- 	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/> -->
 	<title>상품관리 인덱스</title>
 	<script>
-		function updateStockStatus(productId, isOutOfStock) {
-		    fetch('/api/product/updateStockStatus', {
-		        method: 'POST',
-		        headers: {
-		            'Content-Type': 'application/json',
-		        },
-		        body: JSON.stringify({
-		            productId: productId,
-		            outOfStock: isOutOfStock
-		        })
-		    })
-		    .then(response => response.json())
-		    .then(data => {
-		        if (data.success) {
-		            alert('재고 상태가 업데이트되었습니다.');
-		        } else {
-		            alert('재고 상태 업데이트에 실패했습니다.');
-		        }
-		    })
-		    .catch((error) => {
-		        console.error('Error:', error);
-		        alert('오류가 발생했습니다.');
+		document.addEventListener('DOMContentLoaded', function() {
+		    const updateButtons = document.querySelectorAll('.update-product');
+		    updateButtons.forEach(button => {
+		        button.addEventListener('click', function() {
+		            const productId = this.getAttribute('data-product-id');
+		            updateProduct(productId);
+		        });
 		    });
-		}
+	
+		    function updateProduct(productId) {
+		        const row = document.querySelector(`tr[data-product-id="${productId}"]`);
+		        const stock = parseInt(row.querySelector('.stock-input').value, 10);
+		        const pReportstock = parseInt(row.querySelector('.preportstock-input').value, 10);
+		        const saleStatus = row.querySelector('.sale-status').checked ? 'Y' : 'N';
+
+		        fetch('/api/product/update', {
+		            method: 'POST',
+		            headers: {
+		                'Content-Type': 'application/json',
+		            },
+		            body: JSON.stringify({
+		                productId, stock, pReportstock, saleStatus
+		            })
+		        })
+		        .then(response => {
+		            if (!response.ok) {
+		                throw new Error('Network response was not ok');
+		            }
+		            return response.json();
+		        })
+		        .then(data => {
+		            if (data.success) {
+		                alert('상품 정보가 성공적으로 업데이트되었습니다.');
+		                // 필요하다면 여기서 페이지를 새로고침하거나 UI를 업데이트합니다.
+		            } else {
+		                throw new Error(data.message || '상품 정보 업데이트에 실패했습니다.');
+		            }
+		        })
+		        .catch(error => {
+		            console.error('Error:', error);
+		            alert('오류가 발생했습니다: ' + error.message);
+		        });
+		    }
+		});
+
 	</script>
 </head>
 <body>
@@ -74,10 +97,10 @@
 					</select>
 					
 					<!-- 검색바 -->
-					<div class="input-group mb-3">
+					<!-- <div class="input-group mb-3">
 					  <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2">
 					  <button class="btn btn-outline-secondary" type="button" id="button-addon2">Button</button>
-					</div>
+					</div> -->
 				</div>
 				<div>
 					<table class="table-type-a">
@@ -92,7 +115,6 @@
 							<col width="8%" />
 							<col width="8%" />
 							<col width="8%" />
-							<!-- <col width="8%" /> -->
 							<col width="10%" />
 						</colgroup>
 						<thead>
@@ -107,62 +129,46 @@
 								<th>통보수량</th>
 								<th>판매</th>
 								<th>품절</th>
-								<!-- <th>재입고알림</th> -->
 								<th>관리</th>
 							</tr>
 						</thead>
+						<!-- TODO: 주문수량 가져오기, 재고-주문수량=가재고, 재고 수정 반영, 통보수량 상품의 재고가 통보수량보다 작을 때 쇼핑몰 현황 재고부족상품에 표시됩니다,
+						 판매 품절 재입고 알람 필요 없는 체크박스 삭제 -->
 						<tbody>
-							<!-- TODO: 주문수량 가져오기, 재고-주문수량=가재고, 재고 수정 반영, 통보수량 상품의 재고가 통보수량보다 작을 때 쇼핑몰 현황 재고부족상품에 표시됩니다,
-							 판매 품절 재입고 알람 필요 없는 체크박스 삭제 -->
-							<tr th:each="product : ${products}">
-								<td th:text="${product.productId}">20151224</td>
-								<td>
-									<img th:src="${product.imageUrl}" style="display:block;width:60px;" />
-								</td>
-								<td th:text="${product.pName}">일괄등록 상품</td>
-								<td th:text="${product.pStock}">100</td>
-								<td th:text="${product.productId}">0</td>
-								<td th:text="${product.productId}">0</td>
-								<td>
-									<div>
-										<input type="email" class="form-control" id="exampleFormControlInput1" />
-									</div>
-								</td>
-								<td>
-									<div>
-										<input type="email" class="form-control" id="exampleFormControlInput2" />
-									</div>
-								</td>
-								<td>
-									<div class="form-check">
-										<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1" />
-									</div>
-								</td>
-								<td>
-									<div class="form-check">
-										<input class="form-check-input" type="checkbox" 
-										    th:id="${'outOfStock-' + (product != null ? product.productId : '')}"
-										    th:checked="${product != null && product.pStock <= 0}"
-										    th:onchange="'updateStockStatus(' + (${product != null ? product.productId : 'null'}) + ', this.checked)'"/>
-									</div>
-								</td>
-								<!-- <td>
-									<div class="form-check">
-										<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault3" />
-										<label class="form-check-label" for="flexCheckDefault3"></label>
-									</div>
-								</td> -->
-								<td>
-									<div class="d-flex">
-										<button type="button" class="btn btn-primary">수정</button>
-										<button type="button" class="btn btn-danger">삭제</button>									
-									</div>
-								</td>
-							</tr>
+						    <tr th:each="product : ${products}" th:attr="data-product-id=${product.productId}">
+						        <td th:text="${product.productId}"></td>
+						        <td><img th:src="${product.imageUrl}" style="width:60px;height:60px;" /></td>
+						        <td th:text="${product.pName}"></td>
+						        <td th:text="${product.pStock}"></td>
+						        <td th:text="${product.orderWaiting}"></td>
+						        <td th:text="${product.availableStock}"></td>
+						        <td>
+						            <input type="number" th:value="${product.pStock}" class="form-control stock-input" th:attr="data-product-id=${product.productId}" />
+						        </td>
+						        <td>
+						            <input type="number" th:value="${product.pReportstock}" class="form-control preportstock-input" th:attr="data-product-id=${product.productId}" />
+						        </td>
+						        <td>
+						            <div class="form-check">
+						                <input class="form-check-input sale-status" type="checkbox" th:checked="${product.pSale == 'Y'}" th:attr="data-product-id=${product.productId}" />
+						            </div>
+						        </td>
+						        <td>
+						            <div class="form-check">
+						                <input class="form-check-input out-of-stock" type="checkbox" th:checked="${product.pStock <= 0}" th:attr="data-product-id=${product.productId}" />
+						            </div>
+						        </td>
+						        <td>
+						            <div class="d-flex">
+						                <button type="button" class="btn btn-primary update-product" th:data-product-id="${product.productId}">수정</button>
+						                <button type="button" class="btn btn-danger">삭제</button>									
+						            </div>
+						        </td>
+						    </tr>
 						</tbody>
 					</table>
 					<div class="d-flex justify-content-end gap-3">
-						<button type="button" class="btn btn-primary">일괄수정</button>
+						<!-- <button type="button" class="btn btn-primary">일괄수정</button> -->
 						<button type="button" class="btn btn-secondary" onclick="location.href='auth-product-insert'">상품등록</button>
 					</div>
 					<nav aria-label="Page navigation" th:if="${totalPages > 1}">

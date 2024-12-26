@@ -22,5 +22,15 @@ public interface ProductBiz {
 	public String getProductImageUrl(Integer productId);
 	
 	public Page<ProductDto> listAllPaginated(Pageable pageable);
+		
+	public int updateStock(int productId, int quantity);
+	
+	public int updateSaleStatus(int productId, String status);
+	
+	public int updateSoldOutStatus(int productId, String status);
+	
+	public boolean updateProduct(int productId, int stock, int pReportstock, String saleStatus);
+	
+	public ProductDto getProductById(int productId);
 
 }

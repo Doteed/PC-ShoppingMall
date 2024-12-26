@@ -66,7 +66,11 @@ public class HomeController {
 	}
 
 	@GetMapping("/auth-product-insert")
-	public String authProductInsert() {
+	public String authProductInsert(Model model) {
+		
+		model.addAttribute("userId", "USER");
+		model.addAttribute("authId", 1);
+		
 		return "pages/authority/auth-product-insert";
 	}
 
