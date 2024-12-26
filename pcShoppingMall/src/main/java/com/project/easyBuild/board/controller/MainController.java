@@ -1,9 +1,9 @@
 package com.project.easyBuild.board.controller;
 
 import com.project.easyBuild.board.entity.Announcement;
-import com.project.easyBuild.board.entity.Qna;
+import com.project.easyBuild.board.entity.Faq;
 import com.project.easyBuild.board.service.AnnouncementService;
-import com.project.easyBuild.board.service.QnaService;
+import com.project.easyBuild.board.service.FaqService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,11 +15,11 @@ import java.util.List;
 public class MainController {
 
     private final AnnouncementService announcementService;
-    private final QnaService qnaService;
+    private final FaqService faqService;
 
-    public MainController(AnnouncementService announcementService, QnaService qnaService) {
+    public MainController(AnnouncementService announcementService, FaqService qnaService) {
         this.announcementService = announcementService;
-        this.qnaService = qnaService;
+        this.faqService = qnaService;
     }
 
     @GetMapping("/main")
@@ -27,11 +27,11 @@ public class MainController {
         // 최신 공지사항 5개
         List<Announcement> latestAnnouncements = announcementService.getLatestAnnouncements(5);
         // 최신 QnA 5개
-        List<Qna> latestQnas = qnaService.getLatestQnas(5);
+        List<Faq> latestFaqs = faqService.getLatestFaqs(5);
 
         // 모델에 데이터를 추가
         model.addAttribute("latestAnnouncements", latestAnnouncements);
-        model.addAttribute("latestQnas", latestQnas);
+        model.addAttribute("latestFaqs", latestFaqs);
 
         return "main";
     }

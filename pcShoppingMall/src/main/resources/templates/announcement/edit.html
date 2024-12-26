@@ -4,6 +4,7 @@
       layout:decorate="~{fragments/default}">
 <head>
     <title layout:fragment="title">Edit Announcement</title>
+	<link rel="stylesheet" th:href="@{/css/announcement-detail.css}">
 </head>
 <body>
     <div layout:fragment="content">
@@ -18,8 +19,10 @@
 			        <label for="content" class="form-label">내용</label>
 			        <textarea class="form-control" id="content" name="content" th:field="*{content}" rows="5" required></textarea>
 			    </div>
-			    <button type="submit" class="btn btn-primary">수정</button>
+				<div class="button-container">
+			    <button type="submit" class="btn btn-primary" onclick="return confirm('수정하시겠습니까?');">수정</button>
 			    <a href="/announcements" class="btn btn-secondary">취소</a>
+				</div>
 			</form>
         </div>
     </div>
