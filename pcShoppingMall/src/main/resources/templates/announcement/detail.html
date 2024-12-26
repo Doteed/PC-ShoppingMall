@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/default}">
+<head>
+    <title layout:fragment="title">Announcement Detail</title>
+	<link rel="stylesheet" th:href="@{/css/announcement-detail.css}">
+
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container mt-5 content-wrapper">
+            <h1 th:text="${announcement.title}"></h1>
+			<p class="date">
+			    <strong>날짜:</strong> 
+			    <span th:text="${#temporals.format(announcement.createdDate, 'yyyy-MM-dd')}"></span>
+			</p>
+
+            <div class="content-box">
+                <p th:utext="${announcement.content}"></p>
+            </div>
+            <div class="button-container">
+				<a th:href="@{'/announcements/edit/' + ${announcement.announcId}}" class="btn btn-warning btn-sm">수정</a>
+				<a th:href="@{'/announcements/delete/' + ${announcement.announcId}}" class="btn btn-danger btn-sm" onclick="return confirm('삭제하시겠습니까?');">삭제</a>
+                <a href="/announcements" class="btn btn-secondary">목록</a>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

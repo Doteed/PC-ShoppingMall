@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{fragments/default}">
+<head>
+    <!-- Toast UI Editor CSS -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+    <!-- Toast UI Editor JavaScript -->
+	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    
+    <script th:src="@{/js/editor.js}"></script>
+    <script th:src="@{/js/mylist.js}"></script>
+    <meta charset="UTF-8">
+	<title>Insert title here</title>
+</head>
+<body>
+	<section layout:fragment="content" class="content-box d-flex"
+		style="gap: 30px; padding-top: 30px;">
+		<div class="text-center bg-body-secondary" style="width: 200px;">
+			<h6
+				class="m-0 py-3 border-bottom border-secondary-subtle text-body-emphasis">
+				<a href="order">마이 페이지</a>
+			</h6>
+			<ul class="p-0 text-center">
+				<li class="mt-2 text-body-emphasis"><a href="order">내 주문/배송</a></li>
+				<li class="mt-2 text-body-emphasis"><a href="review">내 리뷰</a></li>
+				<li class="mt-2 text-body-emphasis"><a href="qa">내 Q&A</a></li>
+			</ul>
+		</div>
+		<div class="qa-content" id="myQAContent">
+			<div>
+				<table>
+					<thead>
+						<tr>
+							<th>문의일</th>
+							<th>제목</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${#lists.isEmpty(qas)}">
+							<td colspan="2">---- 작성한 Q&A가 없습니다. ----</td>
+						</tr>
+
+						<tr th:each="item : ${qas}" th:unless="${#lists.isEmpty(qas)}">
+							<td th:text="${item.date}" />
+							<td class="qa-title" th:attr="data-id=${item.qaId}"
+								style="cursor: pointer;" th:text="${item.title}" />
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div id="entityDetailContainer">
+				<!-- 상세 내용 -->
+			</div>
+		</div>
+	</section>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/default}">
+<head>
+    <title>EasyBuild</title>
+</head>
+<body>
+    <section layout:fragment="content" class="content-box d-flex flex-column w-100">
+        <!-- 롤링 배너 -->
+        <div class="banner-container">
+            <div class="banner-images" id="bannerImages">
+                <img src="/images/banner1.jpg" alt="배너 이미지 1" class="banner-image">
+                <img src="/images/banner2.jpg" alt="배너 이미지 2" class="banner-image">
+                <img src="/images/banner3.jpg" alt="배너 이미지 3" class="banner-image">
+            </div>
+            <!-- 수동 버튼 -->
+            <button id="prevBtn" class="banner-btn">&#10094;</button>
+            <button id="nextBtn" class="banner-btn">&#10095;</button>
+        </div>
+        <div class="d-flex gap-3 w-100">
+	        <!-- 공지사항, qna -->
+	        <div class="container mt-5 section-wrapper">
+	            <!-- 공지사항 -->
+	            <div class="section-box">
+	                <h2>공지사항</h2>
+	                <ul>
+	                    <li th:each="announcement : ${latestAnnouncements}">
+	                        <a th:href="@{'/announcements/' + ${announcement.announcId}}"
+	                           th:text="${announcement.title}"></a>
+	                        <span th:text="${#temporals.format(announcement.createdDate, 'yyyy-MM-dd')}"></span>
+	                    </li>
+	                </ul>
+	            </div>
+	
+	            <!-- qna -->
+	            <div class="section-box">
+	                <h2>QnA</h2>
+	                <ul>
+	                    <li th:each="qna : ${latestQnas}">
+	                        <a th:href="@{'/qnas/' + ${qna.qnaId}}"
+	                           th:text="${qna.title}"></a>
+	                        <span th:text="${#temporals.format(qna.createdDate, 'yyyy-MM-dd')}"></span>
+	                    </li>
+	                </ul>
+	            </div>
+	        </div>
+        </div>
+    </section>
+</body>
+</html>

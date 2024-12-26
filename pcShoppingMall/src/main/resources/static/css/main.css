@@ -1,0 +1,106 @@
+/* 배너 스타일 */
+.banner-container {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    position: relative;
+}
+
+.banner-images {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.banner-image {
+    min-width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.banner-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    z-index: 10;
+    transition: background-color 0.3s;
+}
+
+.banner-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+#prevBtn {
+    left: 10px;
+}
+
+#nextBtn {
+    right: 10px;
+}
+
+/* 공지사항, 자주 묻는 질문 스타일 */
+.section-wrapper {
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.section-box {
+    flex: 1;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-right: 10px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.section-box:last-child {
+    margin-right: 0;
+}
+
+.section-box h2 {
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+    border-bottom: 2px solid #333;
+    padding-bottom: 5px;
+}
+
+.section-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.section-box li {
+    display: flex; /* Flexbox 적용 */
+    justify-content: space-between; /* 제목과 날짜를 양쪽 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    margin: 5px 0;
+}
+
+.section-box a {
+    text-decoration: none;
+    color: #007bff;
+    flex-grow: 1; /* 제목이 넓게 차지하도록 설정 */
+}
+
+.section-box a:hover {
+    text-decoration: underline;
+}
+
+.section-box span {
+    font-size: 0.9rem;
+    color: #999;
+    margin-left: 10px; /* 제목과 날짜 사이 간격 추가 */
+    white-space: nowrap; /* 날짜 줄바꿈 방지 */
+}
+
+/* 전체 페이지 여백 */
+body {
+    margin: 50px 0; /* 전체 여백 추가 */
+}
