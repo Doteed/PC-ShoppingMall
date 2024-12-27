@@ -78,6 +78,11 @@ public class HomeController {
 	public String authIndex() {
 		return "pages/authority/auth-order";
 	}
+	
+	@GetMapping("/auth-category")
+	public String authCategory() {
+		return "pages/authority/auth-category";
+	}
 
 	//마이페이지 관련
 	@Autowired
