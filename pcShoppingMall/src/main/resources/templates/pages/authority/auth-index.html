@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/default}">
+      layout:decorate="~{layouts/auth-layout}">
 <head>
 	<title>관리자 인덱스</title>
 	<script th:src="@{/js/chart.js}"></script>
@@ -46,161 +46,137 @@
     </script>
 </head>
 <body>
-	<section layout:fragment="content" class="content-box d-flex side-menu">
-		<div class="text-center bg-body-secondary side-nav">
-			<h6 class="m-0 py-3 border-bottom border-secondary-subtle text-body-emphasis">
-				<a href="auth-index">관리자 메뉴</a>
-			</h6>
-			<ul class="p-0 text-center">
-				<li class="mt-2 text-body-emphasis">
-					<a href="javascript: void(0)">회원 관리</a>
-				</li>
-				<li class="mt-2 text-body-emphasis">
-					<a href="javascript: void(0)">게시판 관리</a>
-				</li>
-				<li class="mt-2 text-body-emphasis">
-					<a href="auth-product">상품 관리</a>
-				</li>
-				<li class="mt-2 text-body-emphasis">
-					<a href="auth-order">주문 관리</a>
-				</li>
-				<li class="mt-2 text-body-emphasis">
-					<a href="javascript: void(0)">배너 관리</a>
-				</li>
-			</ul>
+	<div layout:fragment="content" class="d-flex flex-column gap-3 w-100">
+		<div>
+			<h4 class="mb-3">오늘 할일</h4>
+			<div class="d-flex justify-content-between gap-5">
+				<div class="d-flex gap-2">
+					<p>신규주문</p>
+					<!-- 하나라도 있을경우 출력 -->
+					<span class="badge rounded-pill text-bg-info" th:text="${newOrderCount}"></span>
+				</div>	
+				<div class="d-flex gap-2">
+					<p>취소관리</p>
+					<span class="badge rounded-pill text-bg-info" th:text="${newOrderCount}"></span>				
+				</div>
+				<div class="d-flex gap-2">
+					<p>반품관리</p>
+					<span class="badge rounded-pill text-bg-info" th:text="${newOrderCount}">1</span>					
+				</div>
+				<div class="d-flex gap-2">
+					<p>교환관리</p>
+					<span class="badge rounded-pill text-bg-info" th:text="${newOrderCount}">1</span>					
+				</div>
+				<div class="d-flex gap-2">
+					<p>답변대기문의</p>
+					<span class="badge rounded-pill text-bg-info" th:text="${newOrderCount}">1</span>					
+				</div>
+			</div>
 		</div>
-		<div class="d-flex flex-column gap-3 w-100">
-			<div>
-				<h4 class="mb-3">오늘 할일</h4>
-				<div class="d-flex justify-content-between gap-5">
-					<div class="d-flex gap-2">
-						<p>신규주문</p>
-						<!-- 하나라도 있을경우 출력 -->
-						<span class="badge rounded-pill text-bg-info" th:text="${newOrderCount}"></span>
-					</div>	
-					<div class="d-flex gap-2">
-						<p>취소관리</p>
-						<span class="badge rounded-pill text-bg-info" th:text="${newOrderCount}"></span>				
-					</div>
-					<div class="d-flex gap-2">
-						<p>반품관리</p>
-						<span class="badge rounded-pill text-bg-info" th:text="${newOrderCount}">1</span>					
-					</div>
-					<div class="d-flex gap-2">
-						<p>교환관리</p>
-						<span class="badge rounded-pill text-bg-info" th:text="${newOrderCount}">1</span>					
-					</div>
-					<div class="d-flex gap-2">
-						<p>답변대기문의</p>
-						<span class="badge rounded-pill text-bg-info" th:text="${newOrderCount}">1</span>					
-					</div>
-				</div>
-			</div>
-			<div>
-				<canvas id="myChart"></canvas>
-			</div>
-			<div class="d-flex gap-5">
-				<div class="w-100">
-					<h5>월별 매출</h5>
-					<table class="table-type-a">
-						<colgroup>
-							<col width="25%" />
-							<col width="15%" />
-							<col width="*" />
-							<col width="10%" />
-							<col width="10%" />					
-						</colgroup>
-						<thead>
-							<tr>
-								<th>일자</th>
-								<th>주문수</th>
-								<th>매출액</th>
-								<th>문의</th>
-								<th>후기</th>
-							</tr>
-						</thead>
-						<tbody>
-						    <tr th:each="sale : ${monthlySales}">
-						        <td th:text="${#temporals.format(sale.date, 'yyyy-MM-dd')}"></td>
-						        <td th:text="${sale.orderCount}"></td>
-						        <td th:text="${#numbers.formatDecimal(sale.totalSales, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-						        <td th:text="${sale.inquiryCount}"></td>
-						        <td th:text="${sale.reviewCount}"></td>
-						    </tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="w-100">
-					<h5>문의/구매평</h5>
-					<table class="table-type-a">
-						<colgroup>
-							<col width="*" />
-							<col width="15%" />
-							<col width="30%" />					
-						</colgroup>
-						<thead>
-							<tr>
-								<th>제목</th>
-								<th>작성자</th>
-								<th>평점</th>
-							</tr>
-						</thead>
-						<tbody>
-							<!-- <tr th:each="sale : ${monthlySales}">
-								<td th:text="${sale.date}"></td>
-								<td th:text="${sale.orderCount}"></td>
-								<td th:text="${sale.totalSales}"></td>
-								<td th:text="${sale.inquiryCount}"></td>
-								<td th:text="${sale.reviewCount}"></td>
-							</tr> -->
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<div>
-				<h5>테스트 테이블</h5>
+		<div>
+			<canvas id="myChart"></canvas>
+		</div>
+		<div class="d-flex gap-5">
+			<div class="w-100">
+				<h5>월별 매출</h5>
 				<table class="table-type-a">
 					<colgroup>
+						<col width="25%" />
+						<col width="15%" />
+						<col width="*" />
 						<col width="10%" />
-						<col width="10%" />
-						<col width="30%" />
-						<col width="10%" />
-						<col width="10%" />
-						<col width="10%" />
-						<col width="10%" />
-						<col width="10%" />						
+						<col width="10%" />					
 					</colgroup>
 					<thead>
 						<tr>
-							<th>상품 아이디</th>
-							<th>유저 아이디</th>
-							<th>카테고리 아이디</th>
-							<th>권한 식별자</th>
-							<th>가격</th>
-							<th>상품명</th>
-							<th>재고</th>
-							<th>등록일</th>
+							<th>일자</th>
+							<th>주문수</th>
+							<th>매출액</th>
+							<th>문의</th>
+							<th>후기</th>
 						</tr>
 					</thead>
 					<tbody>
-					    <tr th:if="${#lists.isEmpty(list)}">
-					        <td colspan="8">----게시물이 없습니다.----</td>
-					    </tr>
-					    <tr th:each="item : ${list}" th:unless="${#lists.isEmpty(list)}">
-					        <td th:text="${item.productId}"></td>
-					        <td th:text="${item.userId}"></td>
-					        <td th:text="${item.categoryId}"></td>
-					        <td th:text="${item.authId}"></td>
-					        <td th:text="${item.pPrice}"></td>
-					        <td th:text="${item.pName}"></td>
-					        <td th:text="${item.pStock}"></td>
-					        <td th:text="${item.pEnroll}"></td>
+					    <tr th:each="sale : ${monthlySales}">
+					        <td th:text="${#temporals.format(sale.date, 'yyyy-MM-dd')}"></td>
+					        <td th:text="${sale.orderCount}"></td>
+					        <td th:text="${#numbers.formatDecimal(sale.totalSales, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+					        <td th:text="${sale.inquiryCount}"></td>
+					        <td th:text="${sale.reviewCount}"></td>
 					    </tr>
 					</tbody>
 				</table>
 			</div>
-			<div>기타 등등...</div>
+			<div class="w-100">
+				<h5>문의/구매평</h5>
+				<table class="table-type-a">
+					<colgroup>
+						<col width="*" />
+						<col width="15%" />
+						<col width="30%" />					
+					</colgroup>
+					<thead>
+						<tr>
+							<th>제목</th>
+							<th>작성자</th>
+							<th>평점</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- <tr th:each="sale : ${monthlySales}">
+							<td th:text="${sale.date}"></td>
+							<td th:text="${sale.orderCount}"></td>
+							<td th:text="${sale.totalSales}"></td>
+							<td th:text="${sale.inquiryCount}"></td>
+							<td th:text="${sale.reviewCount}"></td>
+						</tr> -->
+					</tbody>
+				</table>
+			</div>
 		</div>
-	</section>
+		<div>
+			<h5>테스트 테이블</h5>
+			<table class="table-type-a">
+				<colgroup>
+					<col width="10%" />
+					<col width="10%" />
+					<col width="30%" />
+					<col width="10%" />
+					<col width="10%" />
+					<col width="10%" />
+					<col width="10%" />
+					<col width="10%" />						
+				</colgroup>
+				<thead>
+					<tr>
+						<th>상품 아이디</th>
+						<th>유저 아이디</th>
+						<th>카테고리 아이디</th>
+						<th>권한 식별자</th>
+						<th>가격</th>
+						<th>상품명</th>
+						<th>재고</th>
+						<th>등록일</th>
+					</tr>
+				</thead>
+				<tbody>
+				    <tr th:if="${#lists.isEmpty(list)}">
+				        <td colspan="8">----게시물이 없습니다.----</td>
+				    </tr>
+				    <tr th:each="item : ${list}" th:unless="${#lists.isEmpty(list)}">
+				        <td th:text="${item.productId}"></td>
+				        <td th:text="${item.userId}"></td>
+				        <td th:text="${item.categoryId}"></td>
+				        <td th:text="${item.authId}"></td>
+				        <td th:text="${item.pPrice}"></td>
+				        <td th:text="${item.pName}"></td>
+				        <td th:text="${item.pStock}"></td>
+				        <td th:text="${item.pEnroll}"></td>
+				    </tr>
+				</tbody>
+			</table>
+		</div>
+		<div>기타 등등...</div>
+	</div>
 </body>
 </html>

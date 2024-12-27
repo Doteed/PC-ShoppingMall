@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/default}">
+      layout:decorate="~{layouts/auth-layout}">
 <head>
 	<title>상품 등록</title>
 	<script>
@@ -72,117 +72,92 @@
 	</script>
 </head>
 <body>
-	<section layout:fragment="content" class="content-box d-flex side-menu">
-		<div class="text-center bg-body-secondary side-nav">
-			<h6 class="m-0 py-3 border-bottom border-secondary-subtle text-body-emphasis">
-				<a href="auth-index">관리자 메뉴</a>
-			</h6>
-			<ul class="p-0 text-center">
-				<li class="mt-2 text-body-emphasis">
-					<a href="javascript: void(0)">회원 관리</a>
-				</li>
-				<li class="mt-2 text-body-emphasis">
-					<a href="javascript: void(0)">게시판 관리</a>
-				</li>
-				<li class="mt-2 text-body-emphasis">
-					<a href="auth-product">상품 관리</a>
-				</li>
-				<li class="mt-2 text-body-emphasis">
-					<a href="auth-order">주문 관리</a>
-				</li>
-				<li class="mt-2 text-body-emphasis">
-					<a href="javascript: void(0)">배너 관리</a>
-				</li>
-			</ul>
-		</div>
-		<div class="d-flex flex-column gap-3 w-100">
-			<h5>상품 등록</h5>			
-			<form action="/api/product/auth-product-insert" method="post" id="productForm" enctype="multipart/form-data">
-			    <!-- <input type="hidden" id="userId" name="userId" th:value="${userId}">
-			    <input type="hidden" id="authId" name="authId" th:value="${authId}"> -->
-			    <input type="text" id="userId" name="userId" th:value="${userId}">
-			    <input type="text" id="authId" name="authId" th:value="${authId}">
-			    
-			    
-			    <div class="row mb-3">
-			        <label for="categoryId" class="col-sm-2 col-form-label">카테고리</label>
-			        <div class="col-sm">
-			            <select class="form-select" id="categoryId" name="categoryId" onchange="loadSubCategories()">
-			                <option selected>대분류 선택</option>
-			                <!-- <option th:each="category : ${mainCategories}" th:value="${category.id}" th:text="${category.name}"></option> -->
-			                <option th:value="1">1</option>
-			                <option th:value="2">2</option>
-			                <option th:value="3">3</option>
-			                <option th:value="4">4</option>
-			            </select>
-			        </div>
-			        <!-- <div class="col-sm">
-			            <select class="form-select" id="subCategory" name="categoryId">
-			                <option selected>소분류 선택</option>
-			            </select>
-			        </div> -->
-			    </div>
-			    
-			    <div class="row mb-3">
-			        <label for="pName" class="col-sm-2 col-form-label">상품명</label>
-			        <div class="col-sm-10">
-			            <input type="text" class="form-control" id="pName" name="pName" required>
-			        </div>
-			    </div>
-			    
-			    <div class="row mb-3">
-			        <label for="pStock" class="col-sm-2 col-form-label">재고수량</label>
-			        <div class="col-sm-10">
-			            <input type="text" class="form-control" id="pStock" name="pStock" required>
-			        </div>
-			    </div>
-			    
-			    <div class="row mb-3">
-			        <label for="pReportstock" class="col-sm-2 col-form-label">통보수량</label>
-			        <div class="col-sm-10">
-			            <input type="text" class="form-control" id="pReportstock" name="pReportstock" required>
-			        </div>
-			    </div>	
-			    		    
-				<div class="row mb-3">
-					<label for="pPrice" class="col-sm-2 col-form-label">가격</label>
-					<div class="col-sm-10">
-						<input type="text" class="form-control" id="pPrice" name="pPrice" required>
-					</div>
+	<div layout:fragment="content" class="d-flex flex-column gap-3 w-100">
+		<h5>상품 등록</h5>			
+		<form action="/api/product/auth-product-insert" method="post" id="productForm" enctype="multipart/form-data">
+		    <!-- <input type="hidden" id="userId" name="userId" th:value="${userId}">
+		    <input type="hidden" id="authId" name="authId" th:value="${authId}"> -->
+		    <input type="text" id="userId" name="userId" th:value="${userId}">
+		    <input type="text" id="authId" name="authId" th:value="${authId}">
+		    
+		    
+		    <div class="row mb-3">
+		        <label for="categoryId" class="col-sm-2 col-form-label">카테고리</label>
+		        <div class="col-sm">
+		            <select class="form-select" id="categoryId" name="categoryId" onchange="loadSubCategories()">
+		                <option selected>대분류 선택</option>
+		                <!-- <option th:each="category : ${mainCategories}" th:value="${category.id}" th:text="${category.name}"></option> -->
+		                <option th:value="1">1</option>
+		                <option th:value="2">2</option>
+		                <option th:value="3">3</option>
+		                <option th:value="4">4</option>
+		            </select>
+		        </div>
+		        <!-- <div class="col-sm">
+		            <select class="form-select" id="subCategory" name="categoryId">
+		                <option selected>소분류 선택</option>
+		            </select>
+		        </div> -->
+		    </div>
+		    
+		    <div class="row mb-3">
+		        <label for="pName" class="col-sm-2 col-form-label">상품명</label>
+		        <div class="col-sm-10">
+		            <input type="text" class="form-control" id="pName" name="pName" required>
+		        </div>
+		    </div>
+		    
+		    <div class="row mb-3">
+		        <label for="pStock" class="col-sm-2 col-form-label">재고수량</label>
+		        <div class="col-sm-10">
+		            <input type="text" class="form-control" id="pStock" name="pStock" required>
+		        </div>
+		    </div>
+		    
+		    <div class="row mb-3">
+		        <label for="pReportstock" class="col-sm-2 col-form-label">통보수량</label>
+		        <div class="col-sm-10">
+		            <input type="text" class="form-control" id="pReportstock" name="pReportstock" required>
+		        </div>
+		    </div>	
+		    		    
+			<div class="row mb-3">
+				<label for="pPrice" class="col-sm-2 col-form-label">가격</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="pPrice" name="pPrice" required>
 				</div>
-				
-				<div class="row mb-3">
-					<label for="pExplan" class="col-sm-2 col-form-label">상품 설명</label>
-					<div class="col-sm-10">
-						<textarea class="form-control" id="pExplan" name="pExplan" rows="3"></textarea>
-					</div>
+			</div>
+			
+			<div class="row mb-3">
+				<label for="pExplan" class="col-sm-2 col-form-label">상품 설명</label>
+				<div class="col-sm-10">
+					<textarea class="form-control" id="pExplan" name="pExplan" rows="3"></textarea>
 				</div>
-				
-			    <div class="row mb-3">
-			        <label for="imageFile" class="col-sm-2 col-form-label">상품 이미지</label>
-			        <div class="col-sm-10">
-			            <input class="form-control" type="file" id="imageFile" name="file" required>
-			        </div>
-			    </div>
-			    
-			    <div class="row mb-3">
-			        <div class="col-sm-10 offset-sm-2">
-			            <div class="form-check">
-			                <input class="form-check-input" type="checkbox" id="pSale" name="pSale" value="Y" checked>
-			                <label class="form-check-label" for="pSale">
-			                    판매 여부
-			                </label>
-			            </div>
-			        </div>
-			    </div>
-			    
-			    <div class="d-flex justify-content-center gap-3">
-			        <button type="button" class="btn btn-secondary" onclick="location.href='auth-product'">취소</button>
-			        <button type="submit" class="btn btn-primary">등록</button>
-			    </div>
-			</form>
-
-		</div>
-	</section>
+			</div>
+			
+		    <div class="row mb-3">
+		        <label for="imageFile" class="col-sm-2 col-form-label">상품 이미지</label>
+		        <div class="col-sm-10">
+		            <input class="form-control" type="file" id="imageFile" name="file" required>
+		        </div>
+		    </div>
+		    
+		    <div class="row mb-3">
+		        <div class="col-sm-10 offset-sm-2">
+		            <div class="form-check">
+		                <input class="form-check-input" type="checkbox" id="pSale" name="pSale" value="Y" checked>
+		                <label class="form-check-label" for="pSale">
+		                    판매 여부
+		                </label>
+		            </div>
+		        </div>
+		    </div>
+		    
+		    <div class="d-flex justify-content-center gap-3">
+		        <button type="button" class="btn btn-secondary" onclick="location.href='auth-product'">취소</button>
+		        <button type="submit" class="btn btn-primary">등록</button>
+		    </div>
+		</form>
+	</div>
 </body>
 </html>
