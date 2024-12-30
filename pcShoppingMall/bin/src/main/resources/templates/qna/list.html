@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/default}">
+<head>
+    <title layout:fragment="title">QnA List</title>
+    <style>
+        .badge {
+            padding: 0.4em 0.8em;
+            font-size: 0.9rem;
+        }
+        .badge.bg-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .badge.bg-success {
+            background-color: #28a745;
+            color: #fff;
+        }
+		/* 테이블 고정 레이아웃 */
+		.table {
+		    table-layout: fixed;
+		    width: 100%; /* 테이블 전체 너비 */
+		}
+		/* 제목 칸 너비 조정 */
+		.table th.title-col, .table td.title-col {
+		    width: 40%; /* 너비를 40%로 설정 */
+		}
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container mt-5">
+            <h1>QnA</h1>
+
+            <!-- 게시글이 없을 경우 메시지 출력 -->
+            <div th:if="${page == null || page.totalElements == 0}" class="alert alert-info mt-3">
+                <p>등록된 QnA가 없습니다.</p>
+            </div>
+
+            <!-- 게시글 목록 출력 -->
+            <div th:if="${page != null && page.totalElements > 0}">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th class="title-col">제목</th>
+							<th>작성자</th>
+                            <th>작성일</th>
+                            <th>비밀 여부</th>
+                            <th>답변 상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="qna, iterStat : ${page.content}">
+                            <td th:text="${page.totalElements - (page.number * page.size + iterStat.index)}"></td>
+                            <td class="title-col">
+                                <a th:href="@{'/qnas/' + ${qna.qnaId}}" th:text="${qna.title}"></a>
+                            </td>
+							<td th:text="${qna.userId}"></td>
+							<td th:text="${#temporals.format(qna.createdDate, 'yyyy-MM-dd')}"></td>
+                            <td>
+                                <span th:if="${qna.isSecret}" class="badge bg-warning">비밀글</span>
+                                <span th:if="${!qna.isSecret}" class="badge bg-success">공개</span>
+                            </td>
+                            <td>
+                                <span th:if="${qna.answer != null}" class="badge bg-success">답변 완료</span>
+                                <span th:if="${qna.answer == null}" class="badge bg-warning">미답변</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 작성하기 버튼 -->
+            <div class="d-flex justify-content-end mt-3 mb-5">
+                <a href="/qnas/new" class="btn btn-primary">QnA 작성</a>
+            </div>
+
+            <!-- 페이지네이션 -->
+            <nav th:if="${page != null && page.totalElements > 0}" class="d-flex justify-content-center mt-4">
+                <ul class="pagination">
+                    <!-- Previous 버튼 -->
+                    <li th:classappend="${page.hasPrevious()} ? '' : 'disabled'" class="page-item">
+                        <a th:href="@{/qnas(page=${page.number - 1})}" class="page-link"><</a>
+                    </li>
+
+                    <!-- 페이지 번호 -->
+                    <li th:each="i : ${#numbers.sequence(0, page.totalPages > 0 ? page.totalPages - 1 : 0)}"
+                        th:classappend="${i == page.number} ? 'active'" class="page-item">
+                        <a th:href="@{/qnas(page=${i})}" th:text="${i + 1}" class="page-link"></a>
+                    </li>
+
+                    <!-- Next 버튼 -->
+                    <li th:classappend="${page.hasNext()} ? '' : 'disabled'" class="page-item">
+                        <a th:href="@{/qnas(page=${page.number + 1})}" class="page-link">></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</body>
+</html>
