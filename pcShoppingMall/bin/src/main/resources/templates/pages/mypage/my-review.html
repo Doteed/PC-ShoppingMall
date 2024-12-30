@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{fragments/default}">
+	layout:decorate="~{layouts/default}">
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
@@ -12,9 +12,11 @@
 		<div class="text-center bg-body-secondary" style="width: 200px;">
 			<h6
 				class="m-0 py-3 border-bottom border-secondary-subtle text-body-emphasis">
-				<a href="javascript: void(0)">마이 페이지</a>
+				<a href="order">마이 페이지</a>
 			</h6>
 			<ul class="p-0 text-center">
+				<li class="mt-2 text-body-emphasis"><a
+					href="order">내 주문/배송</a></li>
 				<li class="mt-2 text-body-emphasis"><a
 					href="review">내 리뷰</a></li>
 				<li class="mt-2 text-body-emphasis"><a

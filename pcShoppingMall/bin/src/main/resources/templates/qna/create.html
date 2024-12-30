@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+      layout:decorate="~{layouts/default}">
+<head>
+    <title layout:fragment="title">QnA 작성</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container mt-5">
+            <h1>QnA 작성하기</h1>
+            <form th:action="@{/qnas}" th:object="${qna}" method="post" enctype="multipart/form-data" id="qnaForm">
+                <!-- User ID -->
+                <div class="mb-3">
+                    <label for="userId" class="form-label">User ID</label>
+                    <input type="text" class="form-control" th:field="*{userId}" id="userId" placeholder="ID를 입력하세요." required>
+                </div>
+
+                <!-- 제목 -->
+                <div class="mb-3">
+                    <label for="title" class="form-label">제목</label>
+                    <input type="text" class="form-control" th:field="*{title}" id="title" placeholder="제목을 입력하세요." required>
+                </div>
+
+                <!-- 내용 -->
+                <div class="mb-3">
+                    <label for="content" class="form-label">내용</label>
+                    <textarea class="form-control" th:field="*{content}" id="content" rows="5" placeholder="내용을 입력하세요." required></textarea>
+                </div>
+
+
+                <!-- 비밀글 -->
+				<div class="form-check mb-3">
+				    <input type="checkbox" class="form-check-input" th:field="*{isSecret}" id="isSecret">
+				    <label class="form-check-label" for="isSecret">비밀글로 설정</label>
+				</div>
+
+                <!-- 비밀번호 -->
+                <div class="mb-3">
+                    <label for="password" class="form-label">비밀번호</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호를 입력하세요">
+                    <small class="text-muted">비밀글로 설정된 경우 비밀번호를 반드시 입력해야 합니다.</small>
+                </div>
+
+                <!-- 버튼 -->
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="submit" class="btn btn-primary me-2">완료</button>
+                    <a href="/qnas" class="btn btn-secondary">취소</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 비밀번호 검증 스크립트 
+	<script type="text/javascript" th:src="@{/js/qna.js(v=${#dates.createNow().getTime()})}"></script>-->
+
+
+</body>
+</html>

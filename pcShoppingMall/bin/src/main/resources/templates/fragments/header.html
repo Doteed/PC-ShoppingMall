@@ -9,7 +9,13 @@
     	<!-- 최상단바(최상단 고정 예정) -->
   		<div class="d-flex justify-content-end pe-5 bg-dark">
 			<div class="p-2">
-				<a class="nav-link text-light" aria-current="page" href="#">마이페이지</a>
+				<a class="nav-link text-light" aria-current="page" href="example">example</a>
+			</div>
+			<div class="p-2">
+				<a class="nav-link text-light" aria-current="page" href="auth-index">관리자페이지</a>
+			</div>
+			<div class="p-2">
+				<a class="nav-link text-light" aria-current="page" href="my/review">마이페이지</a>
 			</div>
 			<div class="p-2">
 				<a class="nav-link text-light" href="#">로그인</a>
@@ -19,7 +25,7 @@
 		<div class="position-relative d-flex justify-content-center py-5">
 			<!-- 로고 -->
 			<div class="position-absolute logo-box">
-	          <a th:href="@{/}" class="d-block w-100">
+	          <a th:href="@{/main}" class="d-block w-100">
 	            <img th:src="@{/images/logo.png}" alt="Logo" width="140" height="100">
 	          </a>
 			</div>

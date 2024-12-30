@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+<head>
+    <title layout:fragment="title">main home</title>
+	<link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <!-- 롤링 배너 -->
+        <div class="banner-container">
+            <div class="banner-images" id="bannerImages">
+                <img src="/images/banner1.jpg" alt="배너 이미지 1" class="banner-image">
+                <img src="/images/banner2.jpg" alt="배너 이미지 2" class="banner-image">
+                <img src="/images/banner3.jpg" alt="배너 이미지 3" class="banner-image">
+            </div>
+            <!-- 수동 버튼 -->
+            <button id="prevBtn" class="banner-btn">&#10094;</button>
+            <button id="nextBtn" class="banner-btn">&#10095;</button>
+        </div>
+
+        <!-- 공지사항, 자주묻는질문 -->
+        <div class="container mt-5 section-wrapper">
+            <!-- 공지사항 -->
+            <div class="section-box">
+                <h2>
+					<a href="/announcements" style="text-decoration: none; color: #333;">공지사항</a>
+				</h2>
+                <ul>
+                    <li th:each="announcement : ${latestAnnouncements}">
+                        <a th:href="@{'/announcements/' + ${announcement.announcId}}"
+                           th:text="${announcement.title}"></a>
+                        <span th:text="${#temporals.format(announcement.createdDate, 'yyyy-MM-dd')}"></span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 자주묻는질문 -->
+            <div class="section-box">
+                <h2>
+					<a href="/faqs" style="text-decoration: none; color: #333;">자주묻는질문</a>
+				</h2>
+                <ul>
+                    <li th:each="faq : ${latestFaqs}">
+                        <a th:href="@{'/faqs/' + ${faq.faqId}}"
+                           th:text="${faq.title}"></a>
+                        <span th:text="${#temporals.format(faq.createdDate, 'yyyy-MM-dd')}"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
