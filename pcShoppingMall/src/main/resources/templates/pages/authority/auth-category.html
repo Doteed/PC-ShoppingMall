@@ -45,54 +45,67 @@
         }
     </style>
     <script th:inline="javascript">
-    let categories = {
-    	    1: [],
-    	    2: {},
-    	    3: {}
+    	let categories = {
+    	    1: [], // 1차 카테고리 배열
+    	    2: {}, // 2차 카테고리의 parentId를 키로 갖는 객체
+    	    3: {}  // 3차 카테고리의 parentId를 키로 갖는 객체
     	};
+
     	let selectedCategories = {1: null, 2: null, 3: null};
 
     	function addCategory(level) {
     	    const input = document.getElementById(`category-input-${level}`);
     	    const value = input.value.trim();
+    	  
     	    if (value) {
     	        const category = {
     	            categoryName: value,
     	            categoryCode: generateCategoryCode(level),
     	            categoryLevel: level,
     	            parentId: level === 1 ? null : selectedCategories[level - 1],
-    	            categoryId: Date.now() // 임시 ID 생성
+    	            categoryId: Date.now(), // 임시 ID
+    	            sortOrder: 0 // 기본 정렬 순서
     	        };
+
     	        if (level === 1) {
-    	            if (!categories[1]) categories[1] = [];
+    	            if (!Array.isArray(categories[1])) {
+    	                categories[1] = [];
+    	            }
     	            categories[1].push(category);
     	        } else if (level === 2 && selectedCategories[1]) {
-    	            if (!categories[2]) categories[2] = {};
-    	            if (!categories[2][selectedCategories[1]]) categories[2][selectedCategories[1]] = [];
+    	            if (!categories[2][selectedCategories[1]]) {
+    	                categories[2][selectedCategories[1]] = [];
+    	            }
     	            categories[2][selectedCategories[1]].push(category);
     	        } else if (level === 3 && selectedCategories[2]) {
-    	            if (!categories[3]) categories[3] = {};
-    	            if (!categories[3][selectedCategories[2]]) categories[3][selectedCategories[2]] = [];
+    	            if (!categories[3][selectedCategories[2]]) {
+    	                categories[3][selectedCategories[2]] = [];
+    	            }
     	            categories[3][selectedCategories[2]].push(category);
     	        }
+
     	        renderCategories(level);
     	        input.value = '';
     	    }
     	}
 
+
     	function saveCategories() {
-    	    const allCategories = [
-    	        ...categories[1],
-    	        ...Object.values(categories[2]).flat(),
-    	        ...Object.values(categories[3]).flat()
-    	    ];
+    		const allCategories = [
+    		    ...(Array.isArray(categories[1]) ? categories[1] : []),
+    		    ...Object.values(categories[2] || {}).flat().filter(item => typeof item === 'object'),
+    		    ...Object.values(categories[3] || {}).flat().filter(item => typeof item === 'object')
+    		];
+
+    	    // 올바른 JSON 포맷인지 확인 (디버깅용)
+    	    console.log('Sending data:', JSON.stringify(allCategories));
 
     	    fetch('/category/add', {
     	        method: 'POST',
     	        headers: {
     	            'Content-Type': 'application/json',
     	        },
-    	        body: JSON.stringify(allCategories)
+    	        body: JSON.stringify(allCategories) // JSON으로 변환
     	    })
     	    .then(response => {
     	        if (!response.ok) {
@@ -102,7 +115,7 @@
     	    })
     	    .then(data => {
     	        alert('카테고리가 성공적으로 저장되었습니다.');
-    	        loadCategories(); // DB에서 카테고리를 다시 불러옵니다.
+    	        loadCategories(); // 데이터 재로드
     	    })
     	    .catch(error => {
     	        console.error('Error:', error);
@@ -115,44 +128,62 @@
     	    if (!container) return;
     	    container.innerHTML = '';
     	    let categoriesToRender = [];
+
     	    if (level === 1) {
-    	        categoriesToRender = categories[1] || [];
+    	        categoriesToRender = categories[1];
     	    } else if (level === 2 && selectedCategories[1]) {
-    	        categoriesToRender = (categories[2] && categories[2][selectedCategories[1]]) || [];
+    	        categoriesToRender = categories[2][selectedCategories[1]] || [];
     	    } else if (level === 3 && selectedCategories[2]) {
-    	        categoriesToRender = (categories[3] && categories[3][selectedCategories[2]]) || [];
+    	        categoriesToRender = categories[3][selectedCategories[2]] || [];
     	    }
-    	    
-    	 	// 배열인지 확인하고, 아니면 빈 배열로 초기화
-    	    if (!Array.isArray(categoriesToRender)) {
-    	        console.warn(`Categories for level ${level} is not an array. Using empty array instead.`);
-    	        categoriesToRender = [];
-    	    }
-    	 	
+
     	    categoriesToRender.forEach(category => {
     	        const item = document.createElement('div');
-    	        item.textContent = category.categoryName;
-    	        item.onclick = () => selectCategory(level, category.categoryId);
+    	        item.className = 'category-item';
     	        
-    	        const updateBtn = document.createElement('button');
-    	        updateBtn.textContent = '수정';
-    	        updateBtn.onclick = (e) => {
-    	            e.stopPropagation();
-    	            updateCategory(level, category.categoryId);
-    	        };
+    	        const input = document.createElement('input');
+    	        input.type = 'text';
+    	        input.value = category.categoryName;
+    	        input.onchange = (e) => updateCategory(level, category.categoryId, e.target.value);
+    	        
+    	        const viewBtn = document.createElement('button');
+    	        viewBtn.textContent = '보기';
+    	        viewBtn.onclick = () => viewSubcategories(level, category.categoryId);
     	        
     	        const deleteBtn = document.createElement('button');
     	        deleteBtn.textContent = '삭제';
-    	        deleteBtn.onclick = (e) => {
-    	            e.stopPropagation();
-    	            deleteCategory(level, category.categoryId);
-    	        };
+    	        deleteBtn.onclick = () => deleteCategory(level, category.categoryId);
     	        
-    	        item.appendChild(updateBtn);
+    	        item.appendChild(input);
+    	        if (level < 3) {
+    	            item.appendChild(viewBtn);
+    	        }
     	        item.appendChild(deleteBtn);
     	        container.appendChild(item);
     	    });
     	}
+
+    	function activateNextLevel(level, categoryId) {
+    	    if (level < 3) {
+    	        selectedCategories[level] = categoryId;
+    	        renderCategories(level + 1);
+    	        const nextLevelInput = document.getElementById(`category-input-${level + 1}`);
+    	        if (nextLevelInput) {
+    	            nextLevelInput.focus();
+    	        }
+    	    }
+    	}
+    	
+    	function viewSubcategories(level, categoryId) {
+    	    selectedCategories[level] = categoryId;
+    	    if (level === 1) {
+    	        renderCategories(2);
+    	        document.getElementById('category-list-3').innerHTML = '';
+    	    } else if (level === 2) {
+    	        renderCategories(3);
+    	    }
+    	}
+
 
     	function selectCategory(level, id) {
     	    selectedCategories[level] = id;
@@ -169,7 +200,36 @@
     	    fetch('/category/all')
     	    .then(response => response.json())
     	    .then(data => {
-    	        categories = data;
+    	        console.log("Received data:", data);
+
+    	        categories = {
+    	            1: data[1] || [],
+    	            2: {},
+    	            3: {}
+    	        };
+    	        
+    	        // 2차 카테고리 구성
+    	        if (Array.isArray(data[2])) {
+    	            data[2].forEach(cat => {
+    	                if (!categories[2][cat.parentId]) {
+    	                    categories[2][cat.parentId] = [];
+    	                }
+    	                categories[2][cat.parentId].push(cat);
+    	            });
+    	        }
+    	        
+    	        // 3차 카테고리 구성
+    	        if (Array.isArray(data[3])) {
+    	            data[3].forEach(cat => {
+    	                if (!categories[3][cat.parentId]) {
+    	                    categories[3][cat.parentId] = [];
+    	                }
+    	                categories[3][cat.parentId].push(cat);
+    	            });
+    	        }
+
+    	        console.log("Processed categories:", categories);
+    	        
     	        renderCategories(1);
     	        renderCategories(2);
     	        renderCategories(3);
@@ -184,8 +244,7 @@
     	    return `CAT${level}-${Date.now()}`;
     	}
     	
-    	function updateCategory(level, id) {
-    	    const newName = prompt("새로운 카테고리 이름을 입력하세요:");
+    	function updateCategory(level, id, newName) {
     	    if (newName) {
     	        fetch('/category/update', {
     	            method: 'PUT',
@@ -196,7 +255,7 @@
     	        })
     	        .then(response => response.json())
     	        .then(data => {
-    	            alert(data.message);
+    	            console.log(data.message);
     	            loadCategories();
     	        })
     	        .catch(error => console.error('Error:', error));
