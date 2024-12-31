@@ -89,7 +89,7 @@ public class QnaController {
         }
         
         qna.setBoardId(103L); // BOARDID 103 고정
-        qna.setAuthId(1L); // 권한 번호 1
+        qna.setAuthId(1L); // 사용자 권한 1 설정
 
         qnaService.saveQna(qna);
 
@@ -130,7 +130,7 @@ public class QnaController {
         }
 
         qna.setBoardId(103L); // BOARD_ID 고정
-        qna.setAuthId(1L); // 임의로 사용자 ID 설정
+        qna.setAuthId(1L); // 사용자 권한 1 설정
 
         qnaService.updateQna(id, qna);
         return "redirect:/qnas";

@@ -81,18 +81,4 @@ public class MemberDaoImpl implements MemberDao {
         logger.debug("Deleting user: {}", userId);
         return jdbcTemplate.update(sql, userId);
     }
-
-    public boolean checkUserId(String userId) {
-        String sql = "SELECT COUNT(*) FROM MEMBER WHERE USER_ID = ?";
-        logger.debug("[checkUserId] - Checking userId: {}", userId);
-        try {
-            Integer count = jdbcTemplate.queryForObject(sql, Integer.class, userId);
-            boolean exists = count != null && count > 0;
-            logger.debug("[checkUserId] - ID: {}, Exists: {}", userId, exists);
-            return exists;
-        } catch (Exception e) {
-            logger.error("Error checking user ID: {}", userId, e);
-            return false;
-        }
-    }
 }

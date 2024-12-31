@@ -13,5 +13,4 @@ public interface MemberDao {
 	
 	public int delete(String userId);
 	
-	boolean checkUserId(String userId); // Ensure this matches the implementation
 }

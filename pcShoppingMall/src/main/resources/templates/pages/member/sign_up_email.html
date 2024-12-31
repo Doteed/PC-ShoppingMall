@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -39,22 +40,12 @@
             margin-bottom: 5px;
         }
 
-        .form-group input, .form-group select {
-            width: 95%;
+        .form-group input {
+            width: 90%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 14px;
-        }
-
-        .form-group .inline {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .form-group .inline input, .form-group .inline select {
-            flex: 1;
         }
 
         .form-group small {
@@ -105,16 +96,27 @@
         .id-check-btn:hover {
             background: #218838;
         }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            color: green;
+            font-size: 12px;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
-    <form class="signup-form" action="/submit" method="post" onsubmit="return validateForm()">
+    <form class="signup-form" role="form" method="post" action="member/register">
         <h2>회원가입</h2>
 
         <div class="form-group">
             <label for="userId">아이디</label>
             <input type="text" id="userId" name="userId" placeholder="영문 4자 이상, 최대 20자" required minlength="4" maxlength="20">
-            <button type="button" class="id-check-btn" onclick="checkUserId()">아이디 중복 확인</button>
         </div>
 
         <div class="form-group">
@@ -124,7 +126,9 @@
 
         <div class="form-group">
             <label for="confirmPassword">비밀번호 확인</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="비밀번호 한 번 더 입력" required>
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="비밀번호 한 번 더 입력" required oninput="checkPasswordMatch()">
+            <div id="passwordMessage" class="error-message hidden">비밀번호가 일치하지 않습니다.</div>
+            <div id="passwordSuccessMessage" class="success-message hidden">비밀번호가 일치합니다.</div>
         </div>
 
         <div class="form-group">
@@ -135,12 +139,12 @@
         <div class="form-group gender-group">
             <label>성별</label>
             <div>
-                <input type="radio" id="M" name="gender" value="male">
-                <label for="male">남성</label>
+                <input type="radio" id="M" name="gender" value="M" required>
+                <label for="M">남성</label>
             </div>
             <div>
-                <input type="radio" id="F" name="gender" value="female">
-                <label for="female">여성</label>
+                <input type="radio" id="F" name="gender" value="F" required>
+                <label for="F">여성</label>
             </div>
         </div>
 
@@ -149,105 +153,54 @@
             <input type="tel" id="phone" name="phone" placeholder="휴대폰 번호 입력 (숫자만)" required maxlength="11" oninput="formatPhoneNumber(this)">
         </div>
 
-		<div class="form-group">
-		    <label for="email">이메일 주소</label>
-		    <div class="inline">
-		        <input type="text" id="emailLocalPart" name="emailLocalPart" placeholder="이메일 주소 입력" required>
-		        <span>@</span>
-		        <select id="emailDomainSelect" name="emailDomain" onchange="toggleEmailDomain(this)" required>
-		            <option value="" disabled selected>선택해주세요.</option>
-		            <option value="gmail.com">gmail.com</option>
-		            <option value="naver.com">naver.com</option>
-		            <option value="daum.net">daum.net</option>
-		            <option value="yahoo.com">yahoo.com</option>
-		            <option value="outlook.com">outlook.com</option>
-		            <option value="custom">직접 입력</option>
-		        </select>
-		        <input type="text" id="emailDomainInput" name="emailDomainCustom" class="hidden" placeholder="도메인 입력 (예: example.com)">
-		    </div>
-		</div>
-
-		<div class="form-group hidden" id="emailVerificationGroup">
-		    <label for="emailVerificationCode">이메일 인증번호</label>
-		    <input type="text" id="emailVerificationCode" name="emailVerificationCode" placeholder="인증번호 입력" required>
-		</div>
-		<button type="button" onclick="sendEmailVerification()">인증번호 전송</button>
-	
+        <div class="form-group">
+            <label for="email">이메일 주소</label>
+            <input type="email" id="email" name="email" placeholder="이메일 입력" required>
+            <button type="button" id="sendBtn" name="sendBtn" onclick="sendNumber()">인증번호 발송</button>
         </div>
+
+        <div id="mail_number" name="mail_number" style="display: none">
+            <input type="text" name="number" id="number" placeholder="인증번호 입력">
+            <button type="button" name="confirmBtn" id="confirmBtn" onclick="confirmNumber()">이메일 인증</button>
+        </div>
+
         <button type="submit" class="submit-btn">회원가입</button>
     </form>
 
-    <script>
-		function sendEmailVerification() {
-		        const emailLocalPart = document.getElementById('emailLocalPart').value;
-		        const emailDomain = document.getElementById('emailDomainInput').classList.contains('hidden')
-		            ? document.getElementById('emailDomainSelect').value
-		            : document.getElementById('emailDomainInput').value;
-		        const email = `${emailLocalPart}@${emailDomain}`;
+    <script type="text/javascript">
+		var number2 = 0
+		
+        function sendNumber() {
+            $("#mail_number").css("display", "block");  // 인증번호 입력란 보이기
 
-		        if (!emailLocalPart || !emailDomain) {
-		            alert('올바른 이메일 주소를 입력하세요.');
-		            return;
-		        }
+            $.ajax({
+                url: "/email",  // 이메일 전송 엔드포인트 수정 (기존: /mail -> /email)
+                type: "POST",
+                dataType: "json",
+                data: { "email": $("#email").val() },  // email로 변경
+                success: function(data) {
+                    alert("인증번호 발송 완료");
+					number2 = data;
+                },
+                error: function() {
+                    alert("인증번호 발송에 실패했습니다.");
+                }
+            });
+        }
 
-		        fetch('/send-email-verification', {
-		            method: 'POST',
-		            headers: { 'Content-Type': 'application/json' },
-		            body: JSON.stringify({ email })
-		        })
-		        .then(response => response.json())
-		        .then(data => {
-		            if (data.success) {
-		                alert('인증번호가 전송되었습니다.');
-		                // 인증번호 입력 필드 표시
-		                document.getElementById('emailVerificationGroup').classList.remove('hidden');
-		            } else {
-		                alert('인증번호 전송에 실패했습니다.');
-		            }
-		        })
-		        .catch(() => alert('서버 오류가 발생했습니다.'));
-		    }
+        // 인증번호 확인 함수
+        function confirmNumber() {
+            var number1 = $("#number").val();  // 사용자가 입력한 인증번호
 
-		    function validateEmailVerification() {
-		        const code = document.getElementById('emailVerificationCode').value;
-		        fetch('/verify-email', {
-		            method: 'POST',
-		            headers: { 'Content-Type': 'application/json' },
-		            body: JSON.stringify({ code })
-		        })
-		        .then(response => response.json())
-		        .then(data => {
-		            if (data.success) {
-		                alert('이메일 인증이 완료되었습니다.');
-		            } else {
-		                alert('인증번호가 틀렸습니다.');
-		            }
-		        })
-		        .catch(() => alert('서버 오류가 발생했습니다.'));
-		    }
-        
-        function toggleEmailDomain(selectElement) {
-            const emailDomainInput = document.getElementById("emailDomainInput");
-            const emailDomainSelect = document.getElementById("emailDomainSelect");
-
-            if (selectElement.value === "custom") {
-                emailDomainSelect.classList.add("hidden");
-                emailDomainSelect.removeAttribute("name");
-                emailDomainInput.classList.remove("hidden");
-                emailDomainInput.setAttribute("name", "emailDomain");
-                emailDomainInput.required = true;
+            if (number1 === number2) {
+                alert("인증되었습니다.");
             } else {
-                emailDomainInput.classList.add("hidden");
-                emailDomainInput.removeAttribute("name");
-                emailDomainInput.required = false;
-                emailDomainInput.value = "";
-                emailDomainSelect.classList.remove("hidden");
-                emailDomainSelect.setAttribute("name", "emailDomain");
+                alert("번호가 다릅니다.");
             }
         }
 
         function formatPhoneNumber(input) {
-            input.value = input.value.replace(/[^0-9]/g, ''); // Only keep numeric characters
+            input.value = input.value.replace(/[^0-9]/g, '');  // Only keep numeric characters
         }
 
         function validateForm() {
@@ -273,26 +226,19 @@
             return true; // Allow form submission
         }
 
-        function checkUserId() {
-            const userId = document.getElementById('userId').value;
-            if (!userId) {
-                alert('아이디를 입력하세요.');
-                return;
+        function checkPasswordMatch() {
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const errorMessage = document.getElementById("passwordMessage");
+            const successMessage = document.getElementById("passwordSuccessMessage");
+
+            if (password === confirmPassword && confirmPassword !== "") {
+                errorMessage.classList.add("hidden");
+                successMessage.classList.remove("hidden");
+            } else {
+                successMessage.classList.add("hidden");
+                errorMessage.classList.remove("hidden");
             }
-            fetch('/check-user-id', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.exists) {
-                    alert('이 아이디는 이미 사용 중입니다.');
-                } else {
-                    alert('사용 가능한 아이디입니다.');
-                }
-            })
-            .catch(() => alert('서버 오류가 발생했습니다.'));
         }
     </script>
 </body>

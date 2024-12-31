@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>default layout</title>
+	<link rel="stylesheet" th:href="@{/css/reset.css}" />
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+	<link rel="stylesheet" th:href="@{/css/announcement.css}" /> <!-- 공지사항 스타일 추가 -->
+
+	<script th:src="@{/js/bootstrap.min.js}"></script>
+</head>
+<body>
+	<!-- 각 레이아웃 별로 하단 태그와 동일한 태그 사용 -->
+    <header th:replace="~{fragments/header :: header}"></header>
+    
+    
+    <section class="content-box d-flex side-menu">
+	<div th:replace="~{fragments/auth-side-nav :: authSideNav}"></div>
+	
+	<div layout:fragment="content"></div>
+    </section>
+    
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

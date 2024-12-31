@@ -26,10 +26,6 @@ public class MemberBizImpl implements MemberBiz {
     public int insert(MemberDto dto) {
         logger.debug("Inserting user: {}", dto.getUserId());
         // Use the boolean result directly
-        if (checkUserId(dto.getUserId())) {
-            logger.info("[insert] - 중복된 아이디: {}", dto.getUserId());
-            return 0;  // 중복된 아이디일 경우, insert하지 않음
-        }
         return dao.insert(dto);  // 아이디가 중복되지 않으면 회원가입 처리
     }
 
@@ -39,11 +35,4 @@ public class MemberBizImpl implements MemberBiz {
         return dao.delete(userId);
     }
 
-    @Override
-    public boolean checkUserId(String userId) {
-        logger.debug("[checkUserId] - Checking userId: {}", userId);
-        boolean exists = dao.checkUserId(userId); // Directly use the boolean return value
-        logger.debug("[checkUserId] - ID: {}, Exists: {}", userId, exists);
-        return exists;
-    }
 }

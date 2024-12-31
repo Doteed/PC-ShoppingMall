@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<<<<<<< HEAD
       layout:decorate="~{fragments/default}">
 <head>
     <title layout:fragment="title">Edit Faq</title>
+=======
+      layout:decorate="~{layouts/default}">
+<head>
+    <title layout:fragment="title">Edit Faq</title>
+	<link rel="stylesheet" th:href="@{/css/announcement-detail.css}">
+>>>>>>> 5e596ad9cff3040e527ce9d4c15e3cd4e8af5f44
 </head>
 <body>
     <div layout:fragment="content">
@@ -18,8 +25,15 @@
 			        <label for="content" class="form-label">내용</label>
 			        <textarea class="form-control" id="content" name="content" th:field="*{content}" rows="5" required></textarea>
 			    </div>
+<<<<<<< HEAD
 			    <button type="submit" class="btn btn-primary">수정</button>
 			    <a href="/faqs" class="btn btn-secondary">취소</a>
+=======
+				<div class="button-container">
+			    <button type="submit" class="btn btn-primary" onclick="return confirm('수정하시겠습니까?');">수정</button>
+			    <a href="/faqs" class="btn btn-secondary">취소</a>
+				</div>
+>>>>>>> 5e596ad9cff3040e527ce9d4c15e3cd4e8af5f44
 			</form>
         </div>
     </div>

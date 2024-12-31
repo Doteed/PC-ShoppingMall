@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<<<<<<< HEAD
       layout:decorate="~{fragments/default}">
+=======
+      layout:decorate="~{layouts/default}">
+>>>>>>> 5e596ad9cff3040e527ce9d4c15e3cd4e8af5f44
 <head>
     <title layout:fragment="title">Faq Detail</title>
 	<link rel="stylesheet" th:href="@{/css/announcement-detail.css}">
@@ -20,7 +24,11 @@
             </div>
             <div class="button-container">
 				<a th:href="@{'/faqs/edit/' + ${faq.faqId}}" class="btn btn-warning btn-sm">수정</a>
+<<<<<<< HEAD
 				<a th:href="@{'/faqs/delete/' + ${faq.faqId}}" class="btn btn-danger btn-sm">삭제</a>
+=======
+				<a th:href="@{'/faqs/delete/' + ${faq.faqId}}" class="btn btn-danger btn-sm" onclick="return confirm('삭제하시겠습니까?');">삭제</a>
+>>>>>>> 5e596ad9cff3040e527ce9d4c15e3cd4e8af5f44
                 <a href="/faqs" class="btn btn-secondary">목록</a>
             </div>
         </div>

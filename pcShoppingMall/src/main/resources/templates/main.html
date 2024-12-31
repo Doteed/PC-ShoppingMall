@@ -1,112 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/default}">
+      layout:decorate="~{layouts/default}">
 
 <head>
     <title layout:fragment="title">main home</title>
-    <style>
-        /* 배너 스타일 */
-        .banner-container {
-            width: 100%;
-            height: 300px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .banner-images {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-        }
-
-        .banner-image {
-            min-width: 100%;
-            height: 300px;
-            object-fit: cover;
-        }
-
-        .banner-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(0, 0, 0, 0.5);
-            color: #fff;
-            border: none;
-            font-size: 2rem;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 50%;
-            z-index: 10;
-            transition: background-color 0.3s;
-        }
-
-        .banner-btn:hover {
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-
-        #prevBtn {
-            left: 10px;
-        }
-
-        #nextBtn {
-            right: 10px;
-        }
-
-        /* 공지사항, qna 스타일 */
-        .section-wrapper {
-            display: flex;
-            margin-top: 20px;
-			margin-bottom: 30px;
-        }
-
-        .section-box {
-            flex: 1;
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin-right: 10px;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-        }
-
-        .section-box:last-child {
-            margin-right: 0;
-        }
-
-        .section-box h2 {
-            margin-bottom: 10px;
-            font-size: 1.5rem;
-            border-bottom: 2px solid #333;
-            padding-bottom: 5px;
-        }
-
-        .section-box ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .section-box li {
-            margin: 5px 0;
-        }
-
-        .section-box a {
-            text-decoration: none;
-            color: #007bff;
-        }
-
-        .section-box a:hover {
-            text-decoration: underline;
-        }
-
-        .section-box span {
-            float: right;
-            font-size: 0.9rem;
-            color: #999;
-        }
-		
-		body {
-		    margin: 50px 0; /* 전체 여백 추가 */
-		}
-    </style>
+	<link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 
 <body>
@@ -123,11 +22,13 @@
             <button id="nextBtn" class="banner-btn">&#10095;</button>
         </div>
 
-        <!-- 공지사항, qna -->
+        <!-- 공지사항, 자주묻는질문 -->
         <div class="container mt-5 section-wrapper">
             <!-- 공지사항 -->
             <div class="section-box">
-                <h2>공지사항</h2>
+                <h2>
+					<a href="/announcements" style="text-decoration: none; color: #333;">공지사항</a>
+				</h2>
                 <ul>
                     <li th:each="announcement : ${latestAnnouncements}">
                         <a th:href="@{'/announcements/' + ${announcement.announcId}}"
@@ -137,14 +38,16 @@
                 </ul>
             </div>
 
-            <!-- qna -->
+            <!-- 자주묻는질문 -->
             <div class="section-box">
-                <h2>QnA</h2>
+                <h2>
+					<a href="/faqs" style="text-decoration: none; color: #333;">자주묻는질문</a>
+				</h2>
                 <ul>
-                    <li th:each="qna : ${latestQnas}">
-                        <a th:href="@{'/qnas/' + ${qna.qnaId}}"
-                           th:text="${qna.title}"></a>
-                        <span th:text="${#temporals.format(qna.createdDate, 'yyyy-MM-dd')}"></span>
+                    <li th:each="faq : ${latestFaqs}">
+                        <a th:href="@{'/faqs/' + ${faq.faqId}}"
+                           th:text="${faq.title}"></a>
+                        <span th:text="${#temporals.format(faq.createdDate, 'yyyy-MM-dd')}"></span>
                     </li>
                 </ul>
             </div>

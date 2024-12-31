@@ -13,7 +13,7 @@ public class SessionInterceptor implements HandlerInterceptor {
         String userId = (String) request.getSession().getAttribute("userId");
 
         if (userId == null) { //로그인 안되어있을때
-            response.sendRedirect("/login"); //로그인 페이지로
+            response.sendRedirect("/member/login"); //로그인 페이지로
             return false;
         }
 

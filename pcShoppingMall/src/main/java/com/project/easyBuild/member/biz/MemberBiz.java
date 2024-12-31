@@ -9,5 +9,4 @@ public interface MemberBiz {
 	
 	public int delete(String userId);
 	
-	public boolean checkUserId(String userId);
 }

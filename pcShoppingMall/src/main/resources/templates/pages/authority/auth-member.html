@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/auth-layout}">
+<head>
+    <title layout:fragment="title">회원 관리</title>
+    
+</head>
+<body>
+	<div layout:fragment="content" class="d-flex flex-column gap-3 w-100">
+
+		<div class="container mt-5">
+			<h4 class="text-center mb-4">회원 관리</h4>
+			
+			<!-- 총 회원 수 -->
+			<p th:if="${page != null}" class="text-end">총 회원 수: <span th:text="${page.totalElements}" class="fw-bold">0</span>명</p>
+			<p th:if="${page == null}" class="text-end">총 회원 수: <span class="fw-bold">0</span>명</p>
+			
+			<!-- 회원 목록 -->
+			<div th:if="${page == null || page.totalElements == 0}" class="alert alert-info">
+				<p>등록된 회원이 없습니다.</p>
+			</div>
+			<div th:if="${page != null && page.totalElements > 0}">
+				<table class="table table-striped">
+					<thead class="table-dark">
+						<tr>
+							<th>No</th>
+							<th>회원명</th>
+							<th>아이디</th>
+							<th>핸드폰 번호</th>
+							<th>가입일시</th>
+							<th>구매 횟수</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="member, iterStat : ${page.content}">
+							<td th:text="${page.totalElements - (page.number * page.size + iterStat.index)}"></td>
+					        <td>
+					            <a th:href="@{'/auth-member/' + ${member.userId}}" th:text="${member.username}" class="username-link"></a>
+					        </td>
+							<td>
+								<a th:href="@{'/auth-member/' + ${member.userId}}" th:text="${member.userId}" class="username-link"></a>
+							</td>
+							<td th:text="${member.phone}"></td>
+							<td th:text="${#temporals.format(member.registerDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+							<td th:text="${member.purchaseCount}"></td>													
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<!-- 페이지네이션 -->
+			<nav th:if="${page != null}" class="d-flex justify-content-center mt-4">
+				<ul class="pagination">
+					<li th:classappend="${page.hasPrevious()} ? '' : 'disabled'" class="page-item">
+						<a th:href="@{/auth-member(page=${page.number - 1})}" class="page-link">&lt;</a>
+					</li>
+					<li th:each="i : ${#numbers.sequence(0, page.totalPages > 0 ? page.totalPages - 1 : 0)}"
+						th:classappend="${i == page.number} ? 'active'" class="page-item">
+						<a th:href="@{/auth-member(page=${i})}" th:text="${i + 1}" class="page-link"></a>
+					</li>
+					<li th:classappend="${page.hasNext()} ? '' : 'disabled'" class="page-item">
+						<a th:href="@{/auth-member(page=${page.number + 1})}" class="page-link">&gt;</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</section>
+</body>
+</html>
