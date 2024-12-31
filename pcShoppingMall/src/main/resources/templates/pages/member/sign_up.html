@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        .signup-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .signup-container img {
+            width: 100px;
+            margin-bottom: 30px;
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            margin: 10px 0;
+            color: white;
+            cursor: pointer;
+        }
+
+        .kakao-btn {
+            background-color: #FFEB00;
+        }
+
+        .naver-btn {
+            background-color: #1EC800;
+        }
+
+        .google-btn {
+            background-color: #DB4437;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #777;
+        }
+
+        .footer a {
+            color: #4f8aff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="signup-container">
+        <h2>회원가입</h2>
+        <p>간편 회원가입</p>
+        <button class="signup-btn google-btn">
+            <i class="fab fa-google"></i> 구글로 가입하기
+        </button>
+
+        <button class="signup-btn kakao-btn">
+            <i class="fab fa-kakao"></i> 카카오로 가입하기
+        </button>
+
+        <button class="signup-btn naver-btn">
+            <i class="fab fa-naver"></i> 네이버로 가입하기
+        </button>
+
+
+		        <button class="signup-btn" onclick="location.href='sign_up_email'">
+            <i class="fas fa-envelope"></i> 이메일로 가입하기
+        </button>
+    	
+    </div>
+
+</body>
+</html>
