@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<<<<<<< HEAD
+      layout:decorate="~{fragments/default}">
+=======
+      layout:decorate="~{layouts/default}">
+>>>>>>> 5e596ad9cff3040e527ce9d4c15e3cd4e8af5f44
+<head>
+    <title layout:fragment="title">QnA 상세보기</title>
+	<link rel="stylesheet" th:href="@{/css/announcement-detail.css}">
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container mt-5 content-wrapper">
+            <h1 th:text="${qna.title}"></h1>
+			<p class="date">
+			    <strong>날짜:</strong> 
+			    <span th:text="${#temporals.format(qna.createdDate, 'yyyy-MM-dd')}"></span>
+			</p>
+
+			<p class="author"><strong>작성자:</strong> <span th:text="${qna.userId}"></span></p>
+
+            <!-- 비밀글일 경우 비밀번호 입력 -->
+            <div th:if="${qna.isSecret}">
+                <form th:action="@{/qnas/verify/{id}(id=${qna.qnaId})}" method="post" class="mb-3">
+                    <label for="password" class="form-label">비밀번호</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
+                    <button type="submit" class="btn btn-primary mt-2">확인</button>
+                </form>
+            </div>
+
+            <!-- 비밀글이 아니거나 비밀번호 인증 성공 시 내용 표시 -->
+            <div class="content-box" th:if="${!qna.isSecret || isAuthenticated}">
+                <p th:utext="${qna.content}"></p>
+            </div>
+
+            <!-- 관리 버튼 -->
+            <div class="button-container" th:if="${!qna.isSecret || isAuthenticated}">
+                <a th:href="@{'/qnas/edit/' + ${qna.qnaId}}" class="btn btn-warning">수정</a>
+<<<<<<< HEAD
+                <a th:href="@{'/qnas/delete/' + ${qna.qnaId}}" class="btn btn-danger">삭제</a>
+=======
+                <a th:href="@{'/qnas/delete/' + ${qna.qnaId}}" class="btn btn-danger" onclick="return confirm('삭제하시겠습니까?');">삭제</a>
+>>>>>>> 5e596ad9cff3040e527ce9d4c15e3cd4e8af5f44
+                <a href="/qnas" class="btn btn-secondary">목록</a>
+            </div>
+
+			<div id="qna-answer-box">
+			    <h3>답변</h3>
+			    <p th:if="${qna.answer != null}" th:text="${qna.answer}"></p>
+			    <p th:if="${qna.answer == null}" class="text-muted">답변 대기 중입니다.</p>
+			    <a th:href="@{'/qnas/answer/' + ${qna.qnaId}}" 
+			       class="btn btn-primary mt-3" 
+			       th:if="${!qna.isSecret || isAuthenticated}">답변하기</a>
+			</div>
+        </div>
+    </div>
+</body>
+</html>

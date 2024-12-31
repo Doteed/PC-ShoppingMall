@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<<<<<<< HEAD
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/default}">
+=======
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/default}">
+>>>>>>> 5e596ad9cff3040e527ce9d4c15e3cd4e8af5f44
+<head>
+    <title layout:fragment="title">QnA 답변 작성</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container mt-5">
+            <h1>답변 작성</h1>
+            <form th:action="@{/qnas/answer/{id}(id=${qna.qnaId})}" method="post">
+                <div class="mb-3">
+                    <label for="answer" class="form-label">답변 내용</label>
+                    <textarea class="form-control" id="answer" name="answer" rows="5" required
+                              th:text="${qna.answer}"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">저장</button>
+                <a th:href="@{'/qnas/' + ${qna.qnaId}}" class="btn btn-secondary">취소</a>
+
+            </form>
+        </div>
+    </div>
+</body>
+</html>

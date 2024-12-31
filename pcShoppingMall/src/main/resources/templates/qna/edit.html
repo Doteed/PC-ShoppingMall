@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/default}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/default}">
 <head>
     <title layout:fragment="title">Edit QnA</title>
+	<link rel="stylesheet" th:href="@{/css/announcement-detail.css}">
 </head>
 <body>
     <div layout:fragment="content">
@@ -25,8 +26,10 @@
                     <input type="password" class="form-control" id="password" name="password" th:field="*{password}" placeholder="비밀번호를 입력하세요">
                     <small class="text-muted">비밀글로 설정된 경우 비밀번호가 필요합니다.</small>
                 </div>
-                <button type="submit" class="btn btn-primary">수정</button>
+				<div class="button-container">
+                <button type="submit" class="btn btn-primary" onclick="return confirm('수정하시겠습니까?');">수정</button>
                 <a href="/qnas" class="btn btn-secondary">취소</a>
+				</div>
             </form>
         </div>
     </div>

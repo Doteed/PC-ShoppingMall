@@ -1,5 +1,6 @@
 package com.project.easyBuild.authority.controller;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,13 @@ public class ProductController {
         this.productBiz = productBiz;
         this.gitHubService = gitHubService;
     }
+    
+    @GetMapping("/list")
+    public ResponseEntity<List<ProductDto>> getProductList() {
+        logger.info("Fetching all products");
+        List<ProductDto> products = productBiz.listAll();
+        return ResponseEntity.ok(products);
+    }
 
     @GetMapping("/productDto")
     public ResponseEntity<List<ProductDto>> getRest() {
@@ -55,6 +63,7 @@ public class ProductController {
             return ResponseEntity.badRequest().body(Collections.singletonMap("success", false));
         }
         
+        logger.info("Updating stock status for product id: {}", productId);
         int updatedRows = productBiz.updateStockStatus(productId, outOfStock ? 0 : 1);
         return ResponseEntity.ok(Collections.singletonMap("success", updatedRows > 0));
     }
@@ -62,8 +71,9 @@ public class ProductController {
     @PostMapping("/auth-product-insert")
     public String authProductInsert(@ModelAttribute ProductDto dto, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
         try {
+            logger.info("Inserting new product: {}", dto.getpName());
             String repoName = "Doteed/PC-ShoppingMall";
-            String path = "pcShoppingMall/src/main/resources/static/images/products";  // 끝에 슬래시 제거
+            String path = "pcShoppingMall/src/main/resources/static/images/products";
             String imageUrl = gitHubService.uploadImage(repoName, path, file);
             dto.setImageUrl(imageUrl);
             
@@ -83,25 +93,31 @@ public class ProductController {
     }
 
     @PostMapping("/upload-image")
-    public ResponseEntity<Map<String, String>> uploadProductImage(@RequestParam("file") MultipartFile file, @RequestParam("productId") Integer productId) {
-        try {
-        	String repoName = "Doteed/PC-ShoppingMall";
-        	String path = "pcShoppingMall/src/main/resources/static/images/products/" + file.getOriginalFilename();
-            String imageUrl = gitHubService.uploadImage(repoName, path, file);
+    public ResponseEntity<Map<String, String>> uploadProductImage(
+        @RequestParam("file") MultipartFile file, 
+        @RequestParam("productId") Integer productId) {
 
-            // 새 이미지 URL로 제품 정보 업데이트
+        if (file.isEmpty() || productId == null) {
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Invalid input data"));
+        }
+
+        try {
+            String imageUrl = gitHubService.uploadImage(
+                "Doteed/PC-ShoppingMall", 
+                "pcShoppingMall/src/main/resources/static/images/products", 
+                file
+            );
+
             int updatedRows = productBiz.updateProductImage(productId, imageUrl);
 
             if (updatedRows > 0) {
-                Map<String, String> response = new HashMap<>();
-                response.put("imageUrl", imageUrl);
-                return ResponseEntity.ok(response);
+                return ResponseEntity.ok(Collections.singletonMap("imageUrl", imageUrl));
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "제품 이미지 업데이트 실패"));
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Image update failed"));
             }
         } catch (IOException e) {
-            logger.error("이미지 업로드 오류", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "이미지 업로드 실패"));
+            logger.error("Image upload error", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Image upload failed"));
         }
     }
 
@@ -115,6 +131,83 @@ public class ProductController {
         }
     }
     
+    @PostMapping("/update-stock")
+    public ResponseEntity<Map<String, Boolean>> updateStock(@RequestBody Map<String, Object> payload) {
+        Integer productId = (Integer) payload.get("productId");
+        Integer quantity = (Integer) payload.get("quantity");
+        
+        if (productId == null || quantity == null) {
+            return ResponseEntity.badRequest().body(Collections.singletonMap("success", false));
+        }
+        
+        int updatedRows = productBiz.updateStock(productId, quantity);
+        boolean success = updatedRows > 0;
+        return ResponseEntity.ok(Collections.singletonMap("success", success));
+    }
 
+    @PostMapping("/update-sale-status")
+    public ResponseEntity<Map<String, Boolean>> updateSaleStatus(@RequestBody Map<String, Object> payload) {
+        Integer productId = (Integer) payload.get("productId");
+        String status = (String) payload.get("status");
+        
+        if (productId == null || status == null) {
+            return ResponseEntity.badRequest().body(Collections.singletonMap("success", false));
+        }
+        
+        int updatedRows = productBiz.updateSaleStatus(productId, status);
+        boolean success = updatedRows > 0;
+        return ResponseEntity.ok(Collections.singletonMap("success", success));
+    }
+
+    @PostMapping("/update-soldout-status")
+    public ResponseEntity<Map<String, Boolean>> updateSoldOutStatus(@RequestBody Map<String, Object> payload) {
+        Integer productId = (Integer) payload.get("productId");
+        String status = (String) payload.get("status");
+        
+        if (productId == null || status == null) {
+            return ResponseEntity.badRequest().body(Collections.singletonMap("success", false));
+        }
+        
+        int updatedRows = productBiz.updateSoldOutStatus(productId, status);
+        boolean success = updatedRows > 0;
+        return ResponseEntity.ok(Collections.singletonMap("success", success));
+    }
+    
+    @PostMapping("/update")
+    public ResponseEntity<Map<String, Object>> updateProduct(@RequestBody Map<String, Object> payload) {
+        try {
+            Integer productId = Integer.valueOf(String.valueOf(payload.get("productId")));
+            Integer stock = Integer.valueOf(String.valueOf(payload.get("stock")));
+            Integer pReportstock = Integer.valueOf(String.valueOf(payload.get("pReportstock")));
+            String saleStatus = (String) payload.get("saleStatus");
+
+            if (productId == null || stock == null || pReportstock == null || saleStatus == null ||
+                stock < 0 || pReportstock < 0 || !Arrays.asList("Y", "N").contains(saleStatus)) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Invalid input data"));
+            }
+
+            logger.info("Updating product: id={}, stock={}, pReportstock={}, saleStatus={}", 
+                        productId, stock, pReportstock, saleStatus);
+
+            boolean success = productBiz.updateProduct(productId, stock, pReportstock, saleStatus);
+            return ResponseEntity.ok(Map.of("success", success));
+        } catch (Exception e) {
+            logger.error("Error updating product", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
+
+    @GetMapping("/product/{productId}")
+    public ResponseEntity<ProductDto> getProductById(@PathVariable int productId) {
+        ProductDto product = productBiz.getProductById(productId); // Biz 계층에서 호출
+
+        if (product == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(product);
+    }
 
 }

@@ -1,60 +1,152 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/default}">
+      layout:decorate="~{layouts/auth-layout}">
 <head>
-	<title>상품관리 인덱스</title>
+	<title>상품 관리 페이지</title>
 	<script>
-		function updateStockStatus(productId, isOutOfStock) {
-		    fetch('/api/product/updateStockStatus', {
-		        method: 'POST',
-		        headers: {
-		            'Content-Type': 'application/json',
-		        },
-		        body: JSON.stringify({
-		            productId: productId,
-		            outOfStock: isOutOfStock
-		        })
-		    })
-		    .then(response => response.json())
-		    .then(data => {
-		        if (data.success) {
-		            alert('재고 상태가 업데이트되었습니다.');
-		        } else {
-		            alert('재고 상태 업데이트에 실패했습니다.');
-		        }
-		    })
-		    .catch((error) => {
-		        console.error('Error:', error);
-		        alert('오류가 발생했습니다.');
+		document.addEventListener('DOMContentLoaded', function() {
+		    const updateButtons = document.querySelectorAll('.update-product');
+		    updateButtons.forEach(button => {
+		        button.addEventListener('click', function() {
+		            const productId = this.getAttribute('data-product-id');
+		            updateProduct(productId);
+		        });
 		    });
-		}
+	
+		    function updateProduct(productId) {
+		        const row = document.querySelector(`tr[data-product-id="${productId}"]`);
+		        const stock = parseInt(row.querySelector('.stock-input').value, 10);
+		        const pReportstock = parseInt(row.querySelector('.preportstock-input').value, 10);
+		        const saleStatus = row.querySelector('.sale-status').checked ? 'Y' : 'N';
+
+		        fetch('/api/product/update', {
+		            method: 'POST',
+		            headers: {
+		                'Content-Type': 'application/json',
+		            },
+		            body: JSON.stringify({
+		                productId, stock, pReportstock, saleStatus
+		            })
+		        })
+		        .then(response => {
+		            if (!response.ok) {
+		                throw new Error('Network response was not ok');
+		            }
+		            return response.json();
+		        })
+		        .then(data => {
+		            if (data.success) {
+		                alert('상품 정보가 성공적으로 업데이트되었습니다.');
+		                // 필요하다면 여기서 페이지를 새로고침하거나 UI를 업데이트합니다.
+		            } else {
+		                throw new Error(data.message || '상품 정보 업데이트에 실패했습니다.');
+		            }
+		        })
+		        .catch(error => {
+		            console.error('Error:', error);
+		            alert('오류가 발생했습니다: ' + error.message);
+		        });
+		    }
+		});
+
 	</script>
 </head>
 <body>
-	<section layout:fragment="content" class="content-box d-flex side-menu">
-		<div class="text-center bg-body-secondary side-nav">
-				<h6 class="m-0 py-3 border-bottom border-secondary-subtle text-body-emphasis">
-					<a href="auth-index">관리자 메뉴</a>
-				</h6>
-				<ul class="p-0 text-center">
-					<li class="mt-2 text-body-emphasis">
-						<a href="javascript: void(0)">회원 관리</a>
-					</li>
-					<li class="mt-2 text-body-emphasis">
-						<a href="javascript: void(0)">게시판 관리</a>
-					</li>
-					<li class="mt-2 text-body-emphasis">
-						<a href="auth-product">상품 관리</a>
-					</li>
-					<li class="mt-2 text-body-emphasis">
-						<a href="auth-order">주문 관리</a>
-					</li>
-					<li class="mt-2 text-body-emphasis">
-						<a href="javascript: void(0)">배너 관리</a>
-					</li>
-				</ul>
+	<div layout:fragment="content" class="d-flex flex-column gap-3 w-100">
+		<h5>상품재고관리</h5>
+		<div class="d-flex">
+			<select class="form-select form-select-sm" aria-label="Small select example">
+			  <option selected>Open this select menu</option>
+			  <option value="1">One</option>
+			  <option value="2">Two</option>
+			  <option value="3">Three</option>
+			</select>
+			
+			<!-- 대분류에서 받아오는 소분류 -->
+			<select class="form-select form-select-sm" aria-label="Small select example">
+			  <option selected>Open this select menu</option>
+			  <option value="4">One</option>
+			  <option value="5">Two</option>
+			  <option value="6">Three</option>
+			</select>
+			
+			<!-- 검색바 -->
+			<!-- <div class="input-group mb-3">
+			  <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2">
+			  <button class="btn btn-outline-secondary" type="button" id="button-addon2">Button</button>
+			</div> -->
+		</div>
+		<div>
+			<table class="table-type-a">
+				<colgroup>
+					<col width="8%" />
+					<col width="8%" />
+					<col width="*" />
+					<col width="8%" />
+					<col width="8%" />
+					<col width="8%" />
+					<col width="8%" />
+					<col width="8%" />
+					<col width="8%" />
+					<col width="8%" />
+					<col width="10%" />
+				</colgroup>
+				<thead>
+					<tr>
+						<th>상품코드</th>
+						<th>상품이미지</th>
+						<th>상품명</th>
+						<th>창고재고</th>
+						<th>주문대기</th>
+						<th>가재고</th>
+						<th>재고수정</th>
+						<th>통보수량</th>
+						<th>판매</th>
+						<th>품절</th>
+						<th>관리</th>
+					</tr>
+				</thead>
+				<!-- TODO: 주문수량 가져오기, 재고-주문수량=가재고, 재고 수정 반영, 통보수량 상품의 재고가 통보수량보다 작을 때 쇼핑몰 현황 재고부족상품에 표시됩니다,
+				 판매 품절 재입고 알람 필요 없는 체크박스 삭제 -->
+				<tbody>
+				    <tr th:each="product : ${products}" th:attr="data-product-id=${product.productId}">
+				        <td th:text="${product.productId}"></td>
+				        <td><img th:src="${product.imageUrl}" style="width:60px;height:60px;" /></td>
+				        <td th:text="${product.pName}"></td>
+				        <td th:text="${product.pStock}"></td>
+				        <td th:text="${product.orderWaiting}"></td>
+				        <td th:text="${product.availableStock}"></td>
+				        <td>
+				            <input type="number" th:value="${product.pStock}" class="form-control stock-input" th:attr="data-product-id=${product.productId}" />
+				        </td>
+				        <td>
+				            <input type="number" th:value="${product.pReportstock}" class="form-control preportstock-input" th:attr="data-product-id=${product.productId}" />
+				        </td>
+				        <td>
+				            <div class="form-check">
+				                <input class="form-check-input sale-status" type="checkbox" th:checked="${product.pSale == 'Y'}" th:attr="data-product-id=${product.productId}" />
+				            </div>
+				        </td>
+				        <td>
+				            <div class="form-check">
+				                <input class="form-check-input out-of-stock" type="checkbox" th:checked="${product.pStock <= 0}" th:attr="data-product-id=${product.productId}" />
+				            </div>
+				        </td>
+				        <td>
+				            <div class="d-flex">
+				                <button type="button" class="btn btn-primary update-product" th:data-product-id="${product.productId}">수정</button>
+				                <button type="button" class="btn btn-danger">삭제</button>									
+				            </div>
+				        </td>
+				    </tr>
+				</tbody>
+			</table>
+			<div class="d-flex justify-content-end gap-3">
+				<!-- <button type="button" class="btn btn-primary">일괄수정</button> -->
+				<button type="button" class="btn btn-secondary" onclick="location.href='auth-product-insert'">상품등록</button>
 			</div>
+<<<<<<< HEAD
 			<div class="d-flex flex-column gap-3 w-100">
 				<h5>상품재고관리</h5>
 				<div class="d-flex">
@@ -80,7 +172,7 @@
 					</div>
 				</div>
 				<div>
-					<table>
+					<table class="table-type-a">
 						<colgroup>
 							<col width="8%" />
 							<col width="8%" />
@@ -186,5 +278,27 @@
 				</div>
 			</div>
 	</section>
+=======
+			<nav aria-label="Page navigation" th:if="${totalPages > 1}">
+			    <ul class="pagination justify-content-center">
+			        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+			            <a class="page-link" th:href="@{/auth-product(page=${currentPage - 1})}" aria-label="Previous">
+			                <span aria-hidden="true">&laquo;</span>
+			            </a>
+			        </li>
+			        <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}" 
+			            th:classappend="${pageNum == currentPage} ? 'active'">
+			            <a class="page-link" th:href="@{/auth-product(page=${pageNum})}" th:text="${pageNum + 1}"></a>
+			        </li>
+			        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+			            <a class="page-link" th:href="@{/auth-product(page=${currentPage + 1})}" aria-label="Next">
+			                <span aria-hidden="true">&raquo;</span>
+			            </a>
+			        </li>
+			    </ul>
+			</nav>
+		</div>
+	</div>
+>>>>>>> 5e596ad9cff3040e527ce9d4c15e3cd4e8af5f44
 </body>
 </html>

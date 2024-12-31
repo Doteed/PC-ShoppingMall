@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/default}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/default}">
 <head>
     <title layout:fragment="title">QnA List</title>
     <style>
@@ -15,12 +15,21 @@
             background-color: #28a745;
             color: #fff;
         }
+		/* 테이블 고정 레이아웃 */
+		.table {
+		    table-layout: fixed;
+		    width: 100%; /* 테이블 전체 너비 */
+		}
+		/* 제목 칸 너비 조정 */
+		.table th.title-col, .table td.title-col {
+		    width: 40%; /* 너비를 40%로 설정 */
+		}
     </style>
 </head>
 <body>
     <div layout:fragment="content">
         <div class="container mt-5">
-            <h1>QnA 목록</h1>
+            <h1>QnA</h1>
 
             <!-- 게시글이 없을 경우 메시지 출력 -->
             <div th:if="${page == null || page.totalElements == 0}" class="alert alert-info mt-3">
@@ -33,7 +42,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>제목</th>
+                            <th class="title-col">제목</th>
 							<th>작성자</th>
                             <th>작성일</th>
                             <th>비밀 여부</th>
@@ -43,7 +52,7 @@
                     <tbody>
                         <tr th:each="qna, iterStat : ${page.content}">
                             <td th:text="${page.totalElements - (page.number * page.size + iterStat.index)}"></td>
-                            <td>
+                            <td class="title-col">
                                 <a th:href="@{'/qnas/' + ${qna.qnaId}}" th:text="${qna.title}"></a>
                             </td>
 							<td th:text="${qna.userId}"></td>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<<<<<<< HEAD
+	layout:decorate="~{fragments/default}">
+=======
+	layout:decorate="~{layouts/default}">
+>>>>>>> 5e596ad9cff3040e527ce9d4c15e3cd4e8af5f44
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<section layout:fragment="content" class="content-box d-flex"
+		style="gap: 30px; padding-top: 30px;">
+		<div class="text-center bg-body-secondary" style="width: 200px;">
+			<h6
+				class="m-0 py-3 border-bottom border-secondary-subtle text-body-emphasis">
+				<a href="order">마이 페이지</a>
+			</h6>
+			<ul class="p-0 text-center">
+				<li class="mt-2 text-body-emphasis"><a
+					href="order">내 주문/배송</a></li>
+				<li class="mt-2 text-body-emphasis"><a
+					href="review">내 리뷰</a></li>
+				<li class="mt-2 text-body-emphasis"><a
+					href="qa">내 Q&A</a></li>
+			</ul>
+		</div>
+		<div class="d-flex flex-column gap-3 w-100">
+			<div>
+				<h4 class="mb-3">오늘 할일</h4>
+				<div class="d-flex justify-content-between gap-5">
+					<div class="d-flex gap-2">
+						<p>신규주문</p>
+						<!-- 하나라도 있을경우 출력 -->
+						<span class="badge rounded-pill text-bg-info">1</span>					
+					</div>
+					<div class="d-flex gap-2">
+						<p>취소관리</p>
+						<span class="badge rounded-pill text-bg-info"></span>				
+					</div>
+					<div class="d-flex gap-2">
+						<p>반품관리</p>
+						<span class="badge rounded-pill text-bg-info">1</span>					
+					</div>
+					<div class="d-flex gap-2">
+						<p>교환관리</p>
+						<span class="badge rounded-pill text-bg-info">1</span>					
+					</div>
+					<div class="d-flex gap-2">
+						<p>답변대기문의</p>
+						<span class="badge rounded-pill text-bg-info">1</span>					
+					</div>
+				</div>
+			</div>
+			<div class="qa-content" id="myQAContent">
+			<div>
+				<table>
+					<thead>
+						<tr>
+							<th>구매일</th>
+							<th>상품명</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${orders == null or #lists.isEmpty(orders)}">
+							<td colspan="2">---- 구매내역이 없습니다. ----</td>
+						</tr>
+
+						<tr th:each="item : ${orders}" th:unless="${#lists.isEmpty(orders)}">
+							<td th:text="${item.orderDate}" />
+							<td class="qa-title" th:attr="data-id=${item.orderId}"
+								style="cursor: pointer;" th:text="${item.productName}" />
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div id="entityDetailContainer">
+				<!-- 상세 내용 -->
+			</div>
+		</div>
+	</section>
+</body>
+</html>

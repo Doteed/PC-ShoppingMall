@@ -30,12 +30,11 @@ public class AnnouncementController {
             Model model) {
         Page<Announcement> page = announcementService.findAll(pageable);
 
-        if (page.isEmpty()) {
-            model.addAttribute("emptyPage", true);
-        } else {
-            model.addAttribute("announcements", page.getContent());
-            model.addAttribute("page", page);
-        }
+        // 모델에 데이터를 추가
+        model.addAttribute("page", page);
+        model.addAttribute("announcements", page.getContent());
+        model.addAttribute("emptyPage", page.isEmpty());
+
         return TEMPLATE_DIR + "list";
     }
 
@@ -59,7 +58,7 @@ public class AnnouncementController {
         if (result.hasErrors()) {
             return TEMPLATE_DIR + "create";
         }
-        announcement.setAuthId(1L);
+        announcement.setAuthId(2L); //관리자 권한 2 설정
         announcement.setBoardId(101L); // BOARD_ID를 101으로 설정
         announcementService.saveAnnouncement(announcement);
         return "redirect:/announcements";

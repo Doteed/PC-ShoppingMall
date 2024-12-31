@@ -78,4 +78,9 @@ public class FaqService {
     public void deleteFaq(Long id) {
         faqRepository.deleteById(id);
     }
+    
+    public List<Faq> getLatestFaqs(int limit) {
+        Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdDate"));
+        return faqRepository.findAll(pageable).getContent();
+    }
 }

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<<<<<<< HEAD
+      layout:decorate="~{fragments/default}">
+=======
+      layout:decorate="~{layouts/default}">
+>>>>>>> 5e596ad9cff3040e527ce9d4c15e3cd4e8af5f44
+<head>
+    <title layout:fragment="title">Create Announcement</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container mt-5">
+            <h1>공지사항 작성하기</h1>
+            <form th:action="@{/announcements}" th:object="${announcement}" method="post">
+                <div class="mb-3">
+                    <label for="userId" class="form-label">User ID</label>
+                    <input type="text" class="form-control" th:field="*{userId}" placeholder="ID를 입력하세요." required>
+                </div>
+                <div class="mb-3">
+                    <label for="title" class="form-label">제목</label>
+                    <input type="text" class="form-control" th:field="*{title}" placeholder="제목을 입력하세요." required>
+                </div>
+                <div class="mb-3">
+                    <label for="content" class="form-label">내용</label>
+                    <textarea class="form-control" th:field="*{content}" rows="5" placeholder="내용을 입력하세요." required></textarea>
+                </div>
+				<div class="d-flex justify-content-end mt-3">
+				    <button type="submit" class="btn btn-primary me-2">완료</button>
+				    <a href="/announcements" class="btn btn-secondary">취소</a>
+				</div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

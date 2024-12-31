@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/default}">
+      layout:decorate="~{layouts/default}">
 <head>
     <title layout:fragment="title">QnA 상세보기</title>
 	<link rel="stylesheet" th:href="@{/css/announcement-detail.css}">
@@ -34,7 +34,7 @@
             <!-- 관리 버튼 -->
             <div class="button-container" th:if="${!qna.isSecret || isAuthenticated}">
                 <a th:href="@{'/qnas/edit/' + ${qna.qnaId}}" class="btn btn-warning">수정</a>
-                <a th:href="@{'/qnas/delete/' + ${qna.qnaId}}" class="btn btn-danger">삭제</a>
+                <a th:href="@{'/qnas/delete/' + ${qna.qnaId}}" class="btn btn-danger" onclick="return confirm('삭제하시겠습니까?');">삭제</a>
                 <a href="/qnas" class="btn btn-secondary">목록</a>
             </div>
 

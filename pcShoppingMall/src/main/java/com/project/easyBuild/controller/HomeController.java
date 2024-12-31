@@ -8,15 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.project.easyBuild.authority.biz.MemberBoardBiz;
 import com.project.easyBuild.authority.biz.ProductBiz;
 import com.project.easyBuild.authority.dao.ProductDao;
+import com.project.easyBuild.authority.dto.MemberBoardDto;
 import com.project.easyBuild.authority.dto.ProductDto;
 import com.project.easyBuild.user.biz.OrderBiz;
 import com.project.easyBuild.user.biz.QABiz;
@@ -115,5 +120,56 @@ public class HomeController {
     @GetMapping("/cpu01")
     public String cpu01() {
     	return "product/detail/cpu01";
+    }
+	
+    //회원 관리
+    @Autowired
+    private MemberBoardBiz memberBoardBiz;
+
+    @GetMapping("/auth-member")
+    public String authMember(Model model, @RequestParam(defaultValue = "0") int page) {
+        int pageSize = 10; // 한 페이지에 표시할 회원 수
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<MemberBoardDto> memberPage = memberBoardBiz.listAllWithPagination(pageable);
+
+        // 총 회원 수
+        long totalMembers = memberPage.getTotalElements();
+
+        // View로 데이터 전달
+        model.addAttribute("page", memberPage);  // Thymeleaf에서 참조할 이름
+        model.addAttribute("totalMembers", totalMembers); // 총 회원 수 전달
+
+        return "pages/authority/auth-member";
+    }
+
+    // 회원 상세 정보 페이지
+    @GetMapping("/auth-member/{userId}")
+    public String authMemberDetail(@PathVariable("userId") String userId, Model model) {
+        System.out.println("Received userId: " + userId);
+
+        // 회원 정보를 가져옴
+        MemberBoardDto member = memberBoardBiz.getMemberById(userId);
+
+        // 예외 처리: 회원 정보를 찾지 못한 경우
+        if (member == null) {
+            System.out.println("회원 정보를 찾을 수 없습니다. userId: " + userId);
+            model.addAttribute("errorMessage", "회원 정보를 찾을 수 없습니다.");
+            return "pages/authority/error-page"; // 에러 페이지를 따로 생성하거나 기존 페이지로 이동
+        }
+
+        // 회원 정보를 모델에 추가
+        model.addAttribute("member", member);
+        return "pages/authority/auth-member-detail";
+    }
+    
+    // 회원 탈퇴
+    @DeleteMapping("/auth-member/{userId}")
+    public ResponseEntity<Void> deleteMember(@PathVariable String userId) {
+        try {
+            memberBoardBiz.deleteMember(userId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
