@@ -7,18 +7,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.project.easyBuild.authority.dto.MemberDto;
+import com.project.easyBuild.authority.dto.MemberBoardDto;
 @Repository
-public class MemberDaoImpl implements MemberDao {
+public class MemberBoardDaoImpl implements MemberBoardDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public MemberDaoImpl(JdbcTemplate jdbcTemplate) {
+    public MemberBoardDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private final RowMapper<MemberDto> rowMapper = (rs, rowNum) -> {
-        MemberDto member = new MemberDto();
+    private final RowMapper<MemberBoardDto> rowMapper = (rs, rowNum) -> {
+        MemberBoardDto member = new MemberBoardDto();
         member.setMemberNo(rs.getInt("MEMBER_NO"));
         member.setUserId(rs.getString("USER_ID"));
         member.setAuthId(rs.getInt("AUTH_ID"));
@@ -35,12 +35,12 @@ public class MemberDaoImpl implements MemberDao {
     };
 
     @Override
-    public List<MemberDto> listAllWithPagination(Pageable pageable) {
+    public List<MemberBoardDto> listAllWithPagination(Pageable pageable) {
         int offset = pageable.getPageNumber() * pageable.getPageSize();
         int pageSize = pageable.getPageSize();
 
         String sql = "SELECT * FROM MEMBER ORDER BY REGISTER_DATE DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-        List<MemberDto> members = jdbcTemplate.query(sql, rowMapper, offset, pageSize);
+        List<MemberBoardDto> members = jdbcTemplate.query(sql, rowMapper, offset, pageSize);
 
         // 로그 추가
         System.out.println("DAO fetched members: " + members);
@@ -55,7 +55,7 @@ public class MemberDaoImpl implements MemberDao {
     }
 
     @Override
-    public MemberDto findById(String userId) {
+    public MemberBoardDto findById(String userId) {
         String sql = "SELECT * FROM MEMBER WHERE USER_ID = ?";
         return jdbcTemplate.queryForObject(sql, rowMapper, userId);
     }

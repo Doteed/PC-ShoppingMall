@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberDto {
+public class MemberBoardDto {
     private int memberNo;          // 작성 번호
     private String userId;         // 사용자 ID
     private int authId;            // 권한 ID

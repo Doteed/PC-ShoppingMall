@@ -4,13 +4,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.project.easyBuild.authority.dto.MemberDto;
+import com.project.easyBuild.authority.dto.MemberBoardDto;
 
 @Service
-public interface MemberBiz {
-    Page<MemberDto> listAllWithPagination(Pageable pageable);
+public interface MemberBoardBiz {
+    Page<MemberBoardDto> listAllWithPagination(Pageable pageable);
 
-    MemberDto getMemberById(String userId);
+    MemberBoardDto getMemberById(String userId);
     
     void deleteMember(String userId);
 
