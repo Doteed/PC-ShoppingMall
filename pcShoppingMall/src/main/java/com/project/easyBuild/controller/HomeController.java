@@ -110,7 +110,6 @@ public class HomeController {
 		model.addAttribute("orders", orders);
 		return "pages/mypage/my-order";
 	}
-	
 	//제품 카테고리 관련
 	@GetMapping("/cpuproducts")
     public String cpuproducts() {
@@ -121,16 +120,20 @@ public class HomeController {
     public String cpu01() {
     	return "product/detail/cpu01";
     }
-	
+    
     //회원 관리
     @Autowired
-    private MemberBoardBiz memberBoardBiz;
+    private MemberBoardBiz memberBiz;
 
     @GetMapping("/auth-member")
     public String authMember(Model model, @RequestParam(defaultValue = "0") int page) {
         int pageSize = 10; // 한 페이지에 표시할 회원 수
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<MemberBoardDto> memberPage = memberBoardBiz.listAllWithPagination(pageable);
+        Page<MemberBoardDto> memberPage = memberBiz.listAllWithPagination(pageable);
+
+        // 디버깅: 페이지 콘텐츠 출력
+        System.out.println("Fetched members: " + memberPage.getContent());
+        System.out.println("Total members: " + memberPage.getTotalElements());
 
         // 총 회원 수
         long totalMembers = memberPage.getTotalElements();
@@ -148,28 +151,48 @@ public class HomeController {
         System.out.println("Received userId: " + userId);
 
         // 회원 정보를 가져옴
-        MemberBoardDto member = memberBoardBiz.getMemberById(userId);
+        MemberBoardDto member = memberBiz.getMemberById(userId);
 
         // 예외 처리: 회원 정보를 찾지 못한 경우
         if (member == null) {
             System.out.println("회원 정보를 찾을 수 없습니다. userId: " + userId);
             model.addAttribute("errorMessage", "회원 정보를 찾을 수 없습니다.");
-            return "pages/authority/error-page"; // 에러 페이지를 따로 생성하거나 기존 페이지로 이동
+            return "pages/authority/error-page"; // 에러 페이지를 따로 생성하거나, 기존 페이지로 이동
         }
 
         // 회원 정보를 모델에 추가
         model.addAttribute("member", member);
         return "pages/authority/auth-member-detail";
     }
+
+
     
     // 회원 탈퇴
     @DeleteMapping("/auth-member/{userId}")
     public ResponseEntity<Void> deleteMember(@PathVariable String userId) {
         try {
-            memberBoardBiz.deleteMember(userId);
+            memberBiz.deleteMember(userId); // 비즈니스 로직 호출
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    
+    @GetMapping("/loginform")
+    public String login() {
+       return "pages/member/login";
+    }
+    @GetMapping("/sign_up")
+    public String sign_up() {
+       return "pages/member/sign_up";
+    }
+    @GetMapping("/sign_up_email")
+    public String sign_up_email() {
+       return "pages/member/sign_up_email";
+    }
+    @GetMapping("/membermy")
+    public String membermy() {
+       return "pages/member/membermy";
+    }
+	
 }
