@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.project.easyBuild.authority.biz.MemberBiz;
+import com.project.easyBuild.authority.biz.MemberBoardBiz;
 import com.project.easyBuild.authority.biz.ProductBiz;
 import com.project.easyBuild.authority.dao.ProductDao;
-import com.project.easyBuild.authority.dto.MemberDto;
+import com.project.easyBuild.authority.dto.MemberBoardDto;
 import com.project.easyBuild.authority.dto.ProductDto;
 import com.project.easyBuild.user.biz.OrderBiz;
 import com.project.easyBuild.user.biz.QABiz;
@@ -71,22 +71,13 @@ public class HomeController {
 	}
 
 	@GetMapping("/auth-product-insert")
-	public String authProductInsert(Model model) {
-		
-		model.addAttribute("userId", "USER");
-		model.addAttribute("authId", 1);
-		
+	public String authProductInsert() {
 		return "pages/authority/auth-product-insert";
 	}
 
 	@GetMapping("/auth-order")
 	public String authIndex() {
 		return "pages/authority/auth-order";
-	}
-	
-	@GetMapping("/auth-category")
-	public String authCategory() {
-		return "pages/authority/auth-category";
 	}
 
 	//마이페이지 관련
@@ -119,7 +110,6 @@ public class HomeController {
 		model.addAttribute("orders", orders);
 		return "pages/mypage/my-order";
 	}
-	
 	//제품 카테고리 관련
 	@GetMapping("/cpuproducts")
     public String cpuproducts() {
@@ -133,13 +123,17 @@ public class HomeController {
     
     //회원 관리
     @Autowired
-    private MemberBiz memberBiz;
+    private MemberBoardBiz memberBiz;
 
     @GetMapping("/auth-member")
     public String authMember(Model model, @RequestParam(defaultValue = "0") int page) {
         int pageSize = 10; // 한 페이지에 표시할 회원 수
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<MemberDto> memberPage = memberBiz.listAllWithPagination(pageable);
+        Page<MemberBoardDto> memberPage = memberBiz.listAllWithPagination(pageable);
+
+        // 디버깅: 페이지 콘텐츠 출력
+        System.out.println("Fetched members: " + memberPage.getContent());
+        System.out.println("Total members: " + memberPage.getTotalElements());
 
         // 총 회원 수
         long totalMembers = memberPage.getTotalElements();
@@ -157,28 +151,48 @@ public class HomeController {
         System.out.println("Received userId: " + userId);
 
         // 회원 정보를 가져옴
-        MemberDto member = memberBiz.getMemberById(userId);
+        MemberBoardDto member = memberBiz.getMemberById(userId);
 
         // 예외 처리: 회원 정보를 찾지 못한 경우
         if (member == null) {
             System.out.println("회원 정보를 찾을 수 없습니다. userId: " + userId);
             model.addAttribute("errorMessage", "회원 정보를 찾을 수 없습니다.");
-            return "pages/authority/error-page"; // 에러 페이지를 따로 생성하거나 기존 페이지로 이동
+            return "pages/authority/error-page"; // 에러 페이지를 따로 생성하거나, 기존 페이지로 이동
         }
 
         // 회원 정보를 모델에 추가
         model.addAttribute("member", member);
         return "pages/authority/auth-member-detail";
     }
+
+
     
     // 회원 탈퇴
     @DeleteMapping("/auth-member/{userId}")
     public ResponseEntity<Void> deleteMember(@PathVariable String userId) {
         try {
-            memberBiz.deleteMember(userId);
+            memberBiz.deleteMember(userId); // 비즈니스 로직 호출
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    
+    @GetMapping("/loginform")
+    public String login() {
+       return "pages/member/login";
+    }
+    @GetMapping("/sign_up")
+    public String sign_up() {
+       return "pages/member/sign_up";
+    }
+    @GetMapping("/sign_up_email")
+    public String sign_up_email() {
+       return "pages/member/sign_up_email";
+    }
+    @GetMapping("/membermy")
+    public String membermy() {
+       return "pages/member/membermy";
+    }
+	
 }

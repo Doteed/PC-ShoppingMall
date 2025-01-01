@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<<<<<<< HEAD
+      layout:decorate="~{fragments/default}">
+=======
       layout:decorate="~{layouts/default}">
+>>>>>>> 5e596ad9cff3040e527ce9d4c15e3cd4e8af5f44
 <head>
     <title layout:fragment="title">Announcements List</title>
 </head>
@@ -9,11 +13,36 @@
     <div layout:fragment="content">
         <div class="container mt-5">
             <h1>공지사항</h1>
+<<<<<<< HEAD
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>제목</th>
+                        <th>날짜</th>
+                    </tr>
+                </thead>
+				<tbody>
+				    <tr th:each="announcement, iterStat : ${page.content}">
+				        <td th:text="${page.totalElements - (page.number * page.size + iterStat.index)}"></td>
+				        <td>
+				            <a th:href="@{'/announcements/' + ${announcement.announcId}}" th:text="${announcement.title}"></a>
+				        </td>
+				        <td th:text="${#temporals.format(announcement.createdDate, 'yyyy-MM-dd')}"></td>
+
+				    </tr>
+				</tbody>
+            </table>
+=======
+>>>>>>> 5e596ad9cff3040e527ce9d4c15e3cd4e8af5f44
 			
 			<!-- 게시글이 없을 경우 메시지 출력 -->
 			<div th:if="${page == null || page.totalElements == 0}" class="alert alert-info mt-3">
 			    <p>등록된 글이 없습니다.</p>
 			</div>
+<<<<<<< HEAD
+			
+=======
 			<div th:if="${page != null && page.totalElements > 0}">
 	            <table class="table table-striped">
 	                <thead>
@@ -35,6 +64,7 @@
 					</tbody>
 	            </table>
 			</div>
+>>>>>>> 5e596ad9cff3040e527ce9d4c15e3cd4e8af5f44
 			<div class="d-flex justify-content-end mt-3 mb-5">
 			    <a href="/announcements/new" class="btn btn-primary">작성하기</a>
 			</div>

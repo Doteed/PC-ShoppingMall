@@ -8,24 +8,24 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.project.easyBuild.authority.dao.MemberDao;
-import com.project.easyBuild.authority.dto.MemberDto;
+import com.project.easyBuild.authority.dao.MemberBoardDao;
+import com.project.easyBuild.authority.dto.MemberBoardDto;
 
 @Service
-public class MemberBizImpl implements MemberBiz {
+public class MemberBoardBizImpl implements MemberBoardBiz {
 
     @Autowired
-    private MemberDao memberDao;
+    private MemberBoardDao memberDao;
 
     @Override
-    public Page<MemberDto> listAllWithPagination(Pageable pageable) {
-        List<MemberDto> members = memberDao.listAllWithPagination(pageable);
+    public Page<MemberBoardDto> listAllWithPagination(Pageable pageable) {
+        List<MemberBoardDto> members = memberDao.listAllWithPagination(pageable);
         long total = memberDao.countMembers();
         return new PageImpl<>(members, pageable, total);
     }
 
     @Override
-    public MemberDto getMemberById(String userId) {
+    public MemberBoardDto getMemberById(String userId) {
         return memberDao.findById(userId);
     }
     
