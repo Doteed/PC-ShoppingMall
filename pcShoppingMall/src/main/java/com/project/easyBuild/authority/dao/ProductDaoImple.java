@@ -113,15 +113,15 @@ public class ProductDaoImple implements ProductDao {
     }
 
     @Override
-    public int updateSoldOutStatus(int productId, String status) {
+    public int updateSoldOutStatus(int productId, String pSoldout) {
         String sql = "UPDATE PRODUCT SET P_SOLDOUT = ? WHERE PRODUCT_ID = ?";
-        return jdbcTemplate.update(sql, status, productId);
+        return jdbcTemplate.update(sql, pSoldout, productId);
     }
     
     @Override
-    public int updateProduct(int productId, int stock, int pReportstock, String saleStatus) {
-        String sql = "UPDATE PRODUCT SET P_STOCK = ?, P_REPORTSTOCK = ?, P_SALE = ? WHERE PRODUCT_ID = ?";
-        return jdbcTemplate.update(sql, stock, pReportstock, saleStatus, productId);
+    public int updateProduct(int productId, int stock, int pReportstock, String saleStatus, String pSoldout) {
+        String sql = "UPDATE PRODUCT SET P_STOCK = ?, P_REPORTSTOCK = ?, P_SALE = ?, P_SOLDOUT = ? WHERE PRODUCT_ID = ?";
+        return jdbcTemplate.update(sql, stock, pReportstock, saleStatus, pSoldout, productId);
     }
 
     @Override

@@ -134,48 +134,6 @@
 				</table>
 			</div>
 		</div>
-		<div>
-			<h5>테스트 테이블</h5>
-			<table class="table-type-a">
-				<colgroup>
-					<col width="10%" />
-					<col width="10%" />
-					<col width="30%" />
-					<col width="10%" />
-					<col width="10%" />
-					<col width="10%" />
-					<col width="10%" />
-					<col width="10%" />						
-				</colgroup>
-				<thead>
-					<tr>
-						<th>상품 아이디</th>
-						<th>유저 아이디</th>
-						<th>카테고리 아이디</th>
-						<th>권한 식별자</th>
-						<th>가격</th>
-						<th>상품명</th>
-						<th>재고</th>
-						<th>등록일</th>
-					</tr>
-				</thead>
-				<tbody>
-				    <tr th:if="${#lists.isEmpty(list)}">
-				        <td colspan="8">----게시물이 없습니다.----</td>
-				    </tr>
-				    <tr th:each="item : ${list}" th:unless="${#lists.isEmpty(list)}">
-				        <td th:text="${item.productId}"></td>
-				        <td th:text="${item.userId}"></td>
-				        <td th:text="${item.categoryId}"></td>
-				        <td th:text="${item.authId}"></td>
-				        <td th:text="${item.pPrice}"></td>
-				        <td th:text="${item.pName}"></td>
-				        <td th:text="${item.pStock}"></td>
-				        <td th:text="${item.pEnroll}"></td>
-				    </tr>
-				</tbody>
-			</table>
-		</div>
 		<div>기타 등등...</div>
 	</div>
 </body>

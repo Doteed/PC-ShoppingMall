@@ -81,16 +81,16 @@ public class ProductBizImpl implements ProductBiz {
 
     @Override
     @Transactional
-    public int updateSoldOutStatus(int productId, String status) {
-        logger.info("Updating sold out status for product id: {} to: {}", productId, status);
-        return dao.updateSoldOutStatus(productId, status);
+    public int updateSoldOutStatus(int productId, String pSoldout) {
+        logger.info("Updating sold out status for product id: {} to: {}", productId, pSoldout);
+        return dao.updateSoldOutStatus(productId, pSoldout);
     }
 
     @Override
     @Transactional
-    public boolean updateProduct(int productId, int stock, int pReportstock, String saleStatus) {
+    public boolean updateProduct(int productId, int stock, int pReportstock, String saleStatus, String pSoldout) {
         logger.info("Updating product id: {}", productId);
-        int updatedRows = dao.updateProduct(productId, stock, pReportstock, saleStatus);
+        int updatedRows = dao.updateProduct(productId, stock, pReportstock, saleStatus, pSoldout);
         return updatedRows > 0;
     }
         
