@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,23 +18,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.easyBuild.user.biz.QABiz;
-import com.project.easyBuild.user.dto.QADto;
+import com.project.easyBuild.user.biz.ReviewBiz;
+import com.project.easyBuild.user.dto.ReviewDto;
 
 @RestController
-@RequestMapping("/qa")
-public class QAController {
+@RequestMapping("/review")
+public class ReviewController {
     @Autowired
-    private QABiz qabiz;
+    private ReviewBiz reviewbiz;
 
-    @GetMapping("/detail/{qaId}")
-    public ResponseEntity<QADto> getQaDetail(@PathVariable int qaId, @RequestParam String userId) {
+    @GetMapping("/detail/{reviewId}")
+    public ResponseEntity<ReviewDto> getDetail(@PathVariable int reviewId, @RequestParam String userId) {
         try {
-            QADto qa = qabiz.listOne(qaId, userId);
+        	System.out.println(reviewId);
+        	ReviewDto review = reviewbiz.listOne(reviewId, userId);
             
-            if (qa != null) {
-                System.out.println("QA Detail Response: " + qa);
-                return ResponseEntity.ok(qa);
+            if (review != null) {
+                return ResponseEntity.ok(review);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
@@ -44,10 +45,9 @@ public class QAController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Map<String, Object>> updateQa(@RequestBody QADto qaDto){//@RequestAttribute("userId") String userId) {
-        System.out.println("dto: " + qaDto);
-        int result = qabiz.update(qaDto);
-        
+    public ResponseEntity<Map<String, Object>> update(@RequestBody ReviewDto reviewDto){//@RequestAttribute("userId") String userId) {
+        int result = reviewbiz.update(reviewDto);
+        System.out.println("dto: " + reviewDto.getRating());
         Map<String, Object> response = new HashMap<>();
         
         if (result > 0) {
@@ -61,10 +61,38 @@ public class QAController {
         }
     }
 
+    @GetMapping("/insert-editor")
+    public ResponseEntity<Map<String, Object>> insertEditor(@RequestParam String userId) {
+        Map<String, Object> response = new HashMap<>();
+        
+        //초기화
+        response.put("title", "");
+        response.put("content", "");
+        response.put("rating", 5);
+
+        return ResponseEntity.ok(response);
+    }
+    
+    @PostMapping("/insert")
+    public ResponseEntity<Map<String, Object>> insert(@RequestBody ReviewDto reviewDto) {
+        int result = reviewbiz.insert(reviewDto);
+        System.out.println(reviewDto);
+        Map<String, Object> response = new HashMap<>();
+        
+        if (result > 0) {
+            response.put("success", true);
+            response.put("message", "해당 게시글이 성공적으로 작성되었습니다.");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("success", false);
+            response.put("message", "해당 게시글 작성에 실패하였습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
     //삭제
-    @DeleteMapping("/delete")
-    public ResponseEntity<Map<String, String>> deleteQa(@RequestParam int qaId, @RequestParam String userId){//@RequestAttribute("userId") String userId) {
-        int result = qabiz.delete(qaId, userId);
+    @PutMapping("/delete")
+    public ResponseEntity<Map<String, String>> delete(@RequestParam int reviewId, @RequestParam String userId){//@RequestAttribute("userId") String userId) {
+        int result = reviewbiz.delete(reviewId, userId);
         
         Map<String, String> response = new HashMap<>();
         if (result > 0) {

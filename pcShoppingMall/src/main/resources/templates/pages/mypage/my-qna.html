@@ -3,15 +3,17 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layouts/default}">
 <head>
-    <!-- Toast UI Editor CSS -->
-    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
-    <!-- Toast UI Editor JavaScript -->
-	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-    
-    <script th:src="@{/js/editor.js}"></script>
-    <script th:src="@{/js/mylist.js}"></script>
-    <meta charset="UTF-8">
-	<title>Insert title here</title>
+<!-- Toast UI Editor CSS -->
+<link rel="stylesheet"
+	href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+<!-- Toast UI Editor JavaScript -->
+<script
+	src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+
+<script th:src="@{/js/editor.js}"></script>
+<script th:src="@{/js/mylist.js}"></script>
+<meta charset="UTF-8">
+<title>Insert title here</title>
 </head>
 <body>
 	<section layout:fragment="content" class="content-box d-flex"
@@ -24,27 +26,33 @@
 			<ul class="p-0 text-center">
 				<li class="mt-2 text-body-emphasis"><a href="order">내 주문/배송</a></li>
 				<li class="mt-2 text-body-emphasis"><a href="review">내 리뷰</a></li>
-				<li class="mt-2 text-body-emphasis"><a href="qa">내 Q&A</a></li>
+				<li class="mt-2 text-body-emphasis"><a href="qna">내 Q&A</a></li>
 			</ul>
 		</div>
-		<div class="qa-content" id="myQAContent">
+		<div class="my-content" id="myQAContent">
 			<div>
 				<table>
 					<thead>
 						<tr>
 							<th>문의일</th>
 							<th>제목</th>
+							<th>답변상태</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:if="${#lists.isEmpty(qas)}">
+						<tr th:if="${#lists.isEmpty(qnas)}">
 							<td colspan="2">---- 작성한 Q&A가 없습니다. ----</td>
 						</tr>
 
-						<tr th:each="item : ${qas}" th:unless="${#lists.isEmpty(qas)}">
-							<td th:text="${item.date}" />
-							<td class="qa-title" th:attr="data-id=${item.qaId}"
+						<tr th:each="item : ${qnas}" th:unless="${#lists.isEmpty(qnas)}">
+							<td th:text="${item.createdDate}" />
+							<td class="my-title"
+								th:attr="data-id=${item.qnaId}, data-type='qna'"
 								style="cursor: pointer;" th:text="${item.title}" />
+							<td>
+								<span th:style="'color: ' + (${item.answer == null} ? 'red' : 'green')">●</span>
+								<span th:text="${item.answer == null ? '답변대기' : '답변완료'}" />
+							</td>
 						</tr>
 					</tbody>
 				</table>
