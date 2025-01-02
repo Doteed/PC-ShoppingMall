@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.project.easyBuild.authority.biz.ProductBiz;
 import com.project.easyBuild.authority.dao.ProductDao;
 import com.project.easyBuild.authority.dto.ProductDto;
-import com.project.easyBuild.user.biz.OrderBiz;
-import com.project.easyBuild.user.biz.QABiz;
+import com.project.easyBuild.entire.biz.OrderBiz;
+import com.project.easyBuild.user.biz.QnaBiz;
 import com.project.easyBuild.user.biz.ReviewBiz;
-import com.project.easyBuild.user.dto.OrderDto;
-import com.project.easyBuild.user.dto.QADto;
+import com.project.easyBuild.entire.dto.OrderDto;
+import com.project.easyBuild.user.dto.QnaDto;
 import com.project.easyBuild.user.dto.ReviewDto;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -87,12 +87,12 @@ public class HomeController {
 	}
 
 	@Autowired
-	private QABiz qabiz;
+	private QnaBiz qnabiz;
 
 	@GetMapping("/my/qa")
 	public String myQA(Model model) {
-		List<QADto> qas = qabiz.mylistAll("user01");
-		model.addAttribute("qas", qas);
+		List<QnaDto> qnas = qnabiz.mylistAll("user01");
+		model.addAttribute("qnas", qnas);
 		return "pages/mypage/my-qa";
 	}
 	
