@@ -22,7 +22,7 @@ import com.project.easyBuild.user.dto.QnaDto;
 
 @RestController
 @RequestMapping("/qna")
-public class QnaController {
+public class UserQnaController {
     @Autowired
     private QnaBiz qnaBiz;
 
