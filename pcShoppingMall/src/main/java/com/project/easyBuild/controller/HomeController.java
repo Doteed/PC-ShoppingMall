@@ -79,6 +79,11 @@ public class HomeController {
 	public String authIndex() {
 		return "pages/authority/auth-order";
 	}
+	
+	@GetMapping("/auth-category")
+	public String authCategory() {
+		return "pages/authority/auth-category";
+	}
 
 	//마이페이지 관련
 	@Autowired
@@ -182,17 +187,20 @@ public class HomeController {
     public String login() {
        return "pages/member/login";
     }
+
     @GetMapping("/sign_up")
     public String sign_up() {
        return "pages/member/sign_up";
     }
+
     @GetMapping("/sign_up_email")
     public String sign_up_email() {
        return "pages/member/sign_up_email";
     }
+
     @GetMapping("/membermy")
     public String membermy() {
        return "pages/member/membermy";
     }
-	
+
 }

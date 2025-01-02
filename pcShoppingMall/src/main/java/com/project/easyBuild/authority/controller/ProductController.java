@@ -55,16 +55,15 @@ public class ProductController {
     }
 
     @PostMapping("/updateStockStatus")
-    public ResponseEntity<Map<String, Boolean>> updateStockStatus(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<Map<String, Object>> updateStockStatus(@RequestBody Map<String, Object> payload) {
         Integer productId = (Integer) payload.get("productId");
-        Boolean outOfStock = (Boolean) payload.get("outOfStock");
-        
-        if (productId == null || outOfStock == null) {
+        String pSoldout = (String) payload.get("pSoldout");
+        if (productId == null || pSoldout == null) {
             return ResponseEntity.badRequest().body(Collections.singletonMap("success", false));
         }
         
         logger.info("Updating stock status for product id: {}", productId);
-        int updatedRows = productBiz.updateStockStatus(productId, outOfStock ? 0 : 1);
+        int updatedRows = productBiz.updateSoldOutStatus(productId, pSoldout);
         return ResponseEntity.ok(Collections.singletonMap("success", updatedRows > 0));
     }
 
@@ -180,23 +179,25 @@ public class ProductController {
             Integer stock = Integer.valueOf(String.valueOf(payload.get("stock")));
             Integer pReportstock = Integer.valueOf(String.valueOf(payload.get("pReportstock")));
             String saleStatus = (String) payload.get("saleStatus");
+            String pSoldout = (String) payload.get("pSoldout");
 
-            if (productId == null || stock == null || pReportstock == null || saleStatus == null ||
-                stock < 0 || pReportstock < 0 || !Arrays.asList("Y", "N").contains(saleStatus)) {
+            if (productId == null || stock == null || pReportstock == null || saleStatus == null || pSoldout == null ||
+                stock < 0 || pReportstock < 0 || !Arrays.asList("Y", "N").contains(saleStatus) || !Arrays.asList("Y", "N").contains(pSoldout)) {
                 return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Invalid input data"));
             }
 
-            logger.info("Updating product: id={}, stock={}, pReportstock={}, saleStatus={}", 
-                        productId, stock, pReportstock, saleStatus);
+            logger.info("Updating product: id={}, stock={}, pReportstock={}, saleStatus={}, outOfStock={}", 
+                        productId, stock, pReportstock, saleStatus, pSoldout);
 
-            boolean success = productBiz.updateProduct(productId, stock, pReportstock, saleStatus);
-            return ResponseEntity.ok(Map.of("success", success));
+            boolean success = productBiz.updateProduct(productId, stock, pReportstock, saleStatus, pSoldout);
+            return ResponseEntity.ok(Map.of("success", success, "message", "상품 정보가 성공적으로 업데이트되었습니다."));
         } catch (Exception e) {
             logger.error("Error updating product", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("success", false, "message", e.getMessage()));
         }
     }
+
 
 
     @GetMapping("/product/{productId}")

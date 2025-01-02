@@ -28,7 +28,7 @@ public interface ProductDao {
 	
 	public int updateSoldOutStatus(int productId, String status);
 
-	public int updateProduct(int productId, int stock, int pReportstock, String saleStatus);
+	public int updateProduct(int productId, int stock, int pReportstock, String saleStatus, String pSoldout);
 	
 	public ProductDto getProductById(int productId);
 

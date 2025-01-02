@@ -13,12 +13,13 @@
 		            updateProduct(productId);
 		        });
 		    });
-	
+		    
 		    function updateProduct(productId) {
 		        const row = document.querySelector(`tr[data-product-id="${productId}"]`);
 		        const stock = parseInt(row.querySelector('.stock-input').value, 10);
 		        const pReportstock = parseInt(row.querySelector('.preportstock-input').value, 10);
 		        const saleStatus = row.querySelector('.sale-status').checked ? 'Y' : 'N';
+		        const pSoldout = row.querySelector('.out-of-stock').checked ? 'Y' : 'N';  // 품절 상태 추가
 
 		        fetch('/api/product/update', {
 		            method: 'POST',
@@ -26,7 +27,7 @@
 		                'Content-Type': 'application/json',
 		            },
 		            body: JSON.stringify({
-		                productId, stock, pReportstock, saleStatus
+		                productId, stock, pReportstock, saleStatus, pSoldout
 		            })
 		        })
 		        .then(response => {
@@ -48,6 +49,7 @@
 		            alert('오류가 발생했습니다: ' + error.message);
 		        });
 		    }
+
 		});
 
 	</script>
@@ -128,11 +130,11 @@
 				                <input class="form-check-input sale-status" type="checkbox" th:checked="${product.pSale == 'Y'}" th:attr="data-product-id=${product.productId}" />
 				            </div>
 				        </td>
-				        <td>
-				            <div class="form-check">
-				                <input class="form-check-input out-of-stock" type="checkbox" th:checked="${product.pStock <= 0}" th:attr="data-product-id=${product.productId}" />
-				            </div>
-				        </td>
+							<td>
+							    <div class="form-check">
+							        <input class="form-check-input out-of-stock" type="checkbox" th:checked="${product.pSoldout == 'Y'}" th:attr="data-product-id=${product.productId}" />
+							    </div>
+							</td>
 				        <td>
 				            <div class="d-flex">
 				                <button type="button" class="btn btn-primary update-product" th:data-product-id="${product.productId}">수정</button>
