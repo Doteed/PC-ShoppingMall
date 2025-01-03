@@ -17,7 +17,7 @@
 		<div class="position-relative d-flex justify-content-center py-5">
 			<!-- 로고 -->
 			<div class="position-absolute logo-box">
-	          <a th:href="@{/}" class="d-block w-100">
+	          <a th:href="@{/main}" class="d-block w-100">
 	            <img th:src="@{/images/logo.png}" alt="Logo" width="140" height="100">
 	          </a>
 			</div>
@@ -112,13 +112,13 @@
 					<a href="javascript: void(0)" class="nav-main-depth">게시판</a>
 					<ul class="nav-sub-depth">
 						<li class="d-flex justify-content-center nav-sub-depth-col">					
-							<a href="javascript: void(0)">게시판1</a>
+							<a th:href="@{/announcements}">공지사항</a>
 						</li>
 						<li class="d-flex justify-content-center nav-sub-depth-col">					
-							<a href="javascript: void(0)">게시판2</a>
+							<a th:href="@{/faqs}">자주묻는질문</a>
 						</li>
 						<li class="d-flex justify-content-center nav-sub-depth-col">					
-							<a href="javascript: void(0)">게시판3</a>
+							<a th:href="@{/qnas}">QnA</a>
 						</li>
 					</ul>
 				</li>
