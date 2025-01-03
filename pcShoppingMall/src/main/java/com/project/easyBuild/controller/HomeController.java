@@ -26,15 +26,10 @@ import com.project.easyBuild.authority.biz.ProductBiz;
 import com.project.easyBuild.authority.dao.ProductDao;
 import com.project.easyBuild.authority.dto.MemberBoardDto;
 import com.project.easyBuild.authority.dto.ProductDto;
-<<<<<<< Updated upstream
 import com.project.easyBuild.entire.biz.OrderBiz;
 import com.project.easyBuild.user.biz.QnaBiz;
-=======
 import com.project.easyBuild.member.biz.MemberBiz;
 import com.project.easyBuild.member.dto.MemberDto;
-import com.project.easyBuild.user.biz.OrderBiz;
-import com.project.easyBuild.user.biz.QABiz;
->>>>>>> Stashed changes
 import com.project.easyBuild.user.biz.ReviewBiz;
 import com.project.easyBuild.entire.dto.OrderDto;
 import com.project.easyBuild.user.dto.QnaDto;
@@ -131,11 +126,6 @@ public class HomeController {
 		model.addAttribute("orders", orders);
 		return "pages/mypage/my-order";
 	}
-<<<<<<< Updated upstream
-=======
-	
-	
->>>>>>> Stashed changes
 	//제품 카테고리 관련
 	@GetMapping("/cpuproducts")
     public String cpuproducts() {
@@ -149,18 +139,13 @@ public class HomeController {
     
     //회원 관리
     @Autowired
-<<<<<<< Updated upstream
-    private MemberBoardBiz memberBiz;
-
-=======
     private MemberBoardBiz memberBoardBiz;
     
->>>>>>> Stashed changes
     @GetMapping("/auth-member")
     public String authMember(Model model, @RequestParam(defaultValue = "0") int page) {
         int pageSize = 10; // 한 페이지에 표시할 회원 수
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<MemberBoardDto> memberPage = memberBiz.listAllWithPagination(pageable);
+        Page<MemberBoardDto> memberPage = memberBoardBiz.listAllWithPagination(pageable);
 
         // 디버깅: 페이지 콘텐츠 출력
         System.out.println("Fetched members: " + memberPage.getContent());
@@ -182,7 +167,7 @@ public class HomeController {
         System.out.println("Received userId: " + userId);
 
         // 회원 정보를 가져옴
-        MemberBoardDto member = memberBiz.getMemberById(userId);
+        MemberBoardDto member = memberBoardBiz.getMemberById(userId);
 
         // 예외 처리: 회원 정보를 찾지 못한 경우
         if (member == null) {
@@ -202,38 +187,15 @@ public class HomeController {
     @DeleteMapping("/auth-member/{userId}")
     public ResponseEntity<Void> deleteMember(@PathVariable String userId) {
         try {
-<<<<<<< Updated upstream
-            memberBiz.deleteMember(userId); // 비즈니스 로직 호출
-=======
+            memberBoardBiz.deleteMember(userId); // 비즈니스 로직 호출
             memberBoardBiz.deleteMember(userId);
             memberBoardBiz.deleteMember(userId);
->>>>>>> Stashed changes
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
     
-<<<<<<< Updated upstream
-    @GetMapping("/loginform")
-    public String login() {
-       return "pages/member/login";
-    }
-
-    @GetMapping("/sign_up")
-    public String sign_up() {
-       return "pages/member/sign_up";
-    }
-
-    @GetMapping("/sign_up_email")
-    public String sign_up_email() {
-       return "pages/member/sign_up_email";
-    }
-
-    @GetMapping("/membermy")
-    public String membermy() {
-       return "pages/member/membermy";
-=======
     @Autowired
     private MemberBiz memberbiz;
     
@@ -290,7 +252,6 @@ public class HomeController {
     public String logout(HttpSession session) {
         session.invalidate();  // 세션 무효화
         return "redirect:/";  // 로그아웃 후 홈 페이지로 리다이렉트
->>>>>>> Stashed changes
     }
 
 }
