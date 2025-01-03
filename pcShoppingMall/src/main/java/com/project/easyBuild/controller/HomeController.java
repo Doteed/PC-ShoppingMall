@@ -91,19 +91,21 @@ public class HomeController {
 
 	@GetMapping("/my/review")
 	public String myReview(Model model) {
-		List<ReviewDto> reviews = reviewbiz.listAll();
-		model.addAttribute("reviews", reviews);
+        List<ReviewDto> writeReviews = reviewbiz.writeListAll("user01");
+        model.addAttribute("writeReviews", writeReviews);
+        List<ReviewDto> writtenReviews = reviewbiz.writtenListAll("user01");
+        model.addAttribute("writtenReviews", writtenReviews);
 		return "pages/mypage/my-review";
 	}
 
 	@Autowired
 	private QnaBiz qnabiz;
 
-	@GetMapping("/my/qa")
+	@GetMapping("/my/qna")
 	public String myQA(Model model) {
 		List<QnaDto> qnas = qnabiz.mylistAll("user01");
 		model.addAttribute("qnas", qnas);
-		return "pages/mypage/my-qa";
+		return "pages/mypage/my-qna";
 	}
 	
 	@Autowired
