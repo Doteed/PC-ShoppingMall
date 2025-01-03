@@ -34,5 +34,9 @@ public class MemberBizImpl implements MemberBiz {
         logger.debug("Deleting user: {}", userId);
         return dao.delete(userId);
     }
-
+    
+    @Override
+    public MemberDto selectOne(String userId) {
+    	return dao.selectOne(userId);
+    }
 }

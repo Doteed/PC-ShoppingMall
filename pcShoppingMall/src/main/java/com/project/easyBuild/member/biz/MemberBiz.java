@@ -9,4 +9,5 @@ public interface MemberBiz {
 	
 	public int delete(String userId);
 	
+	public MemberDto selectOne(String userId);
 }

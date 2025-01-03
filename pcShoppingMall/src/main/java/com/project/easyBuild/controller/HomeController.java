@@ -15,7 +15,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.easyBuild.authority.biz.MemberBoardBiz;
@@ -23,8 +26,15 @@ import com.project.easyBuild.authority.biz.ProductBiz;
 import com.project.easyBuild.authority.dao.ProductDao;
 import com.project.easyBuild.authority.dto.MemberBoardDto;
 import com.project.easyBuild.authority.dto.ProductDto;
+<<<<<<< Updated upstream
 import com.project.easyBuild.entire.biz.OrderBiz;
 import com.project.easyBuild.user.biz.QnaBiz;
+=======
+import com.project.easyBuild.member.biz.MemberBiz;
+import com.project.easyBuild.member.dto.MemberDto;
+import com.project.easyBuild.user.biz.OrderBiz;
+import com.project.easyBuild.user.biz.QABiz;
+>>>>>>> Stashed changes
 import com.project.easyBuild.user.biz.ReviewBiz;
 import com.project.easyBuild.entire.dto.OrderDto;
 import com.project.easyBuild.user.dto.QnaDto;
@@ -71,7 +81,11 @@ public class HomeController {
 	}
 
 	@GetMapping("/auth-product-insert")
-	public String authProductInsert() {
+	public String authProductInsert(Model model) {
+		
+		model.addAttribute("userId", "USER");
+		model.addAttribute("authId", 1);
+		
 		return "pages/authority/auth-product-insert";
 	}
 
@@ -117,6 +131,11 @@ public class HomeController {
 		model.addAttribute("orders", orders);
 		return "pages/mypage/my-order";
 	}
+<<<<<<< Updated upstream
+=======
+	
+	
+>>>>>>> Stashed changes
 	//제품 카테고리 관련
 	@GetMapping("/cpuproducts")
     public String cpuproducts() {
@@ -130,8 +149,13 @@ public class HomeController {
     
     //회원 관리
     @Autowired
+<<<<<<< Updated upstream
     private MemberBoardBiz memberBiz;
 
+=======
+    private MemberBoardBiz memberBoardBiz;
+    
+>>>>>>> Stashed changes
     @GetMapping("/auth-member")
     public String authMember(Model model, @RequestParam(defaultValue = "0") int page) {
         int pageSize = 10; // 한 페이지에 표시할 회원 수
@@ -178,13 +202,19 @@ public class HomeController {
     @DeleteMapping("/auth-member/{userId}")
     public ResponseEntity<Void> deleteMember(@PathVariable String userId) {
         try {
+<<<<<<< Updated upstream
             memberBiz.deleteMember(userId); // 비즈니스 로직 호출
+=======
+            memberBoardBiz.deleteMember(userId);
+            memberBoardBiz.deleteMember(userId);
+>>>>>>> Stashed changes
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
     
+<<<<<<< Updated upstream
     @GetMapping("/loginform")
     public String login() {
        return "pages/member/login";
@@ -203,6 +233,64 @@ public class HomeController {
     @GetMapping("/membermy")
     public String membermy() {
        return "pages/member/membermy";
+=======
+    @Autowired
+    private MemberBiz memberbiz;
+    
+	@GetMapping("/loginform")
+    public String login() {
+    	return "pages/member/login";
+    }
+    
+	@PostMapping("/member/login")
+	public String login(Model model, MemberDto dto, HttpSession session) {
+	    MemberDto result = memberbiz.login(dto);
+	    
+	    if (result != null) {
+	        session.setAttribute("dto", result);  // 로그인 정보 세션에 저장
+	        return "redirect:/";  // 로그인 성공
+	    } else {
+	        return "redirect:/loginform";  // 로그인 실패
+	    }
+	}
+
+
+	
+    @GetMapping("/sign_up")
+    public String sign_up() {
+    	return "pages/member/sign_up";
+    }
+    
+    @GetMapping("/sign_up_email")
+    public String sign_up_email() {
+    	return "pages/member/sign_up_email";
+    }
+    
+    @GetMapping("/membermy")
+    public String membermy(Model model, @SessionAttribute(name = "dto", required = false) MemberDto dto) {
+        // 로그인된 회원 정보가 있을 경우, dto를 모델에 추가
+        if (dto != null) {
+            model.addAttribute("dto", dto);
+        }
+        
+        return "pages/member/membermy";
+    }
+
+    
+    
+    @GetMapping("/my/mydetail")
+    public String mydetail(Model model, String userId) {
+    	MemberDto res = memberbiz.selectOne(userId);
+    	model.addAttribute("dto",res);
+    	
+    	return "pages/member/mydetail";
+    }
+    
+    @GetMapping("/member/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();  // 세션 무효화
+        return "redirect:/";  // 로그아웃 후 홈 페이지로 리다이렉트
+>>>>>>> Stashed changes
     }
 
 }
