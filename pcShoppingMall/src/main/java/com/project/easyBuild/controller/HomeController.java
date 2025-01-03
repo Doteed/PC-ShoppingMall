@@ -1,7 +1,5 @@
 package com.project.easyBuild.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,32 +12,42 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.project.easyBuild.authority.biz.MemberBoardBiz;
 import com.project.easyBuild.authority.biz.ProductBiz;
-import com.project.easyBuild.authority.dao.ProductDao;
 import com.project.easyBuild.authority.dto.MemberBoardDto;
 import com.project.easyBuild.authority.dto.ProductDto;
 import com.project.easyBuild.entire.biz.OrderBiz;
-import com.project.easyBuild.user.biz.QnaBiz;
+import com.project.easyBuild.entire.dto.OrderDto;
 import com.project.easyBuild.member.biz.MemberBiz;
 import com.project.easyBuild.member.dto.MemberDto;
+import com.project.easyBuild.user.biz.QnaBiz;
 import com.project.easyBuild.user.biz.ReviewBiz;
-import com.project.easyBuild.entire.dto.OrderDto;
 import com.project.easyBuild.user.dto.QnaDto;
 import com.project.easyBuild.user.dto.ReviewDto;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class HomeController {
+	
+    // 공통 권한 확인 메서드
+	@ModelAttribute("isAdmin")
+	public boolean isAdmin(HttpSession session) {
+	    MemberDto user = (MemberDto) session.getAttribute("dto");
+	    if (user != null) {
+	        System.out.println("User in session: " + user.getUserId() + ", AuthId: " + user.getAuthId());
+	        return user.getAuthId() == 2;
+	    }
+	    System.out.println("No user in session or user is null.");
+	    return false;
+	}
+
 	@GetMapping("/")
 	public String index() {
 		return "index";
@@ -55,14 +63,25 @@ public class HomeController {
 	private ProductBiz productbiz;
 
 	@GetMapping("/auth-index")
-	public String authIndex(Model model) {
-		List<ProductDto> res = productbiz.listAll();
-		model.addAttribute("list", res);
-		return "pages/authority/auth-index";
+	public String authIndex(HttpSession session, Model model) {
+	    MemberDto user = (MemberDto) session.getAttribute("dto");
+	    if (user == null || user.getAuthId() != 2) {
+	        System.out.println("Access denied. User: " + (user != null ? user.getUserId() : "null"));
+	        return "error/403"; // 권한 없음 에러 페이지
+	    }
+	    System.out.println("Access granted for admin: " + user.getUserId());
+	    List<ProductDto> res = productbiz.listAll();
+	    model.addAttribute("list", res);
+	    return "pages/authority/auth-index";
 	}
 
+	
+
 	@GetMapping("/auth-product")
-	public String authProduct(Model model, @RequestParam(defaultValue = "0") int page) {
+	public String authProduct(HttpSession session, Model model, @RequestParam(defaultValue = "0") int page) {
+        if (!isAdmin(session)) {
+            return "error/403";
+        }
 		int pageSize = 10;
 		Pageable pageable = PageRequest.of(page, pageSize);
 		Page<ProductDto> productPage = productbiz.listAllPaginated(pageable);
@@ -140,10 +159,14 @@ public class HomeController {
     //회원 관리
     @Autowired
     private MemberBoardBiz memberBoardBiz;
-    
+
     @GetMapping("/auth-member")
-    public String authMember(Model model, @RequestParam(defaultValue = "0") int page) {
-        int pageSize = 10; // 한 페이지에 표시할 회원 수
+    public String authMember(HttpSession session, Model model, @RequestParam(defaultValue = "0") int page) {
+        if (!isAdmin(session)) {
+            return "error/403";
+        }
+        
+    	int pageSize = 10; // 한 페이지에 표시할 회원 수
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<MemberBoardDto> memberPage = memberBoardBiz.listAllWithPagination(pageable);
 
@@ -210,6 +233,7 @@ public class HomeController {
 	    
 	    if (result != null) {
 	        session.setAttribute("dto", result);  // 로그인 정보 세션에 저장
+	        System.out.println("Logged in user: " + result.getUserId() + ", AuthId: " + result.getAuthId());
 	        return "redirect:/";  // 로그인 성공
 	    } else {
 	        return "redirect:/loginform";  // 로그인 실패
@@ -253,5 +277,12 @@ public class HomeController {
         session.invalidate();  // 세션 무효화
         return "redirect:/";  // 로그아웃 후 홈 페이지로 리다이렉트
     }
+    
+    
+
+
+
+
+
 
 }

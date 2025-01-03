@@ -56,7 +56,15 @@ public class MemberDaoImpl implements MemberDao {
                 (rs, rowNum) -> {
                     MemberDto member = new MemberDto();
                     member.setUserId(rs.getString("USER_ID"));
+                    member.setAuthId(rs.getInt("AUTH_ID")); // authId 매핑 추가
                     member.setPassword(rs.getString("PASSWORD"));
+                    member.setUserName(rs.getString("USERNAME"));
+                    member.setGender(rs.getString("GENDER"));
+                    member.setEmail(rs.getString("EMAIL"));
+                    member.setPhone(rs.getString("PHONE"));
+                    member.setRegisterDate(rs.getDate("REGISTER_DATE"));
+                    member.setLastUpdate(rs.getDate("LAST_UPDATE"));
+                    member.setMemberStatus(rs.getString("MEMBER_STATUS"));
                     return member;
                 }
             ).stream().findFirst().orElse(null);
@@ -66,6 +74,7 @@ public class MemberDaoImpl implements MemberDao {
 
         return res;
     }
+
 
     @Override
     public int insert(MemberDto dto) {

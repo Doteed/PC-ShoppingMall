@@ -3,9 +3,15 @@ package com.project.easyBuild.member.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.project.easyBuild.member.biz.MemberBiz;
 import com.project.easyBuild.member.dto.MemberDto;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/member")
@@ -33,4 +39,17 @@ public class MemberController {
             return ResponseEntity.status(404).body("회원이 존재하지 않습니다.");
         }
     }
+    @PostMapping("/member/login")
+    public String login(HttpSession session, MemberDto dto) {
+        MemberDto result = memberBiz.login(dto);
+        if (result != null) {
+            session.setAttribute("dto", result); // 사용자 정보를 세션에 저장
+            return "redirect:/";
+        } else {
+            return "redirect:/loginform";
+        }
+    }
+    
+    
+
 }
