@@ -14,16 +14,6 @@ public class MemberController {
     @Autowired
     private MemberBiz memberBiz;
 
-    @PostMapping("/login")
-    public String login(MemberDto dto) {
-        MemberDto result = memberBiz.login(dto);
-        if (result != null) {
-            return "redirect:/";
-        } else {
-            return "redirect:/loginform";
-        }
-    }
-
     @PostMapping("/register")
     public String register(MemberDto dto) {
         int result = memberBiz.insert(dto);

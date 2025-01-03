@@ -13,4 +13,5 @@ public interface MemberDao {
 	
 	public int delete(String userId);
 	
+	public MemberDto selectOne(String userId);
 }
