@@ -1,12 +1,30 @@
 //수정 팝업
-window.openEditPopup = function(entityType, entityId) {
-	const userId = 'user01'; //임시 userId
+window.openEditPopup = function(entityType, entityId, mode) {
+	const userId = 'user01'; // 임시 userId
+	const isUpdate = mode === 'update' ? true : false;
+	const url = isUpdate ? `/${entityType}/detail/${entityId}?userId=${userId}`
+		: `/${entityType}/insert-editor?userId=${userId}`;
 
-	fetch(`/${entityType}/detail/${entityId}?userId=${userId}`)
+	fetch(url)
 		.then(response => response.json())
 		.then(data => {
-			const title = data.title;
-			const pageContent = data.content;
+			//답변 완료된 글을 수정 시
+			if (entityType === 'qna' && data.answer !== null && data.answer !== undefined) {
+				alert('답변완료된 글은 수정이 불가능합니다');
+				return; //중단
+			}
+			let title = '';
+			let pageContent = '';
+			let rating = null;
+
+			if (data) {
+				// 수정 시 기존 데이터 채우기
+				title = data.title;
+				pageContent = data.content;
+				if (entityType === "review") {
+					rating = data.rating;
+				}
+			}
 
 			const popupWindow = window.open('', 'editPopup', 'width=800,height=600');
 			const htmlContent = `
@@ -14,18 +32,27 @@ window.openEditPopup = function(entityType, entityId) {
                 <html lang="ko">
                 <head>
                     <meta charset="UTF-8">
-                    <title>수정</title>
+                    <title>${entityId ? '수정' : '작성'}</title>
                     <style>
                         body { font-family: Arial, sans-serif; padding: 20px; }
                         input, button { width: 100%; padding: 10px; margin: 5px 0; }
                     </style>
-					<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+                    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
                     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
                 </head>
                 <body>
                     <input type="text" id="editorTitle" placeholder="제목을 입력하세요" value="${title}" />
+                    ${entityType === "review" ? `
+                        <select id="editorRating">
+                            <option value="1" ${rating === 1 ? "selected" : ""}>1점</option>
+                            <option value="2" ${rating === 2 ? "selected" : ""}>2점</option>
+                            <option value="3" ${rating === 3 ? "selected" : ""}>3점</option>
+                            <option value="4" ${rating === 4 ? "selected" : ""}>4점</option>
+                            <option value="5" ${rating === 5 ? "selected" : ""}>5점</option>
+                        </select>
+                    ` : ''}
                     <div id="editorContainer" style="height: 300px;"></div>
-                    <button type="button" id="submitBtn">저장</button>
+                    <button type="button" id="submitBtn">${entityId ? '수정' : '작성'} 저장</button>
                 </body>
                 </html>
             `;
@@ -55,7 +82,6 @@ window.openEditPopup = function(entityType, entityId) {
 								const filename = await response.text();
 								const imageUrl = `/tui-editor/image-print?filename=${filename}`;
 								callback(imageUrl, 'image alt attribute');
-
 							} catch (error) {
 								console.error('업로드 실패 : ', error);
 							}
@@ -63,33 +89,47 @@ window.openEditPopup = function(entityType, entityId) {
 					}
 				});
 
-				//저장
+				// 저장 버튼
 				popupWindow.document.getElementById('submitBtn').onclick = function() {
 					const title = popupWindow.document.getElementById('editorTitle').value;
 					const content = editor.getMarkdown();
+					let rating = null;
 
-					//로그 확인용
-					console.log('data:', {
-						qaId: qaId,
-						title: title,
-						content: content,
-					});
+					if (entityType === 'review') {
+						const editorRatingElement = popupWindow.document.getElementById('editorRating');
+						if (editorRatingElement) {
+							rating = editorRatingElement.value;
+						}
+					}
 
+					const bodyData = {
+						userId,
+						title,
+						content,
+					};
 
-					fetch(`/${entityType}/update`, {
-						method: 'PUT',
+					if (isUpdate) {
+						bodyData[`${entityType}Id`] = entityId;
+					} else {
+						bodyData.orderId = entityId; //review 작성시 주문번호 넘김
+					}
+
+					if (rating !== null) {
+						bodyData.rating = rating;
+					}
+
+					const endpoint = isUpdate ? `/${entityType}/update` : `/${entityType}/insert`;
+
+					fetch(endpoint, {
+						method: isUpdate ? 'PUT' : 'POST',
 						headers: {
 							'Content-Type': 'application/json',
 						},
-						body: JSON.stringify({
-							userId,
-							title,
-							content,
-							[`${entityType}Id`]: entityId,
-						})
+						body: JSON.stringify(bodyData),
 					})
 						.then(response => response.json())
 						.then(data => {
+							console.log(data);
 							if (data.success) {
 								alert(data.message);
 								popupWindow.close();
@@ -112,18 +152,27 @@ window.openEditPopup = function(entityType, entityId) {
 
 //삭제
 window.deleteEntity = function(entityType, entityId) {
-	const userId = 'user01'; //임시 userId
-	if (confirm("정말 삭제하시겠습니까?")) {
-		fetch(`/${entityType}/delete?${entityType}Id=${entityId}&userId=${userId}`, {
-			method: 'DELETE',
-		})
-			.then(response => response.json())
-			.then(data => {
-				alert(data.message);
-				location.reload();
-			})
-			.catch(error => {
-				console.error("삭제 실패:", error);
-			});
-	}
+    const userId = 'user01'; // 임시 userId
+    if (confirm("정말 삭제하시겠습니까?")) {
+        let url = `/${entityType}/delete?${entityType}Id=${entityId}&userId=${userId}`;
+        let method = '';
+
+        if (entityType === 'review') {
+            method = 'PUT'; // 상태만 업데이트
+        } else if (entityType === 'qna') {
+            method = 'DELETE';
+        }
+
+        fetch(url, {
+            method: method,
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            location.reload();
+        })
+        .catch(error => {
+            console.error('삭제 실패:', error);  // 에러 처리 추가
+        }); // 닫는 중괄호 추가
+    }
 };

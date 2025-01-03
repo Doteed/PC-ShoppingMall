@@ -29,7 +29,7 @@ public interface ProductBiz {
 	
 	public int updateSoldOutStatus(int productId, String status);
 	
-	public boolean updateProduct(int productId, int stock, int pReportstock, String saleStatus);
+	public boolean updateProduct(int productId, int stock, int pReportstock, String saleStatus, String pSoldout);
 	
 	public ProductDto getProductById(int productId);
 

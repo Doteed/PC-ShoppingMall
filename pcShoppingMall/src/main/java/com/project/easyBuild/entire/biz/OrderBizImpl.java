@@ -1,11 +1,13 @@
-package com.project.easyBuild.user.biz;
+package com.project.easyBuild.entire.biz;
 
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.project.easyBuild.user.dao.OrderDao;
-import com.project.easyBuild.user.dto.OrderDto;
+import com.project.easyBuild.entire.dao.OrderDao;
+import com.project.easyBuild.entire.dto.OrderDto;
 
 @Service
 public class OrderBizImpl implements OrderBiz {
@@ -28,12 +30,17 @@ public class OrderBizImpl implements OrderBiz {
 	}
 
 	@Override
-	public int update(OrderDto dto) {
-		return 0;
+	public int myUpdate(OrderDto dto) {
+		return dao.myUpdate(dto);
 	}
 
 	@Override
-	public int delete(int orderId, String userId) {
-		return dao.delete(orderId, userId);
+	public int cancle(int orderId, String userId) {
+		return dao.cancle(orderId, userId);
+	}
+
+	@Override
+	public Map<String, Integer> count(String userId) {
+		return dao.count(userId);
 	}
 }

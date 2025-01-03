@@ -5,6 +5,16 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<!-- Toast UI Editor CSS -->
+<link rel="stylesheet"
+	href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+<!-- Toast UI Editor JavaScript -->
+<script
+	src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script th:src="@{/js/editor.js}"></script>
+<script th:src="@{/js/mylist.js}"></script>
+<link rel="stylesheet" th:href="@{/css/my-detail.css}">
+
 </head>
 <body>
 	<section layout:fragment="content" class="content-box d-flex"
@@ -15,12 +25,9 @@
 				<a href="order">마이 페이지</a>
 			</h6>
 			<ul class="p-0 text-center">
-				<li class="mt-2 text-body-emphasis"><a
-					href="order">내 주문/배송</a></li>
-				<li class="mt-2 text-body-emphasis"><a
-					href="review">내 리뷰</a></li>
-				<li class="mt-2 text-body-emphasis"><a
-					href="qa">내 Q&A</a></li>
+				<li class="mt-2 text-body-emphasis"><a href="order">내 주문/배송</a></li>
+				<li class="mt-2 text-body-emphasis"><a href="review">내 리뷰</a></li>
+				<li class="mt-2 text-body-emphasis"><a href="qna">내 Q&A</a></li>
 			</ul>
 		</div>
 		<div>
@@ -40,9 +47,35 @@
 				</li>
 			</ul>
 
-			<div class="tab-content" id="myTabContent">
+			<div class="my-content" id="myTabContent">
 				<div class="tab-pane fade show active" id="write-myreviews"
-					role="tabpanel" aria-labelledby="write-myreviews-tab">작성할 탭</div>
+					role="tabpanel" aria-labelledby="write-myreviews-tab">
+					<table>
+						<thead>
+							<tr>
+								<th>주문번호</th>
+								<th>상품명</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:if="${#lists.isEmpty(writeReviews)}">
+								<td colspan="5">---- 작성할 리뷰가 없습니다. ----</td>
+							</tr>
+
+							<tr th:each="item : ${writeReviews}"
+								th:unless="${#lists.isEmpty(writeReviews)}">
+								<td th:text="${item.orderId}">주문 번호</td>
+								<td th:text="${item.productName}">상품 이름</td>
+								<td>
+								<button class="btn btn-primary"
+									th:onclick="openEditPopup('review', ' + ${item.orderId} + ', 'insert')">
+									리뷰 작성</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
 				<div class="tab-pane fade" id="written-myreviews" role="tabpanel"
 					aria-labelledby="written-myreviews-tab">
 					<table>
@@ -56,23 +89,27 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr th:if="${#lists.isEmpty(reviews)}">
-					            <td colspan="5">---- 작성한 리뷰가 없습니다. ----</td>
-					        </tr>
-					
-					        <tr th:each="item : ${reviews}" th:unless="${#lists.isEmpty(reviews)}">
-					            <td th:text="${item.productName}" />
-					            <td>
-					                <span>
-					                    <span th:utext="${#strings.repeat('★', item.rating) + #strings.repeat('☆', 5 - item.rating)}"></span>
-					                </span>
-					            </td>
-					            <td th:text="${item.title}" />
-					            <td th:text="${item.content}" />
-					            <td th:text="${item.date}" />
-					        </tr>
+							<tr th:if="${#lists.isEmpty(writtenReviews)}">
+								<td colspan="5">---- 작성한 리뷰가 없습니다. ----</td>
+							</tr>
+
+							<tr th:each="item : ${writtenReviews}"
+								th:unless="${#lists.isEmpty(writtenReviews)}">
+								<td th:text="${item.productName}" />
+								<td><span> <span
+										th:utext="${#strings.repeat('★', item.rating) + #strings.repeat('☆', 5 - item.rating)}"></span>
+								</span></td>
+								<td class="my-title"
+									th:attr="data-id=${item.reviewId}, data-type='review'"
+									style="cursor: pointer;" th:text="${item.title}" />
+								<td th:text="${item.content}" />
+								<td th:text="${item.date}" />
+							</tr>
 						</tbody>
 					</table>
+				</div>
+				<div id="entityDetailContainer">
+					<!-- 상세 내용 -->
 				</div>
 			</div>
 		</div>
