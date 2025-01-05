@@ -2,6 +2,7 @@ package com.project.easyBuild.user.dto;
 
 import java.util.Date;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,19 +12,22 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class QADto {
-	private int qaId;
+public class QnaDto {
+	private int qnaId;
 	private int boardId;
 	private String userId;
 	private int authId;
 	private String title;
 	private String content;
-	private Date date;
+	private String answer;
+	private String password;
+	private int isSecret;
+	private Date createdDate;
 	
-	//update용 생성자
-	public QADto(int qaId, String title, String content, String userId) {
+	//constructor for updating
+	public QnaDto(int qaId, String title, String content, String userId) {
 		super();
-		this.qaId = qaId;
+		this.qnaId = qaId;
 		this.userId = userId;
 		this.title = title;
 		this.content = content;

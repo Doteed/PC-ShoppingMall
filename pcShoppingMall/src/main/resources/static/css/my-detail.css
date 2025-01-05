@@ -1,0 +1,22 @@
+@charset "UTF-8";
+
+/* mypage */
+.my-content {
+    position: relative;
+}
+
+.my-content td {
+    word-wrap: break-word; /* 자동 줄바꿈 */
+    word-break: break-all;
+    white-space: normal;
+}
+/* 상세내용이 내 목록의 오른쪽에 뜨게 */
+#entityDetailContainer {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 600px;
+    background-color: #fff;
+    padding: 30px;
+    display: none;
+}
