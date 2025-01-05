@@ -145,6 +145,9 @@ public class HomeController {
 		model.addAttribute("orders", orders);
 		return "pages/mypage/my-order";
 	}
+
+		
+
 	//제품 카테고리 관련
 	@GetMapping("/cpuproducts")
     public String cpuproducts() {
@@ -156,6 +159,7 @@ public class HomeController {
     	return "product/detail/cpu01";
     }
     
+
     //회원 관리
     @Autowired
     private MemberBoardBiz memberBoardBiz;

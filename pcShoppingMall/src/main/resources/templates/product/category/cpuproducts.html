@@ -1,310 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>cpuproduct page</title>
-  <!-- Bootstrap CSS 링크 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    /* Footer 스타일 */
-    footer p {
-      font-size: 0.875rem;
-    }
-    footer a {
-      font-size: 0.875rem;
-    }
-    footer img {
-      max-width: 100px; /* 이미지 크기 제한 */
-      height: auto;
-      margin-right: 20px; /* 텍스트와 이미지 간격 */
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 목록</title>
+    <link rel="stylesheet" href="/css/product/cpuCategory.css">
 </head>
 <body>
-  <main>
-    <div class="container">
-      <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-1 mb-1 border-bottom">
-        <!-- 로고 -->
-        <div class="col-md-3 mb-2 mb-md-0">
-          <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
-            <img src="/images/logo.png" alt="Logo" width="140" height="100">
-          </a>
-        </div>
-
-        <!-- 검색바 -->
-        <form class="w-25 me-3" role="search">
-          <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
-        </form>
-
-        <!-- 회원가입/로그인 버튼 -->
-        <div class="col-md-3 text-end">
-          <button type="button" class="btn btn-outline-primary btn-sm me-2">로그인</button>
-          <button type="button" class="btn btn-primary btn-sm">회원가입</button>
-        </div>
-      </header>
+	
+	<h1>CPU</h1>
+    <!-- 필터 UI -->
+    <form id="filter-form">
+    <!-- 제조사 -->
+    <div>
+        <h3>제조사</h3>
+        <label><input type="checkbox" name="manufacturer" value="인텔"> 인텔</label><br>
+        <label><input type="checkbox" name="manufacturer" value="AMD"> AMD</label>
     </div>
 
-    <!-- 메뉴바 (네비게이션) -->
-    <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-      <li class="nav-item dropdown me-5">
-        <a href="#" class="nav-link px-2 dropdown-toggle" role="button">CPU</a>
-        <ul class="dropdown-menu">
-          <li><a href="#" class="dropdown-item">AMD</a></li>
-          <li><a href="#" class="dropdown-item">Intel</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown me-5">
-        <a href="#" class="nav-link px-2 dropdown-toggle" role="button">메모리</a>
-        <ul class="dropdown-menu">
-          <li><a href="#" class="dropdown-item">DDR4</a></li>
-          <li><a href="#" class="dropdown-item">DDR5</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown me-5">
-        <a href="#" class="nav-link px-2 dropdown-toggle" role="button">쿨러/튜닝</a>
-        <ul class="dropdown-menu">
-          <li><a href="#" class="dropdown-item">공랭</a></li>
-          <li><a href="#" class="dropdown-item">수랭</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown me-5">
-        <a href="#" class="nav-link px-2 dropdown-toggle" role="button">메인보드</a>
-        <ul class="dropdown-menu">
-          <li><a href="#" class="dropdown-item">Intel 호환</a></li>
-          <li><a href="#" class="dropdown-item">AMD 호환</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a href="#" class="nav-link px-2 dropdown-toggle" role="button">게시판</a>
-        <ul class="dropdown-menu">
-          <li><a href="#" class="dropdown-item">공지사항</a></li>
-          <li><a href="#" class="dropdown-item">Q&A</a></li>
-          <li><a href="#" class="dropdown-item">자주 묻는 질문</a></li>
-        </ul>
-      </li>
-    </ul>
-    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-1 mb-1 border-bottom"></header>
-  </main>
-
-  <!-- 페이지별 내용 추가 -->
-  <main>
-    <div class="container my-5">
-      <!-- CPU 제품 필터 (제조사, 종류, 소켓) -->
-      <div class="bg-white p-4 rounded shadow-sm mb-4">
-        <h4 class="mb-3">CPU</h4>
-        
-        <!-- 제조사 필터 -->
-        <div class="border p-3 mb-3 rounded">
-          <h6 class="fw-bold">제조사</h6>
-          <div class="form-check">
-            <input class="form-check-input filter-checkbox" type="checkbox" id="intel" value="인텔" data-filter="manufacturer">
-            <label class="form-check-label" for="intel">인텔</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input filter-checkbox" type="checkbox" id="amd" value="AMD" data-filter="manufacturer">
-            <label class="form-check-label" for="amd">AMD</label>
-          </div>
-        </div>
-        
-        <!-- 인텔 CPU 종류 필터 -->
-        <div class="border p-3 mb-3 rounded">
-          <h6 class="fw-bold">인텔 CPU 종류</h6>
-          <div class="form-check">
-            <input class="form-check-input filter-checkbox" type="checkbox" id="core-ultra9" value="코어 i9" data-filter="type">
-            <label class="form-check-label" for="core-ultra9">코어 i9</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input filter-checkbox" type="checkbox" id="core-ultra7" value="코어 i7" data-filter="type">
-            <label class="form-check-label" for="core-ultra7">코어 i7</label>
-          </div>
-        </div>
-        
-        <!-- AMD CPU 종류 필터 -->
-        <div class="border p-3 mb-3 rounded">
-          <h6 class="fw-bold">AMD CPU 종류</h6>
-          <div class="form-check">
-            <input class="form-check-input filter-checkbox" type="checkbox" id="ryzen9" value="라이젠9" data-filter="type">
-            <label class="form-check-label" for="ryzen9">라이젠9</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input filter-checkbox" type="checkbox" id="ryzen7" value="라이젠7" data-filter="type">
-            <label class="form-check-label" for="ryzen7">라이젠7</label>
-          </div>
-        </div>
-        
-        <!-- 소켓 구분 필터 -->
-        <div class="border p-3 mb-3 rounded">
-          <h6 class="fw-bold">소켓 구분</h6>
-          <div class="form-check">
-            <input class="form-check-input filter-checkbox" type="checkbox" id="socket1851" value="소켓1851" data-filter="socket">
-            <label class="form-check-label" for="socket1851">인텔(소켓1851)</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input filter-checkbox" type="checkbox" id="socket1700" value="소켓1700" data-filter="socket">
-            <label class="form-check-label" for="socket1700">인텔(소켓1700)</label>
-          </div>
-        </div>
-      </div>
-
-      <!-- 정렬 탭 (인기순, 신상품순 등) -->
-      <div class="mb-4">
-        <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <a class="nav-link active sort-tab" href="#" data-sort="popularity">인기순</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link sort-tab" href="#" data-sort="newest">신상품순</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link sort-tab" href="#" data-sort="low-price">낮은 가격순</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link sort-tab" href="#" data-sort="high-price">높은 가격순</a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- 제품 리스트 -->
-      <div id="product-list" class="bg-white p-4 rounded shadow-sm"></div>
-
-      <!-- 페이지네이션 -->
-      <div id="pagination" class="mt-4 d-flex justify-content-center"></div>
+    <!-- 인텔 CPU 종류 -->
+    <div>
+        <h3>인텔 CPU 종류</h3>
+        <label><input type="checkbox" name="intelCpu" value="울트라 9"> 울트라 9</label><br>
+        <label><input type="checkbox" name="intelCpu" value="코어 i7"> 코어 i7</label>
     </div>
 
-    <!-- Bootstrap JS, Popper.js 로딩 -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <!-- AMD CPU 종류 -->
+    <div>
+        <h3>AMD CPU 종류</h3>
+        <label><input type="checkbox" name="amdCpu" value="라이젠7"> 라이젠7</label><br>
+        <label><input type="checkbox" name="amdCpu" value="라이젠9"> 라이젠9</label>
+    </div>
 
-    <script>
-      // 제품 데이터를 생성하는 함수 (25개 제품 샘플)
-      const products = Array.from({ length: 50 }, (_, i) => ({
-        name: `제품 ${i + 1}`,
-        manufacturer: i % 2 === 0 ? '인텔' : 'AMD',
-        type: i % 4 === 0 ? '코어 i9' : i % 4 === 1 ? '코어 i7' : i % 4 === 2 ? '라이젠9' : '라이젠7',
-        socket: i % 3 === 0 ? '소켓1851' : '소켓1700',
-        popularity: Math.floor(Math.random() * 100),
-        releaseDate: new Date(2024, 11 - (i % 11), 28 - (i % 28)), // 2024년 기준
-        price: (i + 1) * 1000
-      }));
+    <!-- 소켓 구분 -->
+    <div>
+        <h3>소켓 구분</h3>
+        <label><input type="checkbox" name="socket" value="인텔(소켓1851)"> 인텔(소켓1851)</label><br>
+        <label><input type="checkbox" name="socket" value="인텔(소켓1700)"> 인텔(소켓1700)</label>
+    </div>
+	</form>
+	<!-- 세개의 탭 -->
+	<div class="tabs">
+    	<button class="tab-button" data-sort="newest">신상품 순</button>
+    	<button class="tab-button" data-sort="low-price">낮은 가격순</button>
+    	<button class="tab-button" data-sort="high-price">높은 가격순</button>
+	</div>
 
-      let filteredProducts = [...products];
-      let currentPage = 1;
-      const itemsPerPage = 5; // 5줄로 표시
-
-      function displayProducts(productsToDisplay) {
-        const productList = document.getElementById("product-list");
-        const start = (currentPage - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const paginatedProducts = productsToDisplay.slice(start, end);
-
-        productList.innerHTML = paginatedProducts.map(product => `
-          <div class="mb-3 d-flex justify-content-between align-items-center">
-            <div>
-              <h6>${product.name}</h6>
-              <small class="text-muted">
-                제조사: ${product.manufacturer} | 종류: ${product.type} | 소켓: ${product.socket} |
-                출시일: ${product.releaseDate.toISOString().split('T')[0]}
-              </small>
+    <div class="product-list">
+        <!-- 상품을 반복적으로 렌더링 -->
+        <div class="product-item" th:each="cpu, iterStat : ${cpus}">
+            <div class="product-image">
+    		<!-- 제품 ID를 기반으로 이미지 파일을 동적으로 설정 -->
+    			<img th:src="@{'/images/product/cpu/' + 'cpu' + (${cpu != null && cpu.cpuId != null ? cpu.cpuId : 'default'}) + '.png'}" 
+         				alt="Product Image" style="width:120px; height:120px;">
+			</div>
+            <div class="product-info">
+            	<a href="@{/cpuproducts/${cpu.cpuId}}">
+    				<h2 class="product-name" th:text="${cpu.productName}"></h2>
+    			</a>
+    			<p th:text="'제조사: ' + ${cpu.manufacturer} + ', CPU 종류: ' + ${cpu.productName} + ', 소켓: ' + ${cpu.socket} + ', 코어: ' + ${cpu.coreTypes} + ', 메모리: ' + ${cpu.supportedMemoryStandard}"></p>
+				<p th:text="${cpu.formattedReleaseDate}"></p>
+		
+			</div>
+            <div class="product-price">
+                <p th:text="${cpu.formattedPrice}"></p>
+                <form action="/cart/add" method="post">
+                    <input type="hidden" name="cpuId" th:value="${cpu.cpuId}">
+                    <button type="submit">장바구니</button>
+                </form>
             </div>
-            <div class="d-flex align-items-center">
-              <span class="me-3">${product.price.toLocaleString()}원</span>
-              <button class="btn btn-primary">장바구니</button>
-            </div>
-          </div>
-        `).join('');
-
-        renderPagination(productsToDisplay.length);
-      }
-
-      function renderPagination(totalItems) {
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
-        const pagination = document.getElementById("pagination");
-        pagination.innerHTML = '';
-
-        const maxPages = totalPages > 5 ? 5 : totalPages;
-        for (let i = 1; i <= maxPages; i++) {
-          const pageButton = document.createElement('button');
-          pageButton.textContent = i;
-          pageButton.className = `btn btn-secondary mx-1 ${i === currentPage ? 'active' : ''}`;
-          pageButton.addEventListener('click', () => {
-            currentPage = i;
-            displayProducts(filteredProducts);
-          });
-          pagination.appendChild(pageButton);
-        }
-      }
-
-      function filterProducts() {
-        const filters = {};
-        document.querySelectorAll('.filter-checkbox:checked').forEach(checkbox => {
-          const filterType = checkbox.dataset.filter;
-          if (!filters[filterType]) filters[filterType] = [];
-          filters[filterType].push(checkbox.value);
-        });
-
-        filteredProducts = products.filter(product => {
-          return Object.keys(filters).every(filterType =>
-            filters[filterType].includes(product[filterType])
-          );
-        });
-
-        currentPage = 1;
-        sortProducts(); // 정렬 후 표시
-      }
-
-      function sortProducts(sortType = 'popularity') {
-        switch (sortType) {
-          case 'newest':
-            filteredProducts.sort((a, b) => b.releaseDate - a.releaseDate); // 출시일 내림차순 (최신순)
-            break;
-          case 'low-price':
-            filteredProducts.sort((a, b) => a.price - b.price);
-            break;
-          case 'high-price':
-            filteredProducts.sort((a, b) => b.price - a.price);
-            break;
-          case 'popularity':
-            filteredProducts.sort((a, b) => b.popularity - a.popularity);
-            break;
-        }
-        displayProducts(filteredProducts);
-      }
-
-      // 필터 변경 시 제품 업데이트
-      document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', filterProducts);
-      });
-
-      // 정렬 탭 클릭 시 정렬 적용
-      document.querySelectorAll('.sort-tab').forEach(tab => {
-        tab.addEventListener('click', (event) => {
-          event.preventDefault();
-          document.querySelectorAll('.sort-tab').forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          sortProducts(tab.dataset.sort);
-        });
-      });
-
-      displayProducts(filteredProducts);
-    </script>
-  </main>
-  
-  <!-- 푸터 (회사 정보 등) -->
-  <footer class="bg-light text-center text-lg-start border-top mt-4">
-    <div class="container py-4 d-flex align-items-start">
-      <img src="/images/footerlogo.jpg" alt="Footer Logo">
-      <div class="container py-4">
-        <p><strong>(주)빌드이지</strong></p>
-        <p>주소: 서울특별시 강남구 언주로 508 14층 (역삼동, 서울상록빌딩) 대표: 김기현, 나경수, 이미은, 정병국, 황혜령</p>
-        <p>사업자번호: 104-81-53114 | 통신판매업: 제2016-서울강남-00151호 | 부가통신사업: 제112233호 <a href="#">[사업자정보확인]</a></p>
-        <p>(주)빌드이지는 상품판매와 직접적인 관련이 없으며, 모든 상거래의 책임은 구매자와 판매자에게 있습니다. 이에 대해 (주)빌드이지는 일체의 책임을 지지 않습니다. 본사에 등록된 모든 광고와 저작권 및 법적책임은 자료제공사 (또는 글쓴이)에게 있으므로 본사는 광고에 대한 책임을 지지 않습니다.</p>
-        <p class="text-muted small">Copyright © buildeasy Co., Ltd. All Rights Reserved.</p>
-      </div>
+        </div>
     </div>
-  </footer>
-
-  <!-- Bootstrap Bundle JS (Popper 포함) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/product/cpuCategoryFilter.js"></script>
 </body>
 </html>
