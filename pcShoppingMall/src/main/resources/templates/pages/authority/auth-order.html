@@ -49,169 +49,85 @@
 </head>
 <body>
 	<div layout:fragment="content" class="d-flex flex-column gap-3 w-100">
-		<h5>주문리스트</h5>
-		<div>
-			<table class="table-type-a">
-				<thead>
-					<tr>
-						<th>주문ID</th>
-						<th>주문일자</th>
-						<th>상품명</th>
-						<th>주문자</th>
-						<th>수령자</th>
-						<th>요금</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td data-bs-toggle="modal" data-bs-target="#exampleModal">123456789</td>
-						<td>2024-12-19 00:00:00</td>
-						<td>상품명01</td>
-						<td>주문자01</td>
-						<td>수령자01</td>
-						<td>1,000,000원</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	<!-- Modal -->
-	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	  <div class="modal-dialog modal-lg">
-      	<form action="/api/order/auth-order-modal" method="post">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <h1 class="modal-title fs-5" id="exampleModalLabel">주문 정보</h1>
-		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-		      </div>
-		      <div class="modal-body">
-		        <table class="table-type-a">
-		        	<tr>
-		        		<th>주문번호</th>
-	        			<td>
-        					<div>
-								<input type="email" class="form-control" id="exampleFormControlInput1" />
-							</div>
-						</td>
-		        		<th rowspan="2">배송주소<button type="button" class="btn btn-primary" id="addressSearchBtn">주소찾기</button></th>
-						<td rowspan="2">
-							<div>
-							    <input type="text" id="postcode" class="form-control" placeholder="우편번호" readonly>
-							</div>
-							<div>
-							    <input type="text" id="address" class="form-control" placeholder="주소" readonly>
-							</div>
-							<div>
-								<input type="text" id="detailAddress" class="form-control" placeholder="상세주소">
-							</div>
-							<div>
-								<input type="text" id="extraAddress" class="form-control" placeholder="참고항목" readonly>
-							</div>								
-						</td>
-		        	</tr>
-		        	<tr>
-		        		<th>주문일자</th>
-		        		<td>
-			        		<div>
-								<input type="email" class="form-control" id="exampleFormControlInput1" />
-							</div>
-		        		</td>
-		        	</tr>
-		        	<tr>
-		        		<th>주문자</th>
-		        		<td>
-		        			<div>
-								<input type="email" class="form-control" id="exampleFormControlInput1" />
-							</div>
-		        		</td>
-		        		<th>연락처</th>
-		        		<td>
-		        			<div>
-								<input type="email" class="form-control" id="exampleFormControlInput1" />
-							</div>
-		        		</td>
-		        	</tr>
-		        	<tr>
-		        		<th>주문상태</th>
-		        		<td>
-			        		<select class="form-select" aria-label="Default select example" name="categoryId">
-								<option selected>Open this select menu</option>
-								<option value="1">One</option>
-								<option value="2">Two</option>
-								<option value="3">Three</option>
-							</select>
-						</td>
-		        		<th>택배회사</th>
-		        		<td>
-			        		<select class="form-select" aria-label="Default select example" name="categoryId">
-								<option selected>Open this select menu</option>
-								<option value="1">One</option>
-								<option value="2">Two</option>
-								<option value="3">Three</option>
-							</select>
-		        		</td>
-		        	</tr>
-		        	<tr>
-		        		<th>인증전화번호</th>
-		        		<td>
-		        			<div>
-								<input type="email" class="form-control" id="exampleFormControlInput1" />
-							</div>
-		        		</td>
-		        		<th>운송장번호</th>
-		        		<td>
-		        			<div>
-								<input type="email" class="form-control" id="exampleFormControlInput1" />
-							</div>
-		        		</td>
-		        	</tr>
-		        </table>
-		        <table class="table-type-a">
-		        	<tr>
-		        		<th>주문금액</th>
-		        		<td>
-		        			<div>
-								<input type="email" class="form-control" id="exampleFormControlInput1" />
-							</div>
-		        		</td>
-		        		<th>배송비</th>
-		        		<td>
-		        			<div>
-								<input type="email" class="form-control" id="exampleFormControlInput1" />
-							</div>
-		        		</td>
-		        	</tr>
-		        </table>
-		        <div>
-					<ul class="nav nav-tabs" id="myTab" role="tablist">
-						<li class="nav-item" role="presentation">
-							<button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home</button>
-						</li>
-						<li class="nav-item" role="presentation">
-							<button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Profile</button>
-						</li>
-						<li class="nav-item" role="presentation">
-							<button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Contact</button>
-						</li>
-						<li class="nav-item" role="presentation">
-							<button class="nav-link" id="disabled-tab" data-bs-toggle="tab" data-bs-target="#disabled-tab-pane" type="button" role="tab" aria-controls="disabled-tab-pane" aria-selected="false" disabled>Disabled</button>
-						</li>
-					</ul>
-					<div class="tab-content" id="myTabContent">
-						<div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">...</div>
-						<div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">...</div>
-						<div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">...</div>
-						<div class="tab-pane fade" id="disabled-tab-pane" role="tabpanel" aria-labelledby="disabled-tab" tabindex="0">...</div>
-					</div>
-		        </div>
-		      </div>
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-		        <button type="submit" class="btn btn-primary">Save changes</button>
-		      </div>
-		    </div>
-      	</form>
-	  </div>
-	</div>
+        <h5>주문리스트</h5>
+        <div>
+            <table class="table-type-a">
+                <thead>
+                    <tr>
+                        <th>주문ID</th>
+                        <th>주문일자</th>
+                        <th>상품명</th>
+                        <th>주문자</th>
+                        <th>총 가격</th>
+                        <th>주문 상태</th>
+                    </tr>
+                </thead>
+					<tbody>
+					    <tr th:if="${#lists.isEmpty(orders)}">
+					        <td colspan="6" class="text-center">주문 목록이 비어있습니다.</td>
+					    </tr>
+					    <tr th:unless="${#lists.isEmpty(orders)}" th:each="order : ${orders}">
+					        <td th:text="${order.orderId}" data-bs-toggle="modal" data-bs-target="#orderModal"></td>
+					        <td th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+					        <td th:text="${order.productName}"></td>
+					        <td th:text="${order.userId}"></td>
+					        <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+					        <td th:text="${order.orderStatus}"></td>
+					    </tr>
+					</tbody>
+            </table>
+        </div>
+	    <!-- Modal -->
+	    <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+	        <div class="modal-dialog modal-lg">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <h5 class="modal-title" id="orderModalLabel">주문 상세</h5>
+	                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	                </div>
+	                <div class="modal-body">
+	                    <form th:action="@{/order/update}" method="post" th:object="${orderDto}">
+	                        <input type="hidden" th:field="*{orderId}" />
+	                        <div class="form-group">
+	                            <label for="userId">주문자 ID</label>
+	                            <input type="text" class="form-control" id="userId" th:field="*{userId}" readonly />
+	                        </div>
+	                        <div class="form-group">
+	                            <label for="productId">상품 ID</label>
+	                            <input type="number" class="form-control" id="productId" th:field="*{productId}" readonly />
+	                        </div>
+	                        <div class="form-group">
+	                            <label for="totalPrice">총 가격</label>
+	                            <input type="number" class="form-control" id="totalPrice" th:field="*{totalPrice}" />
+	                        </div>
+	                        <div class="form-group">
+	                            <label for="paymentMethod">결제 방법</label>
+	                            <input type="text" class="form-control" id="paymentMethod" th:field="*{paymentMethod}" />
+	                        </div>
+	                        <div class="form-group">
+	                            <label for="orderDate">주문 날짜</label>
+	                            <input type="datetime-local" class="form-control" id="orderDate" th:field="*{orderDate}" />
+	                        </div>
+	                        <div class="form-group">
+	                            <label for="orderStatus">주문 상태</label>
+	                            <select class="form-control" id="orderStatus" th:field="*{orderStatus}">
+	                                <option value="PENDING">대기 중</option>
+	                                <option value="PROCESSING">처리 중</option>
+	                                <option value="SHIPPED">배송 중</option>
+	                                <option value="DELIVERED">배송 완료</option>
+	                                <option value="CANCELLED">취소됨</option>
+	                            </select>
+	                        </div>
+	                        <div class="form-group">
+	                            <label for="quantity">주문 수량</label>
+	                            <input type="number" class="form-control" id="quantity" th:field="*{quantity}" />
+	                        </div>
+	                        <button type="submit" class="btn btn-primary">저장</button>
+	                    </form>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+    </div>
 </body>
 </html>

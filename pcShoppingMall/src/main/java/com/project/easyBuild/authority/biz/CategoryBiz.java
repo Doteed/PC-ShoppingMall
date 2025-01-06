@@ -17,4 +17,10 @@ public interface CategoryBiz {
 	
 	public void insertBatch(List<CategoryDto> categories);
 
+	public List<CategoryDto> getCategoriesByParentAndLevel(Long parentId, int level);
+	
+	public List<CategoryDto> getCategoriesByLevel(int level, Long parentId);
+	
+	public boolean existsByCategoryCode(String categoryCode);
+
 }

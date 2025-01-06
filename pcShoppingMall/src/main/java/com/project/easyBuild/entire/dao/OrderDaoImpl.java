@@ -1,5 +1,6 @@
 package com.project.easyBuild.entire.dao;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.project.easyBuild.authority.dto.CategoryDto;
 import com.project.easyBuild.entire.dto.OrderDto;
 
 @Repository
@@ -113,4 +115,25 @@ public class OrderDaoImpl implements OrderDao {
 			return result;
 		});
 	}
+	
+	@Override
+	public int insert (OrderDto dto) {
+		String sql = " INSERT INTO ORDER_TABLE ot VALUES (orderId, deliveryId, userId, productId, totalPrice, cartstatus, paymentMethod, orderDate, productName, deliveryStatus, addressee, address, phone) ";
+		return jdbcTemplate.update(sql, 
+				dto.getOrderId(),
+				dto.getDeliveryId(),
+				dto.getUserId(),
+				dto.getProductId(),
+				dto.getTotalPrice(),
+				dto.getCartstatus(),
+				dto.getPaymentMethod(),
+				dto.getOrderDate(),
+				dto.getProductName(),
+				dto.getDeliveryStatus(),
+				dto.getAddressee(),
+				dto.getAddress(),
+				dto.getPhone()				
+				);
+	}
+
 }

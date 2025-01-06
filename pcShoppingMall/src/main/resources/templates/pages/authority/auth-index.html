@@ -130,6 +130,19 @@
 							<td th:text="${sale.inquiryCount}"></td>
 							<td th:text="${sale.reviewCount}"></td>
 						</tr> -->
+					<tr th:if="${#lists.isEmpty(list)}">
+                        <td colspan="8">----게시물이 없습니다.----</td>
+                    </tr>
+                    <tr th:each="item : ${list}" th:unless="${#lists.isEmpty(list)}">
+                        <td th:text="${item.productId}"></td>
+                        <td th:text="${item.userId}"></td>
+                        <td th:text="${item.categoryId}"></td>
+                        <td th:text="${item.authId}"></td>
+                        <td th:text="${item.pPrice}"></td>
+                        <td th:text="${item.pName}"></td>
+                        <td th:text="${item.pStock}"></td>
+                        <td th:text="${item.pEnroll}"></td>
+                    </tr>
 					</tbody>
 				</table>
 			</div>
