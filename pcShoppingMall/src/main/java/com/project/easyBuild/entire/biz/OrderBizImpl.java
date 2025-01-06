@@ -34,6 +34,11 @@ public class OrderBizImpl implements OrderBiz {
 		return dao.myUpdate(dto);
 	}
 
+    @Override
+    public int update(int deliveryId, String deliveryStatus) {
+        return dao.update(deliveryId, deliveryStatus);
+    }
+    
 	@Override
 	public int cancle(int orderId, String userId) {
 		return dao.cancle(orderId, userId);
