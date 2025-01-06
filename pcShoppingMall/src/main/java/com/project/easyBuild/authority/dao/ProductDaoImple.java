@@ -28,18 +28,20 @@ public class ProductDaoImple implements ProductDao {
             ProductDto dto = new ProductDto();
             dto.setProductId(rs.getInt("PRODUCT_ID"));
             dto.setUserId(rs.getString("USER_ID"));
-            dto.setCategoryId(rs.getInt("CATEGORY_ID"));
+            dto.setCategoryId1(rs.getInt("CATEGORY_ID_1"));
+            dto.setCategoryId2(rs.getInt("CATEGORY_ID_2"));
+            dto.setCategoryId3(rs.getInt("CATEGORY_ID_3"));
             dto.setAuthId(rs.getInt("AUTH_ID"));
             dto.setImageUrl(rs.getString("IMAGE_URL"));
-            dto.setpName(rs.getString("P_NAME"));
-            dto.setpStock(rs.getInt("P_STOCK"));
+            dto.setPName(rs.getString("P_NAME"));
+            dto.setPStock(rs.getInt("P_STOCK"));
             dto.setOrderWaiting(rs.getInt("ORDER_WAITING"));
             dto.setAvailableStock(rs.getInt("AVAILABLE_STOCK"));
-            dto.setpReportstock(rs.getInt("P_REPORTSTOCK"));
-            dto.setpSale(rs.getString("P_SALE"));
-            dto.setpSoldout(rs.getString("P_SOLDOUT"));
-            dto.setpPrice(rs.getInt("P_PRICE"));
-            dto.setpEnroll(rs.getDate("P_ENROLL"));
+            dto.setPReportstock(rs.getInt("P_REPORTSTOCK"));
+            dto.setPSale(rs.getString("P_SALE"));
+            dto.setPSoldout(rs.getString("P_SOLDOUT"));
+            dto.setPPrice(rs.getInt("P_PRICE"));
+            dto.setPEnroll(rs.getDate("P_ENROLL"));
             return dto;
         };
     }
@@ -58,11 +60,26 @@ public class ProductDaoImple implements ProductDao {
 
     @Override
     public int insert(ProductDto dto) {
-        String sql = "INSERT INTO PRODUCT (PRODUCT_ID, USER_ID, CATEGORY_ID, AUTH_ID, P_PRICE, P_NAME, P_STOCK, P_ENROLL, IMAGE_URL) " +
-                     "VALUES (SEQ_PRODUCT.NEXTVAL, ?, ?, ?, ?, ?, ?, CURRENT_DATE, ?)";
-        return jdbcTemplate.update(sql, dto.getUserId(), dto.getCategoryId(), dto.getAuthId(), 
-                                   dto.getpPrice(), dto.getpName(), dto.getpStock(), dto.getImageUrl());
+        String sql = "INSERT INTO PRODUCT (PRODUCT_ID, USER_ID, CATEGORY_ID_1, CATEGORY_ID_2, CATEGORY_ID_3, AUTH_ID, P_PRICE, P_NAME, P_STOCK, P_REPORTSTOCK, P_ENROLL, IMAGE_URL, P_EXPLAN, P_SALE, P_SOLDOUT, ORDER_WAITING) " +
+                     "VALUES (SEQ_PRODUCT.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE, ?, ?, ?, ?, ?)";
+        return jdbcTemplate.update(sql, 
+            dto.getUserId(), 
+            dto.getCategoryId1(), 
+            dto.getCategoryId2(), 
+            dto.getCategoryId3(), 
+            dto.getAuthId(),
+            dto.getPPrice(), 
+            dto.getPName(), 
+            dto.getPStock(), 
+            dto.getPReportstock(), 
+            dto.getImageUrl(), 
+            dto.getPExplan(), 
+            dto.getPSale(), 
+            dto.getPSoldout(), 
+            dto.getOrderWaiting()
+        );
     }
+
     
     @Override
     public int updateProductImage(Integer productId, String imageUrl) {

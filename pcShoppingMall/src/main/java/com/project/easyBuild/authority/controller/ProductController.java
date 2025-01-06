@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.project.easyBuild.authority.biz.GitHubService;
 import com.project.easyBuild.authority.biz.ProductBiz;
 import com.project.easyBuild.authority.dto.ProductDto;
@@ -34,11 +37,13 @@ public class ProductController {
     private final Logger logger = LoggerFactory.getLogger(ProductController.class);
     private final ProductBiz productBiz;
     private final GitHubService gitHubService;
+    private final ObjectMapper objectMapper;
         
     @Autowired
-    public ProductController(ProductBiz productBiz, GitHubService gitHubService) {
+    public ProductController(ProductBiz productBiz, GitHubService gitHubService, ObjectMapper objectMapper) {
         this.productBiz = productBiz;
         this.gitHubService = gitHubService;
+        this.objectMapper = objectMapper;
     }
     
     @GetMapping("/list")
@@ -68,26 +73,25 @@ public class ProductController {
     }
 
     @PostMapping("/auth-product-insert")
-    public String authProductInsert(@ModelAttribute ProductDto dto, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+    public ResponseEntity<?> authProductInsert(@ModelAttribute ProductDto dto, 
+                                               @RequestParam("file") MultipartFile file,
+                                               @RequestParam("categoryIds") String categoryIdsJson) {
         try {
-            logger.info("Inserting new product: {}", dto.getpName());
-            String repoName = "Doteed/PC-ShoppingMall";
-            String path = "pcShoppingMall/src/main/resources/static/images/products";
-            String imageUrl = gitHubService.uploadImage(repoName, path, file);
-            dto.setImageUrl(imageUrl);
+            List<Integer> categoryIds = objectMapper.readValue(categoryIdsJson, new TypeReference<List<Integer>>(){});
             
-            int res = productBiz.insert(dto);
+            String imageUrl = gitHubService.uploadImage("Doteed/PC-ShoppingMall", 
+                                                        "pcShoppingMall/src/main/resources/static/images/products", 
+                                                        file);
+            dto.setImageUrl(imageUrl);
+            int res = productBiz.insertWithCategories(dto, categoryIds);
             if (res > 0) {
-                redirectAttributes.addFlashAttribute("successMessage", "Product inserted successfully.");
-                return "redirect:/auth-product";
+                return ResponseEntity.ok().body(Map.of("message", "Product inserted successfully."));
             } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Failed to insert product.");
-                return "redirect:/auth-product-insert";
+                return ResponseEntity.badRequest().body(Map.of("error", "Failed to insert product."));
             }
         } catch (IOException e) {
-            logger.error("Image upload error", e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to upload image.");
-            return "redirect:/auth-product-insert";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(Map.of("error", "Failed to upload image or process categories."));
         }
     }
 
@@ -197,8 +201,6 @@ public class ProductController {
                     .body(Map.of("success", false, "message", e.getMessage()));
         }
     }
-
-
 
     @GetMapping("/product/{productId}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable int productId) {

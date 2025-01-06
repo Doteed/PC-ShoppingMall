@@ -12,4 +12,5 @@ public interface OrderBiz {
 	public int myUpdate(OrderDto dto);
 	public int cancle(int orderId, String userId);
 	public Map<String, Integer> count(String userId);
+	public int insert(OrderDto order);
 }

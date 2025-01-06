@@ -104,10 +104,14 @@ public class HomeController {
 	}
 
 	@GetMapping("/auth-order")
-	public String authIndex() {
-		return "pages/authority/auth-order";
+	public String authOrder(Model model) {
+	    List<OrderDto> orders = orderbiz.listAll(); // 모든 주문 데이터 가져오기
+	    model.addAttribute("orders", orders); // 주문 리스트 추가
+	    model.addAttribute("orderDto", new OrderDto()); // 빈 orderDto 객체 추가
+	    return "pages/authority/auth-order";
 	}
-	
+
+
 	@GetMapping("/auth-category")
 	public String authCategory() {
 		return "pages/authority/auth-category";
@@ -145,20 +149,6 @@ public class HomeController {
 		model.addAttribute("orders", orders);
 		return "pages/mypage/my-order";
 	}
-
-		
-
-	//제품 카테고리 관련
-	@GetMapping("/cpuproducts")
-    public String cpuproducts() {
-    	return "product/category/cpuproducts";
-    }
-    
-    @GetMapping("/cpu01")
-    public String cpu01() {
-    	return "product/detail/cpu01";
-    }
-    
 
     //회원 관리
     @Autowired
@@ -281,12 +271,5 @@ public class HomeController {
         session.invalidate();  // 세션 무효화
         return "redirect:/";  // 로그아웃 후 홈 페이지로 리다이렉트
     }
-    
-    
-
-
-
-
-
 
 }
