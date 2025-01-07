@@ -29,12 +29,12 @@ public class QnaBizImpl implements QnaBiz {
 	}
 
 	@Override
-	public int update(QnaDto dto) {
-		return dao.update(dto);
+	public int update(QnaDto dto, String userId) {
+		return dao.update(dto, userId);
 	}
 
 	@Override
-	public int delete(int qnaId, String userId) {
-		return dao.delete(qnaId, userId);
+	public int delete(int qnaId, String userId, int authId) {
+		return dao.delete(qnaId, userId, authId);
 	}
 }

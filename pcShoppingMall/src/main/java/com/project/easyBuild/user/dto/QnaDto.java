@@ -25,10 +25,9 @@ public class QnaDto {
 	private Date createdDate;
 	
 	//constructor for updating
-	public QnaDto(int qaId, String title, String content, String userId) {
+	public QnaDto(int qaId, String title, String content) {
 		super();
 		this.qnaId = qaId;
-		this.userId = userId;
 		this.title = title;
 		this.content = content;
 	}

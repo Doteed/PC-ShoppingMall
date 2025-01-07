@@ -1,5 +1,6 @@
 package com.project.easyBuild.user.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class QnaDaoImpl implements QnaDao {
 
 	@Override
 	public List<QnaDto> mylistAll(String userId) {
-		String sql = "SELECT * FROM QNA WHERE USER_ID = ?";
+		String sql = "SELECT * FROM QNA WHERE USER_ID = ? ORDER BY QNA_ID DESC";
 
 		System.out.println("userId: " + userId);
 
@@ -45,7 +46,7 @@ public class QnaDaoImpl implements QnaDao {
 
 	@Override
 	public List<QnaDto> listAll() {
-		String sql = "SELECT * FROM QNA";
+		String sql = "SELECT * FROM QNA ORDER BY QNA_ID DESC";
 		return jdbcTemplate.query(sql, rowMapper);
 	}
 
@@ -64,16 +65,34 @@ public class QnaDaoImpl implements QnaDao {
 	}
 
 	@Override
-	public int update(QnaDto dto) {
+	public int update(QnaDto dto, String userId) {
 		String sql = "UPDATE QNA SET TITLE = ?, CONTENT = ? WHERE QNA_ID = ? AND USER_ID = ?";
 
-		return jdbcTemplate.update(sql, dto.getTitle(), dto.getContent(), dto.getQnaId(), dto.getUserId());
+		return jdbcTemplate.update(sql, dto.getTitle(), dto.getContent(), dto.getQnaId(), userId);
 	}
 
+//	@Override
+//	public int insert(QnaDto dto, String userId, String authId) {
+//		String sql = "INSERT INTO QNA (BOARD_ID, USER_ID, AUTH_ID, TITLE, CONTENT, PASSWORD, IS_SECRET, CREATED_DATE)"
+//				+ " VALUES (1, ?, ?, ?, ?, ?, ?, SYSDATE, ?, 'N') ";
+//
+//		return jdbcTemplate.update(sql, userId, authId, dto.getTitle(), dto.getContent(), 1,
+//				dto.getTitle(), dto.getContent(), dto.getRating());
+//	}
+	
 	@Override
-	public int delete(int qnaId, String userId) {
-		String sql = "DELETE FROM QNA WHERE QNA_ID = ? AND (USER_ID = ? OR AUTH_ID = ?)";
+	public int delete(int qnaId, String userId, int authId) {
+		StringBuilder sql = new StringBuilder("DELETE FROM QNA WHERE QNA_ID = ?");
+		List<Object> params = new ArrayList<>();
+		params.add(qnaId);
 		
-		return jdbcTemplate.update(sql, qnaId, userId, authId);
+		if(authId == 2) {
+			//관리자일때 조건없이 삭제
+		} else if(authId == 1) {
+			sql.append(" AND USER_ID = ?");
+	        params.add(userId);
+		}
+		
+		return jdbcTemplate.update(sql.toString(), params.toArray());
 	}
 }

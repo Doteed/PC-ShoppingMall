@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.easyBuild.entire.biz.OrderBiz;
 import com.project.easyBuild.entire.dto.OrderDto;
+import com.project.easyBuild.member.dto.MemberDto;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/order")
@@ -25,9 +28,15 @@ public class UserOrderController {
 	private OrderBiz orderbiz;
 
 	@GetMapping("/detail/{orderId}")
-	public ResponseEntity<OrderDto> getDetail(@PathVariable int orderId, @RequestParam String userId) {
+	public ResponseEntity<?> getDetail(@PathVariable int orderId, HttpSession session) {
+		MemberDto user = (MemberDto) session.getAttribute("dto");
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
+		}
+		
 		try {
-			OrderDto order = orderbiz.listOne(orderId, userId);
+			System.out.println(user.getUserId());
+			OrderDto order = orderbiz.listOne(orderId, user.getUserId());
 
 			if (order != null) {
 				return ResponseEntity.ok(order);
@@ -41,11 +50,13 @@ public class UserOrderController {
 	}
 
 	@PutMapping("/update") // 주소 변경
-	public ResponseEntity<Map<String, Object>> myUpdate(@RequestBody OrderDto orderDto) {
-		System.out.println("받은 OrderDto: " + orderDto);
-
-		int result = orderbiz.myUpdate(orderDto);
-		System.out.println("업데이트 결과: " + result);
+	public ResponseEntity<?> myUpdate(@RequestBody OrderDto orderDto, HttpSession session) {
+		MemberDto user = (MemberDto) session.getAttribute("dto");
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
+		}
+		
+		int result = orderbiz.update(orderDto, user.getUserId());
 
 		Map<String, Object> response = new HashMap<>();
 
@@ -62,8 +73,13 @@ public class UserOrderController {
 
 	// 취소
 	@PutMapping("/cancle")
-	public ResponseEntity<Map<String, String>> cancle(@RequestParam int orderId, @RequestParam String userId) {// @RequestAttribute("userId")
-		int result = orderbiz.cancle(orderId, userId);
+	public ResponseEntity<Map<String, String>> cancle(@RequestParam int orderId,  HttpSession session) {
+		MemberDto user = (MemberDto) session.getAttribute("dto");
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
+		}
+		
+		int result = orderbiz.cancle(orderId, user.getUserId(), user.getAuthId());
 
 		Map<String, String> response = new HashMap<>();
 		if (result > 0) {
