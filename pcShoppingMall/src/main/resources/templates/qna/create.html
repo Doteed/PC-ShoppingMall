@@ -10,12 +10,6 @@
         <div class="container mt-5">
             <h1>QnA 작성하기</h1>
             <form th:action="@{/qnas}" th:object="${qna}" method="post" enctype="multipart/form-data" id="qnaForm">
-                <!-- User ID -->
-                <div class="mb-3">
-                    <label for="userId" class="form-label">User ID</label>
-                    <input type="text" class="form-control" th:field="*{userId}" id="userId" placeholder="ID를 입력하세요." required>
-                </div>
-
                 <!-- 제목 -->
                 <div class="mb-3">
                     <label for="title" class="form-label">제목</label>

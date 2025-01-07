@@ -13,8 +13,8 @@
             <!-- 공지사항 -->
             <div class="mt-4">
 				<div class="d-flex justify-content-between align-items-center">
-                	<h4>공지사항</h4>
-				    <a href="/announcements/new" class="btn btn-primary">작성하기</a>
+                	<h4><a href=/announcements>공지사항</a></h4>
+				    <a th:if="${isAdmin}" href="/announcements/new" class="btn btn-primary">작성하기</a>
 				</div>
                 <div th:if="${notices == null || notices.totalElements == 0}" class="alert alert-info mt-3">
                     <p>등록된 공지사항이 없습니다.</p>
@@ -42,8 +42,8 @@
             <!-- 자주 묻는 질문 -->
             <div class="mt-4">
 				<div class="d-flex justify-content-between align-items-center">
-				    <h4>자주 묻는 질문</h4>
-				    <a href="/faqs/new" class="btn btn-primary">작성하기</a>
+				    <h4><a href=/faqs>자주 묻는 질문</a></h4>
+				    <a th:if="${isAdmin}" href="/faqs/new" class="btn btn-primary">작성하기</a>
 				</div>
                 <div th:if="${faqs == null || faqs.totalElements == 0}" class="alert alert-info mt-3">
                     <p>등록된 자주 묻는 질문이 없습니다.</p>
@@ -70,7 +70,7 @@
 
             <!-- QnA -->
             <div class="mt-4">
-                <h4>QnA</h4>
+                <h4><a href=qnas>QnA</a></h4>
                 <div th:if="${qnas == null || qnas.totalElements == 0}" class="alert alert-info mt-3">
                     <p>등록된 QnA가 없습니다.</p>
                 </div>

@@ -66,17 +66,21 @@ public class AnnouncementService {
     }
 
     public void updateAnnouncement(Announcement announcement) {
-        // 기존 엔티티 조회
-        Announcement existingAnnouncement = announcementRepository.findById(announcement.getAnnouncId())
-            .orElseThrow(() -> new NoSuchElementException("Announcement not found"));
+        if (announcement.getAnnouncId() == null) {
+            throw new IllegalArgumentException("The given id must not be null");
+        }
 
-        // 필요한 필드만 업데이트
+        // 기존 데이터 가져오기
+        Announcement existingAnnouncement = announcementRepository.findById(announcement.getAnnouncId())
+            .orElseThrow(() -> new IllegalArgumentException("No announcement found with ID: " + announcement.getAnnouncId()));
+
+        // 데이터 업데이트
         existingAnnouncement.setTitle(announcement.getTitle());
         existingAnnouncement.setContent(announcement.getContent());
 
-        // 저장
         announcementRepository.save(existingAnnouncement);
     }
+
 
     public void deleteAnnouncement(Long id) {
         if (!announcementRepository.existsById(id)) {

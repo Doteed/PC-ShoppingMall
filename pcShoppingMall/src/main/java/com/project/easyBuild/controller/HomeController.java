@@ -190,7 +190,7 @@ public class HomeController {
         if (member == null) {
             System.out.println("회원 정보를 찾을 수 없습니다. userId: " + userId);
             model.addAttribute("errorMessage", "회원 정보를 찾을 수 없습니다.");
-            return "pages/authority/error-page"; // 에러 페이지를 따로 생성하거나, 기존 페이지로 이동
+            return "pages/authority/error-page"; // 에러 페이지 따로 생성
         }
 
         // 회원 정보를 모델에 추가
@@ -205,8 +205,6 @@ public class HomeController {
     public ResponseEntity<Void> deleteMember(@PathVariable String userId) {
         try {
             memberBoardBiz.deleteMember(userId); // 비즈니스 로직 호출
-            memberBoardBiz.deleteMember(userId);
-            memberBoardBiz.deleteMember(userId);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
