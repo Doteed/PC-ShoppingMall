@@ -3,131 +3,190 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/auth-layout}">
 <head>
-<meta charset="UTF-8">
-	<title>주문 관리 페이지</title>
-	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-		    var addressSearchBtn = document.getElementById('addressSearchBtn');
-		    addressSearchBtn.addEventListener('click', execDaumPostcode);
-		});
-	
-		function execDaumPostcode() {
-		    new daum.Postcode({
-		        oncomplete: function(data) {
-		            var addr = '';
-		            var extraAddr = '';
-	
-		            if (data.userSelectedType === 'R') {
-		                addr = data.roadAddress;
-		            } else {
-		                addr = data.jibunAddress;
-		            }
-	
-		            if(data.userSelectedType === 'R'){
-		                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
-		                    extraAddr += data.bname;
-		                }
-		                if(data.buildingName !== '' && data.apartment === 'Y'){
-		                    extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-		                }
-		                if(extraAddr !== ''){
-		                    extraAddr = ' (' + extraAddr + ')';
-		                }
-		                document.getElementById("extraAddress").value = extraAddr;
-		            } else {
-		                document.getElementById("extraAddress").value = '';
-		            }
-	
-		            document.getElementById('postcode').value = data.zonecode;
-		            document.getElementById("address").value = addr;
-		            document.getElementById("detailAddress").focus();
-		        }
-		    }).open();
-		}
-	</script>
+    <meta charset="UTF-8">
+    <title>주문 관리 페이지</title>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const orderIds = document.querySelectorAll('.order-id');
+            orderIds.forEach(orderId => {
+                orderId.addEventListener('click', function() {
+                    showOrderDetails(this.getAttribute('data-order-id'));
+                });
+            });
+        });
+
+        function showOrderDetails(orderId) {
+            fetch('/orders/' + orderId)
+                .then(response => response.json())
+                .then(order => {
+                    document.getElementById('orderId').value = order.orderId;
+                    document.getElementById('deliveryId').value = order.deliveryId;
+                    document.getElementById('userId').value = order.userId;
+                    document.getElementById('productId').value = order.productId;
+                    document.getElementById('totalPrice').value = order.totalPrice;
+                    document.getElementById('paymentMethod').value = order.paymentMethod;
+                    document.getElementById('orderDate').value = order.orderDate;
+                    
+                    var orderModal = new bootstrap.Modal(document.getElementById('orderModal'));
+                    orderModal.show();
+                })
+                .catch(error => {
+                    alert('주문 정보를 불러오는데 실패했습니다.');
+                });
+        }
+
+        function updateOrder() {
+            var formData = new FormData(document.getElementById('orderForm'));
+            fetch('/orders/update', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('주문이 성공적으로 업데이트되었습니다.');
+                var orderModal = bootstrap.Modal.getInstance(document.getElementById('orderModal'));
+                orderModal.hide();
+                location.reload();
+            })
+            .catch(error => {
+                alert('주문 업데이트에 실패했습니다.');
+            });
+        }
+
+        function cancelOrder() {
+            var orderId = document.getElementById('orderId').value;
+            if (confirm('정말로 이 주문을 취소하시겠습니까?')) {
+                fetch('/orders/cancel/' + orderId, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('주문이 성공적으로 취소되었습니다.');
+                    var orderModal = bootstrap.Modal.getInstance(document.getElementById('orderModal'));
+                    orderModal.hide();
+                    location.reload();
+                })
+                .catch(error => {
+                    alert('주문 취소에 실패했습니다.');
+                });
+            }
+        }
+        
+        //주소관련
+        function execDaumPostcode() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    var addr = data.address; // 기본 주소
+                    document.getElementById("addressee").value = addr;
+                    document.getElementById("address").focus(); // 상세주소 입력 필드로 포커스 이동
+                }
+            }).open();
+        }
+    </script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
-	<div layout:fragment="content" class="d-flex flex-column gap-3 w-100">
+    <div layout:fragment="content" class="d-flex flex-column gap-3 w-100">
         <h5>주문리스트</h5>
         <div>
             <table class="table-type-a">
                 <thead>
                     <tr>
                         <th>주문ID</th>
-                        <th>주문일자</th>
-                        <th>상품명</th>
-                        <th>주문자</th>
+                        <th>배송ID</th>
+                        <th>회원ID</th>
+                        <th>상품ID</th>
                         <th>총 가격</th>
-                        <th>주문 상태</th>
+                        <th>결제 방법</th>
+                        <th>주문 날짜</th>
                     </tr>
                 </thead>
-					<tbody>
-					    <tr th:if="${#lists.isEmpty(orders)}">
-					        <td colspan="6" class="text-center">주문 목록이 비어있습니다.</td>
-					    </tr>
-					    <tr th:unless="${#lists.isEmpty(orders)}" th:each="order : ${orders}">
-					        <td th:text="${order.orderId}" data-bs-toggle="modal" data-bs-target="#orderModal"></td>
-					        <td th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
-					        <td th:text="${order.productName}"></td>
-					        <td th:text="${order.userId}"></td>
-					        <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-					        <td th:text="${order.orderStatus}"></td>
-					    </tr>
-					</tbody>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(orders)}">
+                        <td colspan="7" class="text-center">주문 목록이 비어있습니다.</td>
+                    </tr>
+                    <tr th:unless="${#lists.isEmpty(orders)}" th:each="order : ${orders}">
+                        <td><span class="order-id" th:text="${order.orderId}" data-order-id="#orderModal" style="cursor: pointer;"></span></td>
+                        <td th:text="${order.deliveryId}"></td>
+                        <td th:text="${order.userId}"></td>
+                        <td th:text="${order.productId}"></td>
+                        <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+                        <td th:text="${order.paymentMethod}"></td>
+                        <td th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                    </tr>
+                </tbody>
             </table>
         </div>
-	    <!-- Modal -->
-	    <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-	        <div class="modal-dialog modal-lg">
-	            <div class="modal-content">
-	                <div class="modal-header">
-	                    <h5 class="modal-title" id="orderModalLabel">주문 상세</h5>
-	                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-	                </div>
-	                <div class="modal-body">
-	                    <form th:action="@{/order/update}" method="post" th:object="${orderDto}">
-	                        <input type="hidden" th:field="*{orderId}" />
-	                        <div class="form-group">
-	                            <label for="userId">주문자 ID</label>
-	                            <input type="text" class="form-control" id="userId" th:field="*{userId}" readonly />
-	                        </div>
-	                        <div class="form-group">
-	                            <label for="productId">상품 ID</label>
-	                            <input type="number" class="form-control" id="productId" th:field="*{productId}" readonly />
-	                        </div>
-	                        <div class="form-group">
-	                            <label for="totalPrice">총 가격</label>
-	                            <input type="number" class="form-control" id="totalPrice" th:field="*{totalPrice}" />
-	                        </div>
-	                        <div class="form-group">
-	                            <label for="paymentMethod">결제 방법</label>
-	                            <input type="text" class="form-control" id="paymentMethod" th:field="*{paymentMethod}" />
-	                        </div>
-	                        <div class="form-group">
-	                            <label for="orderDate">주문 날짜</label>
-	                            <input type="datetime-local" class="form-control" id="orderDate" th:field="*{orderDate}" />
-	                        </div>
-	                        <div class="form-group">
-	                            <label for="orderStatus">주문 상태</label>
-	                            <select class="form-control" id="orderStatus" th:field="*{orderStatus}">
-	                                <option value="PENDING">대기 중</option>
-	                                <option value="PROCESSING">처리 중</option>
-	                                <option value="SHIPPED">배송 중</option>
-	                                <option value="DELIVERED">배송 완료</option>
-	                                <option value="CANCELLED">취소됨</option>
-	                            </select>
-	                        </div>
-	                        <div class="form-group">
-	                            <label for="quantity">주문 수량</label>
-	                            <input type="number" class="form-control" id="quantity" th:field="*{quantity}" />
-	                        </div>
-	                        <button type="submit" class="btn btn-primary">저장</button>
-	                    </form>
-	                </div>
-	            </div>
-	        </div>
-	    </div>
+        <button data-bs-toggle="modal" data-bs-target="#orderModal">modal</button>
+        <!-- Modal -->
+		<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+		    <div class="modal-dialog modal-lg">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		                <h5 class="modal-title" id="orderModalLabel">주문 상세</h5>
+		                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		            </div>
+		            <div class="modal-body">
+		                <form id="orderForm">
+		                    <input type="hidden" id="orderId" name="orderId" />
+		                    <div class="row">
+		                        <div class="col-md-6 mb-3">
+		                            <label for="deliveryId">배송 ID</label>
+		                            <input type="number" class="form-control" id="deliveryId" name="deliveryId" />
+		                        </div>
+		                        <div class="col-md-6 mb-3">
+		                            <label for="userId">회원 ID</label>
+		                            <input type="text" class="form-control" id="userId" name="userId" />
+		                        </div>
+		                    </div>
+		                    <div class="row">
+		                        <div class="col-md-6 mb-3">
+		                            <label for="productId">상품 ID</label>
+		                            <input type="number" class="form-control" id="productId" name="productId" />
+		                        </div>
+		                        <div class="col-md-6 mb-3">
+		                            <label for="totalPrice">총 가격</label>
+		                            <input type="number" class="form-control" id="totalPrice" name="totalPrice" />
+		                        </div>
+		                    </div>
+		                    <div class="row">
+		                        <div class="col-md-6 mb-3">
+		                            <label for="paymentMethod">결제 방법</label>
+		                            <input type="text" class="form-control" id="paymentMethod" name="paymentMethod" />
+		                        </div>
+		                        <div class="col-md-6 mb-3">
+		                            <label for="phone">전화번호</label>
+		                            <input type="text" class="form-control" id="phone" name="phone" />
+		                        </div>
+		                    </div>
+		                    <div class="row">
+		                        <div class="col-md-6 mb-3">
+		                            <label for="addressee">주소
+		                                <button type="button" class="btn btn-primary" style="margin-bottom: 5px;padding: 1px 5px;height: 20px;line-height: 10px;" onclick="execDaumPostcode()">주소 검색</button>
+		                            </label>
+		                            <input type="text" class="form-control" id="addressee" name="addressee" readonly />
+		                        </div>
+		                        <div class="col-md-6 mb-3">
+		                            <label for="address">상세주소</label>
+		                            <input type="text" class="form-control" id="address" name="address" />
+		                        </div>
+		                    </div>
+		                    <div class="row">
+		                        <div class="col-md-6 mb-3">
+		                            <label for="deliveryStatus">배송 상태</label>
+		                            <input type="text" class="form-control" id="deliveryStatus" name="deliveryStatus" />
+		                        </div>
+		                    </div>
+		                </form>
+		            </div>
+		            <div class="modal-footer">
+		                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+		                <button type="button" class="btn btn-primary" onclick="updateOrder()">저장</button>
+		                <button type="button" class="btn btn-danger" onclick="cancelOrder()">주문 취소</button>
+		            </div>
+		        </div>
+		    </div>
+		</div>
     </div>
 </body>
 </html>
