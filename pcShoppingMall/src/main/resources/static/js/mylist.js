@@ -12,10 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			
             const entityType = this.getAttribute('data-type');
             const entityId = this.getAttribute('data-id');
-            const userId = 'user01'; // 임시 userId
 
             if (entityType === 'qna' || entityType === 'review') {
-                fetch(`/${entityType}/detail/${entityId}?userId=${userId}`)
+                fetch(`/${entityType}/detail/${entityId}?`)
                     .then(response => response.json())
                     .then(data => {
                         const entityDetailContainer = document.getElementById('entityDetailContainer');
@@ -86,13 +85,12 @@ document.addEventListener('DOMContentLoaded', function() {
     orderDetailButtons.forEach((button) => {
         button.addEventListener('click', function(event) {
             const orderId = event.target.getAttribute('data-order-id');
-            const userId = 'user01'; // 임시 userId
 
             if (popupWindow && !popupWindow.closed) {
                 popupWindow.close();
             }
 
-            fetch(`/order/detail/${orderId}?userId=${userId}`)
+            fetch(`/order/detail/${orderId}?`)
                 .then(response => response.json())
                 .then(data => {
                     popupWindow = window.open('', 'OrderDetail', 'width=600,height=400');
@@ -221,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const confirmCancel = confirm('정말 주문을 취소하시겠습니까?');
                         if (!confirmCancel) return;
 
-                         fetch(`/order/cancle?orderId=${data.orderId}&userId=${userId}`, {
+                         fetch(`/order/cancle?orderId=${data.orderId}`, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json',

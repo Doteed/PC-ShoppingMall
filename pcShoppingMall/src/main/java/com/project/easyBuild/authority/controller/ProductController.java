@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -72,17 +73,28 @@ public class ProductController {
         return ResponseEntity.ok(Collections.singletonMap("success", updatedRows > 0));
     }
 
-    @PostMapping("/auth-product-insert")
-    public ResponseEntity<?> authProductInsert(@ModelAttribute ProductDto dto, 
-                                               @RequestParam("file") MultipartFile file,
-                                               @RequestParam("categoryIds") String categoryIdsJson) {
+    @PostMapping(value = "/auth-product-insert", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> authProductInsert(
+        @ModelAttribute ProductDto dto,
+        @RequestParam("file") MultipartFile file,
+        @RequestParam("categoryIds") String categoryIdsJson) {
+        
         try {
+            // JSON 문자열을 List<Integer>로 변환
             List<Integer> categoryIds = objectMapper.readValue(categoryIdsJson, new TypeReference<List<Integer>>(){});
             
-            String imageUrl = gitHubService.uploadImage("Doteed/PC-ShoppingMall", 
-                                                        "pcShoppingMall/src/main/resources/static/images/products", 
-                                                        file);
+            // 카테고리 ID 설정
+            if (categoryIds.size() > 0) dto.setCategoryId1(categoryIds.get(0));
+            if (categoryIds.size() > 1) dto.setCategoryId2(categoryIds.get(1));
+            if (categoryIds.size() > 2) dto.setCategoryId3(categoryIds.get(2));
+
+            // 이미지 업로드 및 URL 설정
+            String imageUrl = gitHubService.uploadImage("Doteed/PC-ShoppingMall",
+                    "pcShoppingMall/src/main/resources/static/images/products",
+                    file);
             dto.setImageUrl(imageUrl);
+
+            // 제품 삽입
             int res = productBiz.insertWithCategories(dto, categoryIds);
             if (res > 0) {
                 return ResponseEntity.ok().body(Map.of("message", "Product inserted successfully."));
@@ -91,7 +103,7 @@ public class ProductController {
             }
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                 .body(Map.of("error", "Failed to upload image or process categories."));
+                    .body(Map.of("error", "Failed to upload image or process categories."));
         }
     }
 

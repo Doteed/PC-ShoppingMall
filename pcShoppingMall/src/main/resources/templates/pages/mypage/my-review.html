@@ -68,7 +68,7 @@
 								<td th:text="${item.productName}">상품 이름</td>
 								<td>
 								<button class="btn btn-primary"
-									th:onclick="openEditPopup('review', ' + ${item.orderId} + ', 'insert')">
+									th:onclick="|openEditPopup('review', ${item.orderId}, 'insert')|">
 									리뷰 작성</button>
 								</td>
 							</tr>

@@ -95,16 +95,32 @@ public class HomeController {
 	}
 
 	@GetMapping("/auth-product-insert")
-	public String authProductInsert(Model model) {
+	public String authProductInsert(HttpSession session, Model model) {
+		MemberDto user = (MemberDto) session.getAttribute("dto");
+		if (user == null || user.getAuthId() != 2) {
+	        System.out.println("Access denied. User: " + (user != null ? user.getUserId() : "null"));
+	        return "error/403"; // 권한 없음 에러 페이지
+	    }
+	    System.out.println("Access granted for admin: " + user.getUserId());
 		
-		model.addAttribute("userId", "USER");
-		model.addAttribute("authId", 1);
+		model.addAttribute("userId", user.getUserId());
+		model.addAttribute("authId", user.getAuthId());
 		
 		return "pages/authority/auth-product-insert";
 	}
 
 	@GetMapping("/auth-order")
-	public String authOrder(Model model) {
+	public String authOrder(HttpSession session, Model model) {
+		MemberDto user = (MemberDto) session.getAttribute("dto");
+		if (user == null || user.getAuthId() != 2) {
+	        System.out.println("Access denied. User: " + (user != null ? user.getUserId() : "null"));
+	        return "error/403"; // 권한 없음 에러 페이지
+	    }
+	    System.out.println("Access granted for admin: " + user.getUserId());
+		
+		model.addAttribute("userId", user.getUserId());
+		model.addAttribute("authId", user.getAuthId());
+		
 	    List<OrderDto> orders = orderbiz.listAll(); // 모든 주문 데이터 가져오기
 	    model.addAttribute("orders", orders); // 주문 리스트 추가
 	    model.addAttribute("orderDto", new OrderDto()); // 빈 orderDto 객체 추가
