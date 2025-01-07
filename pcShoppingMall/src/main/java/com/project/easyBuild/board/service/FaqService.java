@@ -83,4 +83,9 @@ public class FaqService {
         Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdDate"));
         return faqRepository.findAll(pageable).getContent();
     }
+    
+    public Page<Faq> getAllFaqs(Pageable pageable) {
+        return faqRepository.findAll(pageable);
+    }
+
 }

@@ -126,4 +126,9 @@ public class QnaService {
             throw new IllegalArgumentException("Content cannot be null or empty");
         }
     }
+    
+    public Page<Qna> getAllQnas(Pageable pageable) {
+        return qnaRepository.findAll(pageable);
+    }
+
 }

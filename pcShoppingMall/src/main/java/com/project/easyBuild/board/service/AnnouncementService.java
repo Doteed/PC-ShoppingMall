@@ -90,4 +90,9 @@ public class AnnouncementService {
                 PageRequest.of(0, limit, getDefaultSort())
         ).getContent();
     }
+    
+    public Page<Announcement> getAllAnnouncements(Pageable pageable) {
+        return announcementRepository.findAll(pageable);
+    }
+
 }
