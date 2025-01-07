@@ -119,13 +119,13 @@ public class ProductBizImpl implements ProductBiz {
 	}
 	
 	@Override
-    @Transactional
-    public int insertWithCategories(ProductDto dto, List<Integer> categoryIds) {
-        logger.info("Inserting new product: {} with categories", dto.getPName());
-        if (categoryIds.size() > 0) dto.setCategoryId1(categoryIds.get(0));
-        if (categoryIds.size() > 1) dto.setCategoryId2(categoryIds.get(1));
-        if (categoryIds.size() > 2) dto.setCategoryId3(categoryIds.get(2));
-        return dao.insert(dto);
-    }
+	@Transactional
+	public int insertWithCategories(ProductDto dto, List<Integer> categoryIds) {
+	    logger.info("Inserting new product: {} with categories", dto.getPName());
+	    if (categoryIds.size() > 0) dto.setCategoryId1(categoryIds.get(0));
+	    if (categoryIds.size() > 1) dto.setCategoryId2(categoryIds.get(1));
+	    if (categoryIds.size() > 2) dto.setCategoryId3(categoryIds.get(2));
+	    return dao.insert(dto);
+	}
 
 }

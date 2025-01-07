@@ -136,7 +136,9 @@
                     <tr th:each="item : ${list}" th:unless="${#lists.isEmpty(list)}">
                         <td th:text="${item.productId}"></td>
                         <td th:text="${item.userId}"></td>
-                        <td th:text="${item.categoryId}"></td>
+                        <td th:text="${item.categoryId1}"></td>
+                        <td th:text="${item.categoryId2}"></td>
+                        <td th:text="${item.categoryId3}"></td>
                         <td th:text="${item.authId}"></td>
                         <td th:text="${item.pPrice}"></td>
                         <td th:text="${item.pName}"></td>
