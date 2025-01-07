@@ -60,6 +60,11 @@ public class ProductDaoImple implements ProductDao {
 
     @Override
     public int insert(ProductDto dto) {
+    	//카테고리 체크
+    	validateCategoryId(dto.getCategoryId1());
+        validateCategoryId(dto.getCategoryId2());
+        validateCategoryId(dto.getCategoryId3());
+        
         String sql = "INSERT INTO PRODUCT (PRODUCT_ID, USER_ID, CATEGORY_ID_1, CATEGORY_ID_2, CATEGORY_ID_3, AUTH_ID, P_PRICE, P_NAME, P_STOCK, P_REPORTSTOCK, P_ENROLL, IMAGE_URL, P_EXPLAN, P_SALE, P_SOLDOUT, ORDER_WAITING) " +
                      "VALUES (SEQ_PRODUCT.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE, ?, ?, ?, ?, ?)";
         return jdbcTemplate.update(sql, 
@@ -79,7 +84,15 @@ public class ProductDaoImple implements ProductDao {
             dto.getOrderWaiting()
         );
     }
-
+    private void validateCategoryId(Integer categoryId) {
+        if (categoryId != null) {
+            String sql = "SELECT COUNT(*) FROM CATEGORY WHERE CATEGORY_ID = ?";
+            int count = jdbcTemplate.queryForObject(sql, Integer.class, categoryId);
+            if (count == 0) {
+                throw new IllegalArgumentException("유효하지 않은 카테고리 ID: " + categoryId);
+            }
+        }
+    }
     
     @Override
     public int updateProductImage(Integer productId, String imageUrl) {
