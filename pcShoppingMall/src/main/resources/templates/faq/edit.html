@@ -10,7 +10,7 @@
     <div layout:fragment="content">
         <div class="container mt-5">
             <h1>수정하기</h1>
-			<form th:action="@{/faqs/update/{id}(id=${faq.faqId})}" th:object="${faq}" method="post">
+		      <form th:action="@{/faqs/update/{id}(id=${faq.faqId})}" th:object="${faq}" method="post">
 				<div class="mb-3">
 			        <label for="title" class="form-label">제목</label>
 			        <input type="text" class="form-control" id="title" name="title" th:field="*{title}" required>

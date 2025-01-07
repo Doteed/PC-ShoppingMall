@@ -1,0 +1,138 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.product-detail-container {
+    display: flex;
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    margin-bottom: 30px;
+}
+
+.product-image-section {
+    flex: 1;
+    text-align: center;
+}
+
+.product-image-section img {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+}
+
+.product-info-section {
+    flex: 2;
+    padding: 0 20px;
+}
+
+.product-info-section h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.product-info-section p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.quantity-section {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.quantity-section button {
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    margin: 0 5px;
+}
+
+.quantity-section input {
+    width: 50px;
+    text-align: center;
+}
+
+.action-buttons button {
+    width: 120px;
+    padding: 10px;
+    margin-right: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#add-to-cart {
+    background-color: #ffa500;
+    color: white;
+}
+
+#buy-now {
+    background-color: #28a745;
+    color: white;
+}
+
+.back-link {
+    display: block;
+    margin: 20px;
+    text-decoration: none;
+    color: #007bff;
+    font-size: 16px;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    background-color: #f8f8f8;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.tab {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 10px 20px;
+}
+
+.tab:hover {
+    color: #007bff;
+    text-decoration: underline;
+}
+
+.info-section {
+    border: 1px solid #ddd;
+    padding: 20px;
+}
+
+.product-details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+}
+
+.product-details-table th, .product-details-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.product-details-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+

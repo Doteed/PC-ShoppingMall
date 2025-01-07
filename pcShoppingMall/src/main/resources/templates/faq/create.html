@@ -11,10 +11,6 @@
             <h1>자주묻는질문 작성하기</h1>
             <form th:action="@{/faqs}" th:object="${faq}" method="post">
                 <div class="mb-3">
-                    <label for="userId" class="form-label">User ID</label>
-                    <input type="text" class="form-control" th:field="*{userId}" placeholder="ID를 입력하세요." required>
-                </div>
-                <div class="mb-3">
                     <label for="title" class="form-label">제목</label>
                     <input type="text" class="form-control" th:field="*{title}" placeholder="제목을 입력하세요." required>
                 </div>

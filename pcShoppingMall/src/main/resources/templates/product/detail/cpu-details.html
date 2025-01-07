@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 상세 정보</title>
+    <link rel="stylesheet" href="/css/product/productDetails.css">
+    <link rel="stylesheet" href="/css/product/floatingBar.css">
+</head>
+<body>  
+    <div id="product-info-section" class="product-detail-container">
+        <div class="product-image-section">
+            <img id="product-image" th:src="@{'/images/product/cpu/' + 'cpu' + ${product.cpuId} + '.png'}" alt="Product Image">
+        </div>
+        <div class="product-info-section">
+            <h1 id="product-name" th:text="${product.productName}"></h1>
+            <p id="total-price" th:text="'가격: ' + ${product.formattedPrice}"></p>
+             <!-- 수량 조절 및 버튼 -->
+            <div class="quantity-section">
+                <button id="decrease-quantity" class="quantity-btn">-</button>
+                <input id="quantity" type="number" value="1" min="1" class="quantity-input">
+                <button id="increase-quantity" class="quantity-btn">+</button>
+            </div>
+            <div class="action-buttons">
+                <button id="add-to-cart" class="action-btn">장바구니</button>
+                <button id="buy-now" class="action-btn">구매하기</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tabs">
+        <button class="tab" data-target="#product-info-section">상품정보</button>
+        <button class="tab" data-target="#exchange-info-section">취소/반품/교환정보</button>
+        <button class="tab" data-target="#product-notice-section">상품정보제공고시</button>
+    </div>
+
+
+
+	<!--  상품정보 -->
+	<div id="product-info-section" class="info-section">
+        <h2>상품정보</h2>
+        <div class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
+        	<table class="product-details-table">
+    			<tr>
+        			<th>제조사</th>
+        			<td id="manufacturer" th:text="${product.manufacturer}"></td>
+    			</tr>
+    			<tr>
+        			<th>CPU 종류</th>
+        			<td id="cpu-type" th:text="${product.intelType} ?: ${product.amdType}"></td>
+    			</tr>
+   		 	<tr>
+        			<th>소켓</th>
+        			<td id="socket" th:text="${product.socket}"></td>
+    			</tr>
+    			<tr>
+        			<th>코어 수</th>
+        			<td id="core-types" th:text="${product.coreTypes}"></td>
+    			</tr>
+    			<tr>
+        			<th>지원 메모리</th>
+        			<td id="memory-support" th:text="${product.supportedMemoryStandard}"></td>
+    			</tr>
+    			<tr>
+        			<th>출시일</th>
+        			<td id="release-date" th:text="${product.releaseDate}"></td>
+    			</tr>
+			</table>
+			<!-- 상품 정보 이미지 -->
+        	<div class="product-info-image">
+    			<img th:src="@{'/images/product/cpu/cpu_info/' + 'cpu' + (${product.cpuId} ?: 'default') + '_infor.png'}" alt="Product Information Image">
+			</div>
+        </div>
+    </div>
+	
+	
+	
+	<!--취소/반품/교환정보-->
+    <div id="exchange-info-section" class="info-section">
+        <div class="max-w-3xl mx-auto bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-2xl font-bold mb-4">취소/반품/교환정보</h2>
+        
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold mb-2">반품/교환 정보</h2>
+            <div class="border p-4 rounded-lg bg-gray-50">
+                <h3 class="font-semibold mb-2">반품/교환 사유에 따른 요청 가능 기간</h3>
+                <ul class="list-disc pl-5 mb-4">
+                    <li>구매자 단순 변심: 상품 수령 후 7일 이내</li>
+                    <li>제품 불량 및 택배 배송 중 파손: 상품 수령 후 7일 이내</li>
+                    <li>표시/광고와 상이, 계약 내용과 다르게 이행된 경우: 상품 수령 후 3개월 이내</li>
+                </ul>
+                <h3 class="font-semibold mb-2">반품/교환 불가능 사유</h3>
+                <ul class="list-decimal pl-5">
+                    <li>반품 요청 기간이 지난 경우</li>
+                    <li>구매자의 책임 있는 사유로 상품 등이 멸실 또는 훼손된 경우</li>
+                    <li>구매자의 사용 또는 일부 소비에 의하여 상품의 가치가 현저히 감소한 경우</li>
+                    <li>시간의 경과에 의하여 재판매가 곤란할 정도로 상품 등의 가치가 현저히 감소한 경우</li>
+                    <li>복제가 가능한 상품 등의 포장을 훼손한 경우</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold mb-2">A/S 정책 안내</h2>
+            <div class="border p-4 rounded-lg bg-gray-50">
+                <ul class="list-disc pl-5">
+                    <li>하드웨어 불량 및 A/S 과정에서 손실된 데이터는 판매점에서 책임지지 않습니다.</li>
+                    <li>A/S 진행 시 제품 수급에 따라 제품이 변경될 수 있으며, 제품의 제조사 규정에 따라 진행됩니다.</li>
+                    <li>제조사에 따라 별도로 A/S 기간이 정해진 제품은 소비자가 직접 A/S를 받을 수 있습니다.</li>
+                    <li>조립PC A/S 무상 방문 출장 기간(1년/2년) 등은 무상 출장 서비스를 지원합니다.</li>
+                    <li>무상 A/S 기간 중이라도 고객 과실이나 하드웨어 문제로 인한 A/S는 유상 처리됩니다.</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+    </div>
+
+
+
+	<!--상품정보제공고시-->		
+    <div id="product-notice-section" class="info-section">
+        <div class="max-w-4xl mx-auto p-6 bg-white shadow-md mt-10">
+        <h2 class="text-xl font-bold mb-4">상품정보제공고시 상세정보</h2>
+        <table class="w-full text-left border-collapse">
+            <tbody>
+                <tr class="border-b">
+                    <td class="py-2 px-4 font-medium">품명 및 모델명</td>
+                    <td class="py-2 px-4 text-blue-600 cursor-pointer">상세정보 별도 표기</td>
+                </tr>
+                <tr class="border-b">
+                    <td class="py-2 px-4 font-medium">인증 필 유무</td>
+                    <td class="py-2 px-4 text-blue-600 cursor-pointer">상세정보 별도 표기</td>
+                </tr>
+                <tr class="border-b">
+                    <td class="py-2 px-4 font-medium">정격전압, 소비전력, 에너지소비효율등급</td>
+                    <td class="py-2 px-4 text-blue-600 cursor-pointer">상세정보 별도 표기</td>
+                </tr>
+                <tr class="border-b">
+                    <td class="py-2 px-4 font-medium">출시년월</td>
+                    <td class="py-2 px-4 text-blue-600 cursor-pointer">상세정보 별도 표기</td>
+                </tr>
+                <tr class="border-b">
+                    <td class="py-2 px-4 font-medium">제조자 및 제조판매업자</td>
+                    <td class="py-2 px-4 text-blue-600 cursor-pointer">상세정보 별도 표기</td>
+                </tr>
+                <tr class="border-b">
+                    <td class="py-2 px-4 font-medium">제조국 또는 원산지</td>
+                    <td class="py-2 px-4 text-blue-600 cursor-pointer">상세정보 별도 표기</td>
+                </tr>
+                <tr class="border-b">
+                    <td class="py-2 px-4 font-medium">크기, 무게</td>
+                    <td class="py-2 px-4 text-blue-600 cursor-pointer">상세정보 별도 표기</td>
+                </tr>
+                <tr class="border-b">
+                    <td class="py-2 px-4 font-medium">주요 사항</td>
+                    <td class="py-2 px-4 text-blue-600 cursor-pointer">상세정보 별도 표기</td>
+                </tr>
+                <tr class="border-b">
+                    <td class="py-2 px-4 font-medium">품질보증기준</td>
+                    <td class="py-2 px-4 text-blue-600 cursor-pointer">상세정보 별도 표기</td>
+                </tr>
+                <tr>
+                    <td class="py-2 px-4 font-medium">A/S 책임자와 전화번호</td>
+                    <td class="py-2 px-4 text-blue-600 cursor-pointer">상세정보 별도 표기</td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="text-sm text-gray-600 mt-4">
+            * 본 정보는 공정거래위원회 '상품정보제공고시'에 의해 판매자가 직접 기재한 내용으로 해당 정보에 대한 책임은 판매자에게 있습니다.
+        </p>
+    </div>
+    
+    
+	<!-- 플로팅바 -->
+    <div id="floating-bar" class="hidden">
+        <div class="floating-bar-content">
+            <strong id="product-name" th:text="${product.productName}"></strong>
+            <div class="quantity-control">
+                <button id="decrease-floating-quantity">-</button>
+                <input id="floating-quantity" type="number" value="1" min="1">
+                <button id="increase-floating-quantity">+</button>
+                <p id="floating-price" th:text="'가격: ' + ${product.formattedPrice}"></p>
+            </div>
+            <div class="floating-buttons">
+                <button id="floating-add-to-cart">장바구니</button>
+                <button id="floating-buy-now">구매하기</button>
+            </div>
+            <button id="close-floating-bar">닫기</button>
+        </div>
+    </div>
+
+    <button id="toggle-floating-bar" class="toggle-button hidden">열기</button>
+
+    <script src="/js/product/productDetails.js"></script>
+    <script src="/js/product/floatingBar.js"></script>
+</body>
+</html>

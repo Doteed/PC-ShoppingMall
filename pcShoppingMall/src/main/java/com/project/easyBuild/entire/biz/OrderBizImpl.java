@@ -12,7 +12,7 @@ import com.project.easyBuild.entire.dto.OrderDto;
 @Service
 public class OrderBizImpl implements OrderBiz {
 	@Autowired
-	private OrderDao dao;
+	private OrderDao  dao;
 
 	@Override
 	public List<OrderDto> mylistAll(String userId) {
@@ -34,6 +34,11 @@ public class OrderBizImpl implements OrderBiz {
 		return dao.myUpdate(dto);
 	}
 
+    @Override
+    public int update(int deliveryId, String deliveryStatus) {
+        return dao.update(deliveryId, deliveryStatus);
+    }
+    
 	@Override
 	public int cancle(int orderId, String userId) {
 		return dao.cancle(orderId, userId);
@@ -43,4 +48,9 @@ public class OrderBizImpl implements OrderBiz {
 	public Map<String, Integer> count(String userId) {
 		return dao.count(userId);
 	}
+	
+	 @Override
+    public int insert(OrderDto order) {
+        return dao.insert(order);
+    }
 }

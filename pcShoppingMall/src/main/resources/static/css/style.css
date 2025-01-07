@@ -52,5 +52,16 @@ p{margin-bottom:0;}
 .table-type-a tbody > tr > td{padding-top:10px;padding-bottom:10px;}
 .table-type-a tbody > tr:last-of-type{border-bottom: none;}
 
+/* category */
+.category-container {display: flex;gap: 20px;}
+.category-column {display: flex;flex-direction: column;border: 1px solid #eaeaea;border-radius: 4px;width: 100%;text-align: center;}
+.category-list {padding: 10px;height: 300px;overflow-y: auto;}
+.category-item {display: flex;justify-content: space-between;margin: 5px 0;border: 1px solid #ddd;padding: 5px;cursor: pointer;}
+.category-item:hover {background-color: #f0f0f0;}
+.category-actions {display: none;}
+.category-item:hover .category-actions {display: block;}
+.disabled {opacity: 0.5;pointer-events: none;}
+
 /* footer */
 footer{border-top:1px solid #dee2e6;padding:30px 0;}
+        

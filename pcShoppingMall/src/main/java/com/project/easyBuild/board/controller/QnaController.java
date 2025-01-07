@@ -4,21 +4,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.project.easyBuild.board.entity.Qna;
 import com.project.easyBuild.board.service.QnaService;
+import com.project.easyBuild.member.dto.MemberDto;
 
 import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.domain.Sort;
-
-import java.io.File;
-import java.io.IOException;
 
 @Controller
 @RequestMapping("/qnas")
@@ -41,7 +39,6 @@ public class QnaController {
 
         return TEMPLATE_DIR + "list";
     }
-    
 
     // QnA 상세보기
     @GetMapping("/{id}")
@@ -71,29 +68,37 @@ public class QnaController {
         return TEMPLATE_DIR + "detail";
     }
 
-    // qna 작성 페이지
+    // QnA 작성 페이지
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("qna", new Qna());
         return TEMPLATE_DIR + "create";
     }
-    
-    // qna 작성 처리
+
+    // QnA 작성 처리
     @PostMapping
     public String createQna(
             @ModelAttribute @Valid Qna qna,
-            BindingResult result) {
+            BindingResult result,
+            HttpSession session) {
 
         if (result.hasErrors()) {
-            return TEMPLATE_DIR + "create"; // 유효성 검사 실패 시 다시 작성 페이지로 이동
+            return TEMPLATE_DIR + "create";
         }
-        
-        qna.setBoardId(103L); // BOARDID 103 고정
+
+        // 로그인한 사용자 정보 가져오기
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+        if (loggedInUser == null) {
+            return "redirect:/loginform"; // 로그인되지 않은 경우 로그인 페이지로 이동
+        }
+
+        // 로그인한 사용자 ID 설정
+        qna.setUserId(loggedInUser.getUserId());
+        qna.setBoardId(103L); // BOARD_ID 고정
         qna.setAuthId(1L); // 사용자 권한 1 설정
 
         qnaService.saveQna(qna);
 
-        // qna 목록 페이지로 리다이렉트
         return "redirect:/qnas";
     }
 
@@ -102,33 +107,42 @@ public class QnaController {
     public String showAnswerForm(@PathVariable Long id, Model model) {
         model.addAttribute("qna", qnaService.getQnaById(id));
         return TEMPLATE_DIR + "answer";
-    }    
+    }
 
     // 답변 작성/수정 처리
     @PostMapping("/answer/{id}")
     public String saveAnswer(@PathVariable Long id, @RequestParam("answer") String answer) {
         qnaService.saveAnswer(id, answer);
-        return "redirect:/qnas/" + id; // 해당 qna 상세 페이지로 리다이렉트
+        return "redirect:/qnas/" + id;
     }
 
-    // qna 수정 페이지
+    // QnA 수정 페이지
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         model.addAttribute("qna", qnaService.getQnaById(id));
         return TEMPLATE_DIR + "edit";
     }
 
-    // qna 수정 처리
+    // QnA 수정 처리
     @PostMapping("/update/{id}")
     public String updateQna(
             @PathVariable Long id,
             @ModelAttribute @Valid Qna qna,
-            BindingResult result) {
+            BindingResult result,
+            HttpSession session) {
 
         if (result.hasErrors()) {
             return TEMPLATE_DIR + "edit";
         }
 
+        // 로그인한 사용자 정보 가져오기
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+        if (loggedInUser == null) {
+            return "redirect:/loginform"; // 로그인되지 않은 경우 로그인 페이지로 이동
+        }
+
+        // 로그인한 사용자 ID 설정
+        qna.setUserId(loggedInUser.getUserId());
         qna.setBoardId(103L); // BOARD_ID 고정
         qna.setAuthId(1L); // 사용자 권한 1 설정
 
@@ -136,8 +150,7 @@ public class QnaController {
         return "redirect:/qnas";
     }
 
-
-    // qna 삭제 처리
+    // QnA 삭제 처리
     @GetMapping("/delete/{id}")
     public String deleteQna(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {

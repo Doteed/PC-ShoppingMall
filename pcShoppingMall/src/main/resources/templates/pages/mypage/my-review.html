@@ -50,7 +50,7 @@
 			<div class="my-content" id="myTabContent">
 				<div class="tab-pane fade show active" id="write-myreviews"
 					role="tabpanel" aria-labelledby="write-myreviews-tab">
-					<table>
+                    <table class="table-type-a">
 						<thead>
 							<tr>
 								<th>주문번호</th>
@@ -68,7 +68,7 @@
 								<td th:text="${item.productName}">상품 이름</td>
 								<td>
 								<button class="btn btn-primary"
-									th:onclick="openEditPopup('review', ' + ${item.orderId} + ', 'insert')">
+									th:onclick="|openEditPopup('review', ${item.orderId}, 'insert')|">
 									리뷰 작성</button>
 								</td>
 							</tr>
@@ -78,7 +78,7 @@
 
 				<div class="tab-pane fade" id="written-myreviews" role="tabpanel"
 					aria-labelledby="written-myreviews-tab">
-					<table>
+                    <table class="table-type-a">
 						<thead>
 							<tr>
 								<th>상품명</th>

@@ -10,6 +10,8 @@ public interface OrderDao {
 	public List<OrderDto> listAll();
 	public OrderDto listOne(int orderId, String userId);
 	public int myUpdate(OrderDto dto);
+    public int update(int deliveryId, String deliveryStatus);
 	public int cancle(int orderId, String userId);
 	public Map<String, Integer> count(String userId);
+	public int insert(OrderDto dto);
 }

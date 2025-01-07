@@ -7,20 +7,18 @@
 <body>
     <header th:fragment="header" class="border-bottom border-tertiary">
   		<div class="d-flex justify-content-end pe-5 bg-dark">
-			<div th:if="${isAdmin}">
+			<div class="p-2" th:if="${isAdmin}">
 			    <a class="nav-link text-light" href="/auth-index">관리자 페이지</a>
 			</div>
 			<div class="p-2">
 			    <a class="nav-link text-light" href="/membermy">마이페이지</a>
 			</div>
-			<div th:if="${session.dto != null}">
+			<div class="p-2" th:if="${session.dto != null}">
 			    <a class="nav-link text-light" href="/member/logout">로그아웃</a>
 			</div>
-			<div th:if="${session.dto == null}">
+			<div class="p-2" th:if="${session.dto == null}">
 			    <a class="nav-link text-light" href="/loginform">로그인</a>
 			</div>
-			
-
 		</div>
 		<div class="position-relative d-flex justify-content-center py-5">
 			<!-- 로고 -->

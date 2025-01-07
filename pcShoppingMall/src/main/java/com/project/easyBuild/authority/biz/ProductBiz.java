@@ -32,5 +32,7 @@ public interface ProductBiz {
 	public boolean updateProduct(int productId, int stock, int pReportstock, String saleStatus, String pSoldout);
 	
 	public ProductDto getProductById(int productId);
+	
+	public int insertWithCategories(ProductDto dto, List<Integer> categoryIds);
 
 }

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/auth-layout}">
+<head>
+    <title layout:fragment="title">관리자 게시판 페이지</title>
+</head>
+<body>
+	<div layout:fragment="content" class="d-flex flex-column gap-3 w-100">
+        <div class="container mt-5">
+            <h5>관리자 게시판 관리</h5>
+			<br>
+            <!-- 공지사항 -->
+            <div class="mt-4">
+				<div class="d-flex justify-content-between align-items-center">
+                	<h4><a href=/announcements>공지사항</a></h4>
+				    <a th:if="${isAdmin}" href="/announcements/new" class="btn btn-primary">작성하기</a>
+				</div>
+                <div th:if="${notices == null || notices.totalElements == 0}" class="alert alert-info mt-3">
+                    <p>등록된 공지사항이 없습니다.</p>
+                </div>
+                <div th:if="${notices != null && notices.totalElements > 0}">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>제목</th>
+                                <th>날짜</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="notice, iterStat : ${notices.content}">
+                                <td th:text="${notices.totalElements - (notices.number * notices.size + iterStat.index)}"></td>
+                                <td><a th:href="@{'/announcements/' + ${notice.announcId}}" th:text="${notice.title}"></a></td>
+                                <td th:text="${#temporals.format(notice.createdDate, 'yyyy-MM-dd')}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 자주 묻는 질문 -->
+            <div class="mt-4">
+				<div class="d-flex justify-content-between align-items-center">
+				    <h4><a href=/faqs>자주 묻는 질문</a></h4>
+				    <a th:if="${isAdmin}" href="/faqs/new" class="btn btn-primary">작성하기</a>
+				</div>
+                <div th:if="${faqs == null || faqs.totalElements == 0}" class="alert alert-info mt-3">
+                    <p>등록된 자주 묻는 질문이 없습니다.</p>
+                </div>
+                <div th:if="${faqs != null && faqs.totalElements > 0}">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>제목</th>
+                                <th>날짜</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="faq, iterStat : ${faqs.content}">
+                                <td th:text="${faqs.totalElements - (faqs.number * faqs.size + iterStat.index)}"></td>
+                                <td><a th:href="@{'/faqs/' + ${faq.faqId}}" th:text="${faq.title}"></a></td>
+                                <td th:text="${#temporals.format(faq.createdDate, 'yyyy-MM-dd')}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- QnA -->
+            <div class="mt-4">
+                <h4><a href=qnas>QnA</a></h4>
+                <div th:if="${qnas == null || qnas.totalElements == 0}" class="alert alert-info mt-3">
+                    <p>등록된 QnA가 없습니다.</p>
+                </div>
+                <div th:if="${qnas != null && qnas.totalElements > 0}">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>제목</th>
+                                <th>작성자</th>
+                                <th>작성일</th>
+                                <th>비밀 여부</th>
+                                <th>답변 상태</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="qna, iterStat : ${qnas.content}">
+                                <td th:text="${qnas.totalElements - (qnas.number * qnas.size + iterStat.index)}"></td>
+                                <td><a th:href="@{'/qnas/' + ${qna.qnaId}}" th:text="${qna.title}"></a></td>
+                                <td th:text="${qna.userId}"></td>
+                                <td th:text="${#temporals.format(qna.createdDate, 'yyyy-MM-dd')}"></td>
+                                <td>
+                                    <span th:if="${qna.isSecret}" class="badge bg-warning">비밀글</span>
+                                    <span th:if="${!qna.isSecret}" class="badge bg-success">공개</span>
+                                </td>
+                                <td>
+                                    <span th:if="${qna.answer != null}" class="badge bg-success">답변 완료</span>
+                                    <span th:if="${qna.answer == null}" class="badge bg-warning">미답변</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

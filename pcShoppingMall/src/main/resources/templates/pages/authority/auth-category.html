@@ -4,46 +4,6 @@
       layout:decorate="~{layouts/auth-layout}">
 <head>
     <title>카테고리 관리 페이지</title>
-	<style>
-        .category-container {
-            display: flex;
-            gap: 20px;
-        }
-        .category-column {
-            display: flex;
-            flex-direction: column;
-            border: 1px solid #eaeaea;
-            border-radius: 4px;
-            width: 100%;
-            text-align: center;
-        }
-        .category-list {
-            height: 300px;
-            overflow-y: auto;
-            padding: 10px;
-        }
-        .category-item {
-            cursor: pointer;
-            padding: 5px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            display: flex;
-            justify-content: space-between;
-        }
-        .category-item:hover {
-            background-color: #f0f0f0;
-        }
-        .category-actions {
-            display: none;
-        }
-        .category-item:hover .category-actions {
-            display: block;
-        }
-        .disabled {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-    </style>
     <script th:inline="javascript">
     	let categories = {
     	    1: [], // 1차 카테고리 배열
@@ -52,43 +12,45 @@
     	};
 
     	let selectedCategories = {1: null, 2: null, 3: null};
+    	let nextCategoryId = 1; // 전역 변수로 다음 사용할 카테고리 ID 관리
+    	
+    	function generateUniqueCategoryId() {
+   		  return nextCategoryId++;
+   		}
 
-    	function addCategory(level) {
-    	    const input = document.getElementById(`category-input-${level}`);
-    	    const value = input.value.trim();
-    	  
-    	    if (value) {
-    	        const category = {
-    	            categoryName: value,
-    	            categoryCode: generateCategoryCode(level),
-    	            categoryLevel: level,
-    	            parentId: level === 1 ? null : selectedCategories[level - 1],
-    	            categoryId: Date.now(), // 임시 ID
-    	            sortOrder: 0 // 기본 정렬 순서
-    	        };
-
-    	        if (level === 1) {
-    	            if (!Array.isArray(categories[1])) {
-    	                categories[1] = [];
-    	            }
-    	            categories[1].push(category);
-    	        } else if (level === 2 && selectedCategories[1]) {
-    	            if (!categories[2][selectedCategories[1]]) {
-    	                categories[2][selectedCategories[1]] = [];
-    	            }
-    	            categories[2][selectedCategories[1]].push(category);
-    	        } else if (level === 3 && selectedCategories[2]) {
-    	            if (!categories[3][selectedCategories[2]]) {
-    	                categories[3][selectedCategories[2]] = [];
-    	            }
-    	            categories[3][selectedCategories[2]].push(category);
-    	        }
-
-    	        renderCategories(level);
-    	        input.value = '';
-    	    }
-    	}
-
+		function addCategory(level) {
+			const input = document.getElementById(`category-input-${level}`);
+			const value = input.value.trim();
+			if (value) {
+			  const category = {
+			    categoryId: generateUniqueCategoryId(),
+			    categoryName: value,
+			    categoryCode: generateCategoryCode(level),
+			    categoryLevel: level,
+			    parentId: level === 1 ? null : selectedCategories[level - 1],
+			    sortOrder: 0 // 기본 정렬 순서
+			  };
+			  
+			  if (level === 1) {
+			    if (!Array.isArray(categories[1])) {
+			      categories[1] = [];
+			    }
+			    categories[1].push(category);
+			  } else if (level === 2 && selectedCategories[1]) {
+			    if (!categories[2][selectedCategories[1]]) {
+			      categories[2][selectedCategories[1]] = [];
+			    }
+			    categories[2][selectedCategories[1]].push(category);
+			  } else if (level === 3 && selectedCategories[2]) {
+			    if (!categories[3][selectedCategories[2]]) {
+			      categories[3][selectedCategories[2]] = [];
+			    }
+			    categories[3][selectedCategories[2]].push(category);
+			  }
+			  renderCategories(level);
+			  input.value = '';
+			}
+		}
 
     	function saveCategories() {
     		const allCategories = [
@@ -184,7 +146,6 @@
     	    }
     	}
 
-
     	function selectCategory(level, id) {
     	    selectedCategories[level] = id;
     	    for (let i = level + 1; i <= 3; i++) {
@@ -197,48 +158,42 @@
     	}
 
     	function loadCategories() {
-    	    fetch('/category/all')
-    	    .then(response => response.json())
-    	    .then(data => {
-    	        console.log("Received data:", data);
+  		  fetch('/category/all')
+  		    .then(response => response.json())
+  		    .then(data => {
+  		      console.log("Received data:", data);
+  		      categories = { 1: [], 2: {}, 3: {} };
+  		      nextCategoryId = 1; // 카테고리 ID 초기화
 
-    	        categories = {
-    	            1: data[1] || [],
-    	            2: {},
-    	            3: {}
-    	        };
-    	        
-    	        // 2차 카테고리 구성
-    	        if (Array.isArray(data[2])) {
-    	            data[2].forEach(cat => {
-    	                if (!categories[2][cat.parentId]) {
-    	                    categories[2][cat.parentId] = [];
-    	                }
-    	                categories[2][cat.parentId].push(cat);
-    	            });
-    	        }
-    	        
-    	        // 3차 카테고리 구성
-    	        if (Array.isArray(data[3])) {
-    	            data[3].forEach(cat => {
-    	                if (!categories[3][cat.parentId]) {
-    	                    categories[3][cat.parentId] = [];
-    	                }
-    	                categories[3][cat.parentId].push(cat);
-    	            });
-    	        }
+  		      // 모든 카테고리의 최대 ID 찾기
+  		      const allCategories = [...data[1], ...data[2], ...data[3]];
+  		      nextCategoryId = Math.max(...allCategories.map(cat => cat.categoryId), 0) + 1;
 
-    	        console.log("Processed categories:", categories);
-    	        
-    	        renderCategories(1);
-    	        renderCategories(2);
-    	        renderCategories(3);
-    	    })
-    	    .catch(error => {
-    	        console.error('Error:', error);
-    	        alert('카테고리 로드 중 오류가 발생했습니다.');
-    	    });
-    	}
+  		      // 카테고리 데이터 구성
+  		      categories[1] = data[1] || [];
+  		      data[2].forEach(cat => {
+  		        if (!categories[2][cat.parentId]) {
+  		          categories[2][cat.parentId] = [];
+  		        }
+  		        categories[2][cat.parentId].push(cat);
+  		      });
+  		      data[3].forEach(cat => {
+  		        if (!categories[3][cat.parentId]) {
+  		          categories[3][cat.parentId] = [];
+  		        }
+  		        categories[3][cat.parentId].push(cat);
+  		      });
+
+  		      console.log("Processed categories:", categories);
+  		      renderCategories(1);
+  		      renderCategories(2);
+  		      renderCategories(3);
+  		    })
+  		    .catch(error => {
+  		      console.error('Error:', error);
+  		      alert('카테고리 로드 중 오류가 발생했습니다.');
+  		    });
+  		}
 
     	function generateCategoryCode(level) {
     	    return `CAT${level}-${Date.now()}`;

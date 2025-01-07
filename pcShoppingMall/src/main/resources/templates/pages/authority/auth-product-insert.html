@@ -5,6 +5,85 @@
 <head>
 	<title>상품 등록 페이지</title>
 	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+		    loadFirstLevelCategories();
+		    
+		    const form = document.getElementById('productForm');
+		    if (form) {
+		        form.addEventListener('submit', function(event) {
+		            event.preventDefault();
+		            submitForm();
+		        });
+		    } else {
+		        console.error('Product form not found');
+		    }
+		});
+	
+		function loadFirstLevelCategories() {
+		    fetch('/category?level=1')
+		        .then(response => response.json())
+		        .then(categories => {
+		            const select = document.getElementById('firstLevelCategory');
+		            select.innerHTML = '<option value="">1차 카테고리 선택</option>';
+		            categories.forEach(category => {
+		                const option = document.createElement('option');
+		                option.value = category.categoryId;
+		                option.textContent = category.categoryName;
+		                select.appendChild(option);
+		            });
+		            
+		            select.addEventListener('change', function() {
+		                if (this.value) {
+		                    loadSubCategories(this.value);
+		                } else {
+		                    clearSubCategories();
+		                }
+		            });
+		        })
+		        .catch(error => console.error('1차 카테고리 로딩 중 오류 발생:', error));
+		}
+
+		function loadSubCategories(parentId) {
+		    fetch(`/category/subcategories?parentId=${parentId}`)
+		        .then(response => response.json())
+		        .then(data => {
+		            renderCategories(data[2], 'secondLevelCategory');
+		            renderCategories(data[3], 'thirdLevelCategory');
+		        })
+		        .catch(error => console.error('하위 카테고리 로딩 중 오류 발생:', error));
+		}
+		
+		function renderCategories(categories, containerId) {
+		    const container = document.getElementById(containerId);
+		    container.innerHTML = containerId === 'secondLevelCategory' ? '<p>2차 카테고리</p>' : '<p>3차 카테고리</p>';
+		    
+		    categories.forEach(category => {
+		        const checkboxDiv = document.createElement('div');
+		        checkboxDiv.className = 'form-check';
+		        
+		        const checkbox = document.createElement('input');
+		        checkbox.type = 'checkbox';
+		        checkbox.className = 'form-check-input';
+		        checkbox.id = `category-${category.categoryId}`;
+		        checkbox.name = 'categoryIds';
+		        checkbox.value = category.categoryId;
+		        
+		        const label = document.createElement('label');
+		        label.className = 'form-check-label';
+		        label.htmlFor = `category-${category.categoryId}`;
+		        label.textContent = category.categoryName;
+		        
+		        checkboxDiv.appendChild(checkbox);
+		        checkboxDiv.appendChild(label);
+		        container.appendChild(checkboxDiv);
+		    });
+		}
+		
+		function clearSubCategories() {
+		    document.getElementById('secondLevelCategory').innerHTML = '<p>2차 카테고리</p>';
+		    document.getElementById('thirdLevelCategory').innerHTML = '<p>3차 카테고리</p>';
+		}
+		
 		function submitForm() {
 		    var userId = document.getElementById('userId').value;
 		    if (!userId) {
@@ -13,13 +92,18 @@
 		    }
 		    var form = document.getElementById('productForm');
 		    var formData = new FormData(form);
+		    
+		    var categoryIds = Array.from(form.querySelectorAll('input[name="categoryIds"]:checked'))
+		                           .map(cb => cb.value);
+		    formData.set('categoryIds', JSON.stringify(categoryIds));
+
 		    fetch('/api/product/auth-product-insert', {
 		        method: 'POST',
 		        body: formData
 		    })
 		    .then(response => {
 		        if (response.ok) {
-		            window.location.href = '/auth-product'; // 성공 페이지로 리다이렉트
+		            window.location.href = '/auth-product';
 		        } else {
 		            throw new Error('상품 등록 실패');
 		        }
@@ -29,30 +113,7 @@
 		        alert('상품 등록에 실패했습니다.');
 		    });
 		}
-	
-		// 폼에 이벤트 리스너 추가
-		document.getElementById('productForm').addEventListener('submit', function(event) {
-		    event.preventDefault();
-		    submitForm();
-		});
-		
-		//서브카테고리 가져오기
-		/* function loadSubCategories() {
-		    var mainCategoryId = document.getElementById("mainCategory").value;
-		    fetch('/api/categories/sub/' + mainCategoryId)
-		        .then(response => response.json())
-		        .then(data => {
-		            var subCategorySelect = document.getElementById("subCategory");
-		            subCategorySelect.innerHTML = '<option selected>소분류 선택</option>';
-		            data.forEach(category => {
-		                var option = document.createElement("option");
-		                option.value = category.id;
-		                option.text = category.name;
-		                subCategorySelect.appendChild(option);
-		            });
-		        });
-		} */
-		
+
 		function uploadImage(file) {
 		    const formData = new FormData();
 		    formData.append('file', file);
@@ -75,31 +136,26 @@
 	<div layout:fragment="content" class="d-flex flex-column gap-3 w-100">
 		<h5>상품 등록</h5>			
 		<form action="/api/product/auth-product-insert" method="post" id="productForm" enctype="multipart/form-data">
-		    <!-- <input type="hidden" id="userId" name="userId" th:value="${userId}">
-		    <input type="hidden" id="authId" name="authId" th:value="${authId}"> -->
-		    <input type="text" id="userId" name="userId" th:value="${userId}">
-		    <input type="text" id="authId" name="authId" th:value="${authId}">
+		    <input type="hidden" id="userId" name="userId" th:value="${userId}">
+		    <input type="hidden" id="authId" name="authId" th:value="${authId}">
 		    
-		    
-		    <div class="row mb-3">
-		        <label for="categoryId" class="col-sm-2 col-form-label">카테고리</label>
-		        <div class="col-sm">
-		            <select class="form-select" id="categoryId" name="categoryId" onchange="loadSubCategories()">
-		                <option selected>대분류 선택</option>
-		                <!-- <option th:each="category : ${mainCategories}" th:value="${category.id}" th:text="${category.name}"></option> -->
-		                <option th:value="1">1</option>
-		                <option th:value="2">2</option>
-		                <option th:value="3">3</option>
-		                <option th:value="4">4</option>
-		            </select>
-		        </div>
-		        <!-- <div class="col-sm">
-		            <select class="form-select" id="subCategory" name="categoryId">
-		                <option selected>소분류 선택</option>
-		            </select>
-		        </div> -->
-		    </div>
-		    
+			<div class="row mb-3">
+			    <label class="col-sm-2 col-form-label">카테고리</label>
+			    <div class="col-sm-10">
+			        <select id="firstLevelCategory" class="form-select mb-2">
+			            <option value="">1차 카테고리 선택</option>
+			        </select>
+			        <div id="secondLevelCategory" class="mb-2">
+			            <p>2차 카테고리</p>
+			            <div id="secondLevelCheckboxes"></div>
+			        </div>
+			        <div id="thirdLevelCategory">
+			            <p>3차 카테고리</p>
+			            <div id="thirdLevelCheckboxes"></div>
+			        </div>
+			    </div>
+			</div>
+
 		    <div class="row mb-3">
 		        <label for="pName" class="col-sm-2 col-form-label">상품명</label>
 		        <div class="col-sm-10">

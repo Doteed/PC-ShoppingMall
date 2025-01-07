@@ -1,20 +1,26 @@
 package com.project.easyBuild.board.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.project.easyBuild.board.entity.Faq;
 import com.project.easyBuild.board.service.FaqService;
+import com.project.easyBuild.member.dto.MemberDto;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.domain.Sort;
 
 @Controller
 @RequestMapping("/faqs")
@@ -54,17 +60,29 @@ public class FaqController {
         return TEMPLATE_DIR + "create";
     }
 
-    // FAQ 작성 처리
     @PostMapping
-    public String createFaq(@ModelAttribute @Valid Faq faq, BindingResult result) {
+    public String createFaq(@ModelAttribute @Valid Faq faq, BindingResult result, HttpSession session) {
         if (result.hasErrors()) {
             return TEMPLATE_DIR + "create";
         }
-        faq.setAuthId(2L); // 관리자 권한 2 설정
-        faq.setBoardId(102L); // BOARD_ID 102으로 설정
+
+        // 로그인한 사용자 정보 가져오기
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+        if (loggedInUser == null) {
+            return "redirect:/loginform"; // 로그인되지 않은 경우 로그인 페이지로 이동
+        }
+
+        // 로그인한 사용자 아이디 설정
+        faq.setUserId(loggedInUser.getUserId());
+
+        // 기본값 설정
+        faq.setAuthId(2L); // 관리자 권한
+        faq.setBoardId(102L); // FAQ 게시판 ID
         faqService.saveFaq(faq);
+
         return "redirect:/faqs";
     }
+
 
     // FAQ 수정 페이지
     @GetMapping("/edit/{id}")
@@ -78,11 +96,21 @@ public class FaqController {
     public String updateFaq(
             @PathVariable Long id,
             @ModelAttribute @Valid Faq faq,
-            BindingResult result) {
+            BindingResult result,
+            HttpSession session) {
 
         if (result.hasErrors()) {
             return TEMPLATE_DIR + "edit";
         }
+
+        // 로그인한 사용자 정보 가져오기
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+        if (loggedInUser == null) {
+            return "redirect:/loginform"; // 로그인되지 않은 경우 로그인 페이지로 이동
+        }
+
+        // 로그인한 사용자 아이디 설정
+        faq.setUserId(loggedInUser.getUserId());
 
         // 기본값 설정
         if (faq.getBoardId() == null) {
@@ -94,6 +122,7 @@ public class FaqController {
 
         return "redirect:/faqs";
     }
+
 
     // FAQ 삭제 처리
     @GetMapping("/delete/{id}")

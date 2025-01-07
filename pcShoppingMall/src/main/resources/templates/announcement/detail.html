@@ -3,29 +3,41 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 <head>
-    <title layout:fragment="title">Announcement Detail</title>
-	<link rel="stylesheet" th:href="@{/css/announcement-detail.css}">
-
+    <title layout:fragment="title">Edit Announcement</title>
+    <link rel="stylesheet" th:href="@{/css/announcement-detail.css}">
 </head>
 <body>
     <div layout:fragment="content">
-        <div class="container mt-5 content-wrapper">
-            <h1 th:text="${announcement.title}"></h1>
-			<p class="date">
-			    <strong>날짜:</strong> 
-			    <span th:text="${#temporals.format(announcement.createdDate, 'yyyy-MM-dd')}"></span>
-			</p>
+        <div class="container mt-5">
+            <h1>수정하기</h1>
+            <form th:action="@{/announcements/update/{id}(id=${announcement.announcId})}" 
+                  th:object="${announcement}" method="post">
+                <div class="mb-3">
+                    <label for="title" class="form-label">제목</label>
+                    <input type="text" class="form-control" id="title" name="title" 
+                           th:field="*{title}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="content" class="form-label">내용</label>
+                    <textarea class="form-control" id="content" name="content" 
+                              th:field="*{content}" rows="5" required></textarea>
+                </div>
+				<div class="button-container">
+				    <!-- 수정 버튼 -->
+				    <a th:if="${loggedInUser != null and loggedInUser.authId == 2}" 
+				       th:href="@{'/announcements/edit/' + ${announcement.announcId}}" 
+				       class="btn btn-warning btn-sm">수정</a>
 
-            <div class="content-box">
-                <p th:utext="${announcement.content}"></p>
-            </div>
-            <div class="button-container">
-				<a th:href="@{'/announcements/edit/' + ${announcement.announcId}}" class="btn btn-warning btn-sm">수정</a>
-				<a th:href="@{'/announcements/delete/' + ${announcement.announcId}}" class="btn btn-danger btn-sm" onclick="return confirm('삭제하시겠습니까?');">삭제</a>
-                <a href="/announcements" class="btn btn-secondary">목록</a>
-            </div>
+				    <!-- 삭제 버튼 -->
+				    <a th:if="${loggedInUser != null and loggedInUser.authId == 2}" 
+				       th:href="@{'/announcements/delete/' + ${announcement.announcId}}" 
+				       class="btn btn-danger btn-sm" onclick="return confirm('삭제하시겠습니까?');">삭제</a>
+
+				    <!-- 목록 버튼 -->
+				    <a href="/announcements" class="btn btn-secondary">목록</a>
+				</div>
+            </form>
         </div>
-
     </div>
 </body>
 </html>
