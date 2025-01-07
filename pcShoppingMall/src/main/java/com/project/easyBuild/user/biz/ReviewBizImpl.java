@@ -32,18 +32,18 @@ public class ReviewBizImpl implements ReviewBiz {
 	}
 
 	@Override
-	public int update(ReviewDto dto) {
-		return dao.update(dto);
+	public int update(ReviewDto dto, String userId) {
+		return dao.update(dto, userId);
 	}
 
 	@Override
-	public int insert(ReviewDto dto) {
-		return dao.insert(dto);
+	public int insert(ReviewDto dto, String userId) {
+		return dao.insert(dto, userId);
 	}
 	
 	@Override
-	public int delete(int reviewId, String userId) {
-		return dao.delete(reviewId, userId);
+	public int delete(int reviewId, String userId, int authId) {
+		return dao.delete(reviewId, userId, authId);
 	}
 
 

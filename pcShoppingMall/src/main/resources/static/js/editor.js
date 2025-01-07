@@ -1,9 +1,8 @@
 //수정 팝업
 window.openEditPopup = function(entityType, entityId, mode) {
-	const userId = 'user01'; // 임시 userId
 	const isUpdate = mode === 'update' ? true : false;
-	const url = isUpdate ? `/${entityType}/detail/${entityId}?userId=${userId}`
-		: `/${entityType}/insert-editor?userId=${userId}`;
+	const url = isUpdate ? `/${entityType}/detail/${entityId}?`
+		: `/${entityType}/insert-editor?`;
 
 	fetch(url)
 		.then(response => response.json())
@@ -103,7 +102,6 @@ window.openEditPopup = function(entityType, entityId, mode) {
 					}
 
 					const bodyData = {
-						userId,
 						title,
 						content,
 					};
@@ -152,9 +150,8 @@ window.openEditPopup = function(entityType, entityId, mode) {
 
 //삭제
 window.deleteEntity = function(entityType, entityId) {
-    const userId = 'user01'; // 임시 userId
     if (confirm("정말 삭제하시겠습니까?")) {
-        let url = `/${entityType}/delete?${entityType}Id=${entityId}&userId=${userId}`;
+        let url = `/${entityType}/delete?${entityType}Id=${entityId}`;
         let method = '';
 
         if (entityType === 'review') {
@@ -172,7 +169,7 @@ window.deleteEntity = function(entityType, entityId) {
             location.reload();
         })
         .catch(error => {
-            console.error('삭제 실패:', error);  // 에러 처리 추가
-        }); // 닫는 중괄호 추가
+            console.error('삭제 실패:', error);
+        });
     }
 };

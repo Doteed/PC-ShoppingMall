@@ -1,5 +1,6 @@
 package com.project.easyBuild.user.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import com.project.easyBuild.user.dto.ReviewDto;
 
 @Repository
 public class ReviewDaoImpl implements ReviewDao {
-	private static final int AUTH_ID = 2; //관리자
+	//private static final int AUTH_ID = 2; //관리자
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -90,26 +91,35 @@ public class ReviewDaoImpl implements ReviewDao {
 	}
 
 	@Override
-	public int update(ReviewDto dto) {
+	public int update(ReviewDto dto, String userId) {
 		String sql = "UPDATE REVIEW SET TITLE = ?, CONTENT = ?, RATING = ? WHERE REVIEW_ID = ? AND USER_ID = ?";
 
 		return jdbcTemplate.update(sql, dto.getTitle(), dto.getContent(), dto.getRating(), dto.getReviewId(),
-				dto.getUserId());
+				userId);
 	}
 
 	@Override
-	public int delete(int reviewId, String userId) {
-		String sql = "UPDATE REVIEW SET IS_DELETED = 'Y' WHERE REVIEW_ID = ? AND USER_ID = ?";
+	public int delete(int reviewId, String userId, int authId) {
+		StringBuilder sql = new StringBuilder("UPDATE REVIEW SET IS_DELETED = 'Y' WHERE REVIEW_ID = ?");
+		List<Object> params = new ArrayList<>();
+		params.add(reviewId);
+		
+		if(authId == 2) {
+			//관리자일때 조건없이 삭제
+		} else if(authId == 1) {
+			sql.append(" AND USER_ID = ?"); //일반 유저는 본인글만
+	        params.add(userId);
+		}
 
-		return jdbcTemplate.update(sql, reviewId, userId);
+		return jdbcTemplate.update(sql.toString(), params.toArray());
 	}
-
+	
 	@Override
-	public int insert(ReviewDto dto) {
+	public int insert(ReviewDto dto, String userId) {
 		String sql = "INSERT INTO REVIEW "
-				+ "VALUES (SEQ_REVIEW.NEXTVAL, ?, ?, ?, ?, ?, ?, SYSDATE, ?, 'N')";
+				+ " VALUES (SEQ_REVIEW.NEXTVAL, ?, ?, ?, ?, ?, ?, SYSDATE, ?, 'N') ";
 
-		return jdbcTemplate.update(sql, getProductId(dto.getOrderId()), dto.getOrderId(), dto.getUserId(), 1,
+		return jdbcTemplate.update(sql, getProductId(dto.getOrderId()), dto.getOrderId(), userId, 1,
 				dto.getTitle(), dto.getContent(), dto.getRating());
 	}
 
