@@ -30,7 +30,6 @@ public class ReviewDto {
 	// constructor for inserting
 	public ReviewDto(int orderId, String userId, String title, String content, int rating) {
 		this.orderId = orderId;
-		this.userId = userId;
 		this.title = title;
 		this.content = content;
 		this.rating = rating;
@@ -40,7 +39,6 @@ public class ReviewDto {
 	public ReviewDto(Integer reviewId, String userId, String title, String content, int rating) {
 		super();
 		if(reviewId != null) this.reviewId = reviewId;
-		this.userId = userId;
 		this.title = title;
 		this.content = content;
 		this.rating = rating;
