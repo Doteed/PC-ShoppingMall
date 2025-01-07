@@ -138,20 +138,31 @@ public class HomeController {
 	private ReviewBiz reviewbiz;
 
 	@GetMapping("/my/review")
-	public String myReview(Model model) {
-        List<ReviewDto> writeReviews = reviewbiz.writeListAll("user01");
+    public String myReview(HttpSession session, Model model) {
+        MemberDto user = (MemberDto) session.getAttribute("dto");
+        if (user == null) {
+            return "redirect:/loginform"; // 로그인 페이지로 리다이렉트
+        }
+
+        List<ReviewDto> writeReviews = reviewbiz.writeListAll(user.getUserId());
         model.addAttribute("writeReviews", writeReviews);
-        List<ReviewDto> writtenReviews = reviewbiz.writtenListAll("user01");
+        List<ReviewDto> writtenReviews = reviewbiz.writtenListAll(user.getUserId());
         model.addAttribute("writtenReviews", writtenReviews);
-		return "pages/mypage/my-review";
-	}
+        
+        return "pages/mypage/my-review";
+    }
 
 	@Autowired
 	private QnaBiz qnabiz;
 
 	@GetMapping("/my/qna")
-	public String myQA(Model model) {
-		List<QnaDto> qnas = qnabiz.mylistAll("user01");
+	public String myQna(HttpSession session, Model model) {
+        MemberDto user = (MemberDto) session.getAttribute("dto");
+        if (user == null) {
+            return "redirect:/loginform";
+        }
+        
+		List<QnaDto> qnas = qnabiz.mylistAll(user.getUserId());
 		model.addAttribute("qnas", qnas);
 		return "pages/mypage/my-qna";
 	}
@@ -160,10 +171,30 @@ public class HomeController {
 	private OrderBiz orderbiz;
 
 	@GetMapping("/my/order")
-	public String myOrder(Model model) {
-		List<OrderDto> orders = orderbiz.mylistAll("user01");
+	public String myOrder(HttpSession session, Model model) {
+        MemberDto user = (MemberDto) session.getAttribute("dto");
+        if (user == null) {
+            return "redirect:/loginform";
+        }
+        
+		List<OrderDto> orders = orderbiz.mylistAll(user.getUserId());
 		model.addAttribute("orders", orders);
 		return "pages/mypage/my-order";
+	}
+	
+	//@Autowired
+	//private CartBiz cartbiz;
+	
+	@GetMapping("/my/cart")
+	public String myCart(HttpSession session, Model model) {
+        MemberDto user = (MemberDto) session.getAttribute("dto");
+        if (user == null) {
+            return "redirect:/loginform";
+        }
+        
+		//List<CartDto> carts = cartbiz.mylistAll(user.getUserId());
+		//model.addAttribute("carts", carts);
+		return "pages/mypage/my-cart";
 	}
 
     //회원 관리
