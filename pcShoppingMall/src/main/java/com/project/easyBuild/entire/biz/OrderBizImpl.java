@@ -30,8 +30,8 @@ public class OrderBizImpl implements OrderBiz {
 	}
 
 	@Override
-	public int myUpdate(OrderDto dto) {
-		return dao.myUpdate(dto);
+	public int update(OrderDto dto, String userId) {
+		return dao.update(dto, userId);
 	}
 
     @Override
@@ -40,8 +40,8 @@ public class OrderBizImpl implements OrderBiz {
     }
     
 	@Override
-	public int cancle(int orderId, String userId) {
-		return dao.cancle(orderId, userId);
+	public int cancle(int orderId, String userId, int authId) {
+		return dao.cancle(orderId, userId, authId);
 	}
 
 	@Override

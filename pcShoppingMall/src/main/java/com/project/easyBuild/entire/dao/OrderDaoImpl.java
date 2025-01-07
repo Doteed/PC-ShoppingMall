@@ -1,5 +1,6 @@
 package com.project.easyBuild.entire.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ public class OrderDaoImpl implements OrderDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private static final int authId = 2; // 관리자 권한
+	//private static final int authId = 2; // 관리자 권한
 
 	private RowMapper<OrderDto> orderRowMapper = (rs, rowNum) -> {
 		OrderDto order = new OrderDto();
@@ -85,36 +86,46 @@ public class OrderDaoImpl implements OrderDao {
 		}
 	}
 
-    //TODO: 컨트롤러에서 세션 확인 후 없으면 리다이렉트 구현. 완료시 서브쿼리는 지울 것.
+	//배송 정보 업데이트(사용자)
 	@Override
-	public int myUpdate(OrderDto dto) {
+	public int update(OrderDto dto, String userId) {
 		String sql = "UPDATE DELIVERY d SET d.ADDRESSEE = ?, d.ADDRESS = ?, d.PHONE = ? "
 				+ " WHERE d.DELIVERY_ID = ? AND d.DELIVERY_ID IN ( "
 				+ " SELECT DELIVERY_ID FROM ORDER_TABLE ot WHERE ot.USER_ID = ?)";
 
 		return jdbcTemplate.update(sql, dto.getAddressee(), dto.getAddress(), dto.getPhone(), dto.getDeliveryId(),
-				dto.getUserId());
+				userId);
 	}
 
-    //TODO: 컨트롤러에서 관리자인지 확인 필요. 배송 상태 업데이트.
+    //TODO: 컨트롤러에서 관리자인지 확인 필요.
+	//배송 상태 업데이트(관리자)
     @Override
     public int update(int deliveryId, String deliveryStatus) {
-        String sql = "UPDATE DELIVERY d SET d.DELIVERY_STATUS = ? WHERE d.DELIVERY_ID = ?";
+        String sql = "UPDATE DELIVERY SET DELIVERY_STATUS = ? WHERE DELIVERY_ID = ?";
         
         return jdbcTemplate.update(sql, deliveryStatus, deliveryId);
     }
     
     //TODO:
 	@Override
-	public int cancle(int orderId, String userId) {
-		String sql = "UPDATE DELIVERY d SET d.DELIVERY_STATUS = ? "
-				+ "WHERE d.DELIVERY_ID = ( "
-				+ "SELECT ot.DELIVERY_ID FROM ORDER_TABLE ot "
-				+ "JOIN MEMBER m ON ot.USER_ID = m.USER_ID "
-				+ "WHERE ot.ORDER_ID = ? "
-				+ "AND (ot.USER_ID = ? OR m.AUTH_ID = ?) " + ")";
+	public int cancle(int orderId, String userId, int authId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE DELIVERY d SET d.DELIVERY_STATUS = ? ")
+		   .append("WHERE d.DELIVERY_ID = ( ")
+		   .append("SELECT ot.DELIVERY_ID FROM ORDER_TABLE ot ")
+		   .append("WHERE ot.ORDER_ID = ? ");
+		
+		List<Object> params = new ArrayList<>();
+		params.add(orderId);
+		
+		if(authId == 2) {
+			sql.append(")"); //관리자일때 조건없이 닫기만
+		} else if(authId == 1) {
+			sql.append(" AND ot.USER_ID = ? )"); //일반 유저는 본인글만
+	        params.add(userId);
+		}
 
-		return jdbcTemplate.update(sql, "취소", orderId, userId, authId);
+		return jdbcTemplate.update(sql.toString(), "취소", params.toArray());
 	}
 
 	@Override

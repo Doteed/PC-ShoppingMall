@@ -8,6 +8,6 @@ public interface QnaBiz {
 	public List<QnaDto> mylistAll(String userId);
 	public List<QnaDto> listAll();
 	public QnaDto listOne(int qnaId, String userId);
-	public int update(QnaDto dto);
-	public int delete(int qnaId, String userId);
+	public int update(QnaDto dto, String userId);
+	public int delete(int qnaId, String userId, int authId);
 }

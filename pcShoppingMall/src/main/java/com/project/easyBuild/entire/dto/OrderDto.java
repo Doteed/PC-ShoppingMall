@@ -29,11 +29,10 @@ public class OrderDto {
 	private String address;			//주소(delivery table)
     private String phone;			//전화번호(delivery table)
     
-    //constructor for mypage updating
-	public OrderDto(int deliveryId, String userId, String addressee, String address, String phone) {
+    //constructor for user updating
+	public OrderDto(int deliveryId, String addressee, String address, String phone) {
 		super();
 		this.deliveryId = deliveryId;
-		this.userId = userId;
 		this.addressee = addressee;
 		this.address = address;
 		this.phone = phone;

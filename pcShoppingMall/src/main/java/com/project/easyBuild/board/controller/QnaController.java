@@ -70,8 +70,15 @@ public class QnaController {
 
     // QnA 작성 페이지
     @GetMapping("/new")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(Model model,
+    		@RequestParam(value = "source", required = false) String source,
+    		HttpSession session) {
         model.addAttribute("qna", new Qna());
+        
+        if (source != null) {
+            session.setAttribute("source", source); //게시판 접근이 아니면 세션에 저장
+        }
+        
         return TEMPLATE_DIR + "create";
     }
 
@@ -99,6 +106,13 @@ public class QnaController {
 
         qnaService.saveQna(qna);
 
+        String source = (String)session.getAttribute("source");
+        session.removeAttribute("source"); // 세션 값 삭제
+        
+        if ("my".equals(source)) {
+        	return "redirect:/my/qna"; // 마이페이지에서 요청시 마이페이지로
+        }
+        
         return "redirect:/qnas";
     }
 

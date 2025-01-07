@@ -28,7 +28,7 @@ public class ReviewDto {
 	private String productName;
 	
 	// constructor for inserting
-	public ReviewDto(int orderId, String userId, String title, String content, int rating) {
+	public ReviewDto(int orderId, String title, String content, int rating) {
 		this.orderId = orderId;
 		this.title = title;
 		this.content = content;
@@ -36,7 +36,7 @@ public class ReviewDto {
 	}
 
 	// constructor for updating
-	public ReviewDto(Integer reviewId, String userId, String title, String content, int rating) {
+	public ReviewDto(Integer reviewId, String title, String content, int rating) {
 		super();
 		if(reviewId != null) this.reviewId = reviewId;
 		this.title = title;

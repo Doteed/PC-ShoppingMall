@@ -9,7 +9,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import com.project.easyBuild.entire.biz.OrderBiz;
 import com.project.easyBuild.entire.dto.OrderDto;
+import com.project.easyBuild.member.dto.MemberDto;
+
+import jakarta.servlet.http.HttpSession;
+
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @Controller
@@ -43,8 +50,14 @@ public class OrderController {
 
     @PostMapping("/update")
     @ResponseBody
-    public ResponseEntity<String> updateOrder(@RequestBody OrderDto orderDto) {
-        int result = orderBiz.myUpdate(orderDto);
+    public ResponseEntity<?> updateOrder(@RequestBody OrderDto orderDto, HttpSession session) {
+    	MemberDto user = (MemberDto) session.getAttribute("dto");
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
+		}
+		
+    	int result = orderBiz.update(orderDto, user.getUserId());
+    	
         if (result > 0) {
             return ResponseEntity.ok("주문이 성공적으로 업데이트되었습니다.");
         } else {
@@ -54,8 +67,13 @@ public class OrderController {
 
     @PostMapping("/cancel/{orderId}")
     @ResponseBody
-    public ResponseEntity<String> cancelOrder(@PathVariable int orderId, @RequestParam String userId) {
-        int result = orderBiz.cancle(orderId, userId);
+    public ResponseEntity<?> cancelOrder(@PathVariable int orderId, HttpSession session) {
+    	MemberDto user = (MemberDto) session.getAttribute("dto");
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
+		}
+		
+    	int result = orderBiz.cancle(orderId, user.getUserId(), user.getAuthId());
         if (result > 0) {
             return ResponseEntity.ok("주문이 성공적으로 취소되었습니다.");
         } else {
