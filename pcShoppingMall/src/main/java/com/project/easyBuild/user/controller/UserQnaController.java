@@ -17,23 +17,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.easyBuild.user.biz.QABiz;
-import com.project.easyBuild.user.dto.QADto;
+import com.project.easyBuild.user.biz.QnaBiz;
+import com.project.easyBuild.user.dto.QnaDto;
 
 @RestController
-@RequestMapping("/qa")
-public class QAController {
+@RequestMapping("/qna")
+public class UserQnaController {
     @Autowired
-    private QABiz qabiz;
+    private QnaBiz qnaBiz;
 
-    @GetMapping("/detail/{qaId}")
-    public ResponseEntity<QADto> getQaDetail(@PathVariable int qaId, @RequestParam String userId) {
+    @GetMapping("/detail/{qnaId}")
+    public ResponseEntity<QnaDto> getDetail(@PathVariable int qnaId, @RequestParam String userId) {
         try {
-            QADto qa = qabiz.listOne(qaId, userId);
+            QnaDto qna = qnaBiz.listOne(qnaId, userId);
             
-            if (qa != null) {
-                System.out.println("QA Detail Response: " + qa);
-                return ResponseEntity.ok(qa);
+            if (qna != null) {
+                System.out.println("QA Detail : " + qna);
+                return ResponseEntity.ok(qna);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
@@ -44,9 +44,9 @@ public class QAController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Map<String, Object>> updateQa(@RequestBody QADto qaDto){//@RequestAttribute("userId") String userId) {
-        System.out.println("dto: " + qaDto);
-        int result = qabiz.update(qaDto);
+    public ResponseEntity<Map<String, Object>> update(@RequestBody QnaDto qnaDto){//@RequestAttribute("userId") String userId) {
+        System.out.println("dto: " + qnaDto);
+        int result = qnaBiz.update(qnaDto);
         
         Map<String, Object> response = new HashMap<>();
         
@@ -63,8 +63,8 @@ public class QAController {
 
     //삭제
     @DeleteMapping("/delete")
-    public ResponseEntity<Map<String, String>> deleteQa(@RequestParam int qaId, @RequestParam String userId){//@RequestAttribute("userId") String userId) {
-        int result = qabiz.delete(qaId, userId);
+    public ResponseEntity<Map<String, String>> delete(@RequestParam int qnaId, @RequestParam String userId){//@RequestAttribute("userId") String userId) {
+        int result = qnaBiz.delete(qnaId, userId);
         
         Map<String, String> response = new HashMap<>();
         if (result > 0) {

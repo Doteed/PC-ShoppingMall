@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/auth-layout}">
+<head>
+    <title>회원 상세 정보</title>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script th:inline="javascript">
+	    window.deleteMember = function () {
+	        const confirmDelete = confirm("정말로 탈퇴하시겠습니까?");
+	        if (confirmDelete) {
+	            const userId = /*[[${dto.userId}]]*/ 'defaultUserId';
+	            fetch('/auth-member/' + userId, {
+	                method: 'DELETE',
+	                headers: {
+	                    'Content-Type': 'application/json'
+	                }
+	            })
+	            .then(response => {
+	                if (response.ok) {
+	                    alert('회원이 성공적으로 탈퇴되었습니다.');
+	                    window.location.href = '/auth-member';
+	                } else {
+	                    alert('회원 탈퇴 중 오류가 발생했습니다.');
+	                }
+	            })
+	            .catch(error => {
+	                console.error('Error:', error);
+	                alert('서버 요청에 실패했습니다.');
+	            });
+	        }
+	    }
+
+	    window.goToMemberManagement = function () {
+	        window.location.href = '/auth-member';
+	    }
+	</script>
+	
+    <style>
+		.content-box {
+		    display: flex;
+		    flex-wrap: nowrap;
+		}
+
+		.side-menu {
+		    flex: 0 0 250px; /* 사이드바를 고정 250px로 설정 */
+		}
+
+		.main-content {
+		    flex: 1; /* 남은 공간을 모두 사용 */
+		    padding: 20px;
+		}
+
+		.detail-container {
+		    padding: 20px;
+		    max-width: 1200px; 
+		    width: 100%;
+		    margin: 0 auto;
+		}
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .button-group button {
+            width: 100px;
+        }
+		.table th {
+		    width: 200px;
+		    text-align: left;
+		    white-space: nowrap; /* 줄바꿈 방지 */
+		}
+
+    </style>
+</head>
+<body>
+	<div layout:fragment="content" class="d-flex flex-column gap-3 w-100">
+	    <div class="detail-container">
+	        <h1 class="text-center">회원 상세 정보</h1>
+	        
+	        <!-- 탭 네비게이션 -->
+	        <ul class="nav nav-tabs" id="memberTabs" role="tablist">
+	            <li class="nav-item">
+	                <a class="nav-link active" id="info-tab" data-bs-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">기본 정보</a>
+	            </li>
+	        </ul>
+	
+	        <!-- 탭 내용 -->
+	        <div class="tab-content" id="memberTabsContent">
+	            <!-- 기본 정보 -->
+	            <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+	                <table class="table table-striped mt-3">
+	                    <tr>
+	                        <th>아이디</th>
+	                        <td th:text="${dto.userId}"></td>
+	                    </tr>
+	                    <tr>
+	                        <th>회원명</th>
+	                        <td th:text="${dto.userName}"></td>
+	                    </tr>
+	                    <tr>
+	                        <th>성별</th>
+	                        <td th:text="${dto.gender == 'M' ? '남자' : '여자'}"></td>
+	                    </tr>
+	                    <tr>
+	                        <th>이메일</th>
+	                        <td th:text="${dto.email}"></td>
+	                    </tr>
+						<tr>
+						    <th>전화번호</th>
+						    <td th:text="${dto.phone}"></td>
+						</tr>
+	                </table>
+	        </div>
+	
+	        <div class="button-group">
+	            <button class="btn btn-danger" onclick="deleteMember()">회원 탈퇴</button>
+				<button class="btn btn-danger" onclick="window.location.href='member/update?userId=${userId}'">정보 수정</button>
+	            <button class="btn btn-secondary" onclick="goToMemberManagement()">닫기</button>
+	        </div>
+	    </div>
+	</div>
+
+</body>
+</html>
