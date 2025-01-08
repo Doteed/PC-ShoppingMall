@@ -9,7 +9,7 @@
 	src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('/order/count?userId=user01') //임시 아이디
+        fetch('/order/count?')
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -68,6 +68,7 @@
                     <table class="table-type-a">
 						<thead>
 							<tr>
+								<th>주문번호</th>
 								<th>주문날짜</th>
 								<th>상품명</th>
 								<th>주문금액</th>
@@ -81,6 +82,7 @@
 							</tr>
 							<tr th:each="item : ${orders}"
 								th:unless="${#lists.isEmpty(orders)}">
+								<td th:text="${item.orderId}" />
 								<td th:text="${item.orderDate}" />
 								<td th:text="${item.productName}" />
 								<td th:text="${item.totalPrice}" />

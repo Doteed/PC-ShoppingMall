@@ -30,9 +30,9 @@ public class OrderDaoImpl implements OrderDao {
 		order.setOrderId(rs.getInt("ORDER_ID"));
 		order.setDeliveryId(rs.getInt("DELIVERY_ID"));
 		order.setUserId(rs.getString("USER_ID"));
+		order.setProductId(rs.getInt("AUTH_ID"));
 		order.setProductId(rs.getInt("PRODUCT_ID"));
 		order.setTotalPrice(rs.getInt("TOTAL_PRICE"));
-		order.setCartstatus(rs.getString("CARTSTATUS"));
 		order.setPaymentMethod(rs.getString("PAYMENT_METHOD"));
 		order.setOrderDate(rs.getDate("ORDER_DATE"));
 
@@ -116,6 +116,7 @@ public class OrderDaoImpl implements OrderDao {
 		   .append("WHERE ot.ORDER_ID = ? ");
 		
 		List<Object> params = new ArrayList<>();
+		params.add("취소");
 		params.add(orderId);
 		
 		if(authId == 2) {
@@ -125,7 +126,7 @@ public class OrderDaoImpl implements OrderDao {
 	        params.add(userId);
 		}
 
-		return jdbcTemplate.update(sql.toString(), "취소", params.toArray());
+		return jdbcTemplate.update(sql.toString(), params.toArray());
 	}
 
 	@Override
@@ -153,14 +154,14 @@ public class OrderDaoImpl implements OrderDao {
 	
 	@Override
 	public int insert (OrderDto dto) {
-		String sql = " INSERT INTO ORDER_TABLE ot VALUES (orderId, deliveryId, userId, productId, totalPrice, cartstatus, paymentMethod, orderDate, productName, deliveryStatus, addressee, address, phone) ";
+		String sql = " INSERT INTO ORDER_TABLE ot VALUES (orderId, deliveryId, userId, auth_id, productId, totalPrice, paymentMethod, orderDate, productName, deliveryStatus, addressee, address, phone) ";
 		return jdbcTemplate.update(sql, 
 				dto.getOrderId(),
 				dto.getDeliveryId(),
 				dto.getUserId(),
+				dto.getAuthId(),
 				dto.getProductId(),
 				dto.getTotalPrice(),
-				dto.getCartstatus(),
 				dto.getPaymentMethod(),
 				dto.getOrderDate(),
 				dto.getProductName(),

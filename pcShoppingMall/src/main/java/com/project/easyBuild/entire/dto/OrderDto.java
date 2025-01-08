@@ -16,9 +16,9 @@ public class OrderDto {
 	private int orderId;			//주문아이디
 	private int deliveryId;			//배송아이디
 	private String userId;			//회원아이디
+	private int authId;				//권한
 	private int productId;			//상품아이디
 	private int totalPrice;			//총가격
-	private String cartstatus;		//카트상태
 	private String paymentMethod;	//결제방법
 	private Date orderDate;			//주문날짜
 	
@@ -28,6 +28,15 @@ public class OrderDto {
 	private String addressee;		//수령인(delivery table)
 	private String address;			//주소(delivery table)
     private String phone;			//전화번호(delivery table)
+    
+    //
+    public OrderDto(String paymentMethod, String addressee, String address, String phone) {
+        super();
+        this.paymentMethod = paymentMethod;
+        this.addressee = addressee;
+        this.address = address;
+        this.phone = phone;
+    }
     
     //constructor for user updating
 	public OrderDto(int deliveryId, String addressee, String address, String phone) {

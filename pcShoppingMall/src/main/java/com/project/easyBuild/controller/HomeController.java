@@ -32,8 +32,10 @@ import com.project.easyBuild.entire.biz.OrderBiz;
 import com.project.easyBuild.entire.dto.OrderDto;
 import com.project.easyBuild.member.biz.MemberBiz;
 import com.project.easyBuild.member.dto.MemberDto;
+import com.project.easyBuild.user.biz.CartBiz;
 import com.project.easyBuild.user.biz.QnaBiz;
 import com.project.easyBuild.user.biz.ReviewBiz;
+import com.project.easyBuild.user.dto.CartDto;
 import com.project.easyBuild.user.dto.QnaDto;
 import com.project.easyBuild.user.dto.ReviewDto;
 
@@ -213,8 +215,8 @@ public class HomeController {
 		return "pages/mypage/my-order";
 	}
 	
-	//@Autowired
-	//private CartBiz cartbiz;
+	@Autowired
+	private CartBiz cartbiz;
 	
 	@GetMapping("/my/cart")
 	public String myCart(HttpSession session, Model model) {
@@ -223,8 +225,8 @@ public class HomeController {
             return "redirect:/loginform";
         }
         
-		//List<CartDto> carts = cartbiz.mylistAll(user.getUserId());
-		//model.addAttribute("carts", carts);
+		List<CartDto> carts = cartbiz.mylistAll(user.getUserId());
+		model.addAttribute("carts", carts);
 		return "pages/mypage/my-cart";
 	}
 
