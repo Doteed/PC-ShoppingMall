@@ -5,6 +5,26 @@
 <head>
     <title layout:fragment="title">QnA 상세보기</title>
 	<link rel="stylesheet" th:href="@{/css/announcement-detail.css}">
+	<style>
+	    #qna-answer-box {
+	        margin-top: 20px;
+			height: 200px;
+			margin-bottom: 40px;
+	    }
+
+	    #qna-answer-title {
+	        margin-left: 15px;
+	    }
+		
+		#answer{
+			text-align: left;
+		}
+		#qnanswer{
+			text-align: right;
+			margin-top:-30px;
+			margin-bottom: 40px;
+		}
+	</style>
 </head>
 <body>
     <div layout:fragment="content">
@@ -18,7 +38,7 @@
 			<p class="author"><strong>작성자:</strong> <span th:text="${qna.userId}"></span></p>
 
             <!-- 비밀글일 경우 비밀번호 입력 -->
-            <div th:if="${qna.isSecret}">
+            <div th:if="${qna.isSecret && !isAuthenticated}">
                 <form th:action="@{/qnas/verify/{id}(id=${qna.qnaId})}" method="post" class="mb-3">
                     <label for="password" class="form-label">비밀번호</label>
                     <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
@@ -26,25 +46,29 @@
                 </form>
             </div>
 
-            <!-- 비밀글이 아니거나 비밀번호 인증 성공 시 내용 표시 -->
-            <div class="content-box" th:if="${!qna.isSecret || isAuthenticated}">
-                <p th:utext="${qna.content}"></p>
-            </div>
+			<!-- 비밀글이 아니거나 인증된 경우 또는 관리자인 경우 내용 표시 -->
+			<div class="content-box" th:if="${!qna.isSecret || isAdmin || isAuthenticated}">
+			    <p th:utext="${qna.content}"></p>
+			</div>
 
-            <!-- 관리 버튼 -->
-            <div class="button-container" th:if="${!qna.isSecret || isAuthenticated}">
-                <a th:href="@{'/qnas/edit/' + ${qna.qnaId}}" class="btn btn-warning">수정</a>
-                <a th:href="@{'/qnas/delete/' + ${qna.qnaId}}" class="btn btn-danger" onclick="return confirm('삭제하시겠습니까?');">삭제</a>
-                <a href="/qnas" class="btn btn-secondary">목록</a>
-            </div>
+			<!-- 관리 버튼 -->
+			<div class="button-container" 
+			     th:if="${(loggedInUser != null && (loggedInUser.authId == 2 || loggedInUser.userId == qna.userId))}">
+			    <a th:href="@{'/qnas/edit/' + ${qna.qnaId}}" class="btn btn-warning">수정</a>
+			    <a th:href="@{'/qnas/delete/' + ${qna.qnaId}}" class="btn btn-danger" onclick="return confirm('삭제하시겠습니까?');">삭제</a>
+			    <a href="/qnas" class="btn btn-secondary">목록</a>
+			</div>
 
+			<h3 id="answer">답변</h3>
 			<div id="qna-answer-box">
-			    <h3>답변</h3>
 			    <p th:if="${qna.answer != null}" th:text="${qna.answer}"></p>
 			    <p th:if="${qna.answer == null}" class="text-muted">답변 대기 중입니다.</p>
-			    <a th:href="@{'/qnas/answer/' + ${qna.qnaId}}" 
-			       class="btn btn-primary mt-3" 
-			       th:if="${!qna.isSecret || isAuthenticated}">답변하기</a>
+			</div>
+			<!-- 답변하기 버튼: 관리자만 보이도록 설정 -->
+			<div id="qnanswer">
+			<a th:if="${loggedInUser != null and loggedInUser.authId == 2}" 
+			   th:href="@{'/qnas/answer/' + ${qna.qnaId}}" 
+			   class="btn btn-primary mt-3">답변하기</a>
 			</div>
         </div>
     </div>

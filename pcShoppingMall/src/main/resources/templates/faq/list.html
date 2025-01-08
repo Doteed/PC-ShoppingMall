@@ -41,7 +41,8 @@
 
             <!-- 작성하기 버튼 -->
             <div class="d-flex justify-content-end mt-3 mb-5">
-                <a href="/faqs/new" class="btn btn-primary">작성하기</a>
+				<!-- 작성 버튼 관리자만 노출 -->
+				<a th:if="${loggedInUser != null and loggedInUser.authId == 2}" href="/faqs/new" class="btn btn-primary">작성하기</a>
             </div>
 
             <!-- 페이지네이션 -->
