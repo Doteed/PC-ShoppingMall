@@ -39,9 +39,16 @@ public class UserOrderController {
 			OrderDto order = orderbiz.listOne(orderId, user.getUserId());
 
 			if (order != null) {
-				return ResponseEntity.ok(order);
+	            Map<String, Object> response = new HashMap<>();
+	            response.put("userId", user.getUserName());
+	            System.out.println(user.getPhone());
+	            response.put("phone", user.getPhone());
+	            response.put("order", order);
+	            return ResponseEntity.ok(response);
+
+				//return ResponseEntity.ok(order);
 			} else {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+				 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("잘못된 접근입니다.");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -74,6 +81,7 @@ public class UserOrderController {
 	// 취소
 	@PutMapping("/cancle")
 	public ResponseEntity<Map<String, String>> cancle(@RequestParam int orderId,  HttpSession session) {
+		System.out.println("cancle");
 		MemberDto user = (MemberDto) session.getAttribute("dto");
 		if (user == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
@@ -93,10 +101,14 @@ public class UserOrderController {
 
 	// 주문 상태 카운팅
 	@GetMapping("/count")
-	public ResponseEntity<Map<String, Integer>> getCount(@RequestParam String userId) {
+	public ResponseEntity<?> getCount(HttpSession session) {
+		MemberDto user = (MemberDto) session.getAttribute("dto");
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
+		}
+		
 		try {
-			System.out.println("userId: " + userId); // userId 로그 출력
-			Map<String, Integer> statusCount = orderbiz.count(userId);
+			Map<String, Integer> statusCount = orderbiz.count(user.getUserId());
 			return ResponseEntity.ok(statusCount);
 		} catch (Exception e) {
 			e.printStackTrace();
