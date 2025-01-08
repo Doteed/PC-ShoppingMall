@@ -22,6 +22,12 @@ import com.project.easyBuild.authority.biz.MemberBoardBiz;
 import com.project.easyBuild.authority.biz.ProductBiz;
 import com.project.easyBuild.authority.dto.MemberBoardDto;
 import com.project.easyBuild.authority.dto.ProductDto;
+import com.project.easyBuild.board.entity.Announcement;
+import com.project.easyBuild.board.entity.Faq;
+import com.project.easyBuild.board.entity.Qna;
+import com.project.easyBuild.board.service.AnnouncementService;
+import com.project.easyBuild.board.service.FaqService;
+import com.project.easyBuild.board.service.QnaService;
 import com.project.easyBuild.entire.biz.OrderBiz;
 import com.project.easyBuild.entire.dto.OrderDto;
 import com.project.easyBuild.member.biz.MemberBiz;
@@ -61,17 +67,42 @@ public class HomeController {
 	//관리자페이지 관련
 	@Autowired
 	private ProductBiz productbiz;
+	@Autowired
+	private AnnouncementService announcementService;
+	@Autowired
+    private FaqService faqService;
+	@Autowired
+    private QnaService qnaService;
+
 
 	@GetMapping("/auth-index")
-	public String authIndex(HttpSession session, Model model) {
+	public String authIndex(HttpSession session, Model model, @RequestParam(defaultValue = "0") int page) {
+		int pageSize = 5;
+		
 	    MemberDto user = (MemberDto) session.getAttribute("dto");
 	    if (user == null || user.getAuthId() != 2) {
 	        System.out.println("Access denied. User: " + (user != null ? user.getUserId() : "null"));
 	        return "error/403"; // 권한 없음 에러 페이지
 	    }
 	    System.out.println("Access granted for admin: " + user.getUserId());
-	    List<ProductDto> res = productbiz.listAll();
+	    List<ProductDto> res = productbiz.listAll();        
 	    model.addAttribute("list", res);
+	    
+	    // 공지사항
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Announcement> announcements = announcementService.getAllAnnouncements(pageable);
+        model.addAttribute("notices", announcements);
+        
+        // FAQ
+        Pageable faqPageable = PageRequest.of(page, pageSize);
+        Page<Faq> faqs = faqService.getAllFaqs(faqPageable);
+        model.addAttribute("faqs", faqs);
+
+        // QnA
+        Pageable qnaPageable = PageRequest.of(page, pageSize);
+        Page<Qna> qnas = qnaService.getAllQnas(qnaPageable);
+        model.addAttribute("qnas", qnas);
+
 	    return "pages/authority/auth-index";
 	}
 
