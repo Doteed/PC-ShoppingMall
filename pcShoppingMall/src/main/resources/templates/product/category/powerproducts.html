@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:fragment="title">power products</title>
+    <link rel="stylesheet" href="/css/product/productCategory.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+	<div layout:fragment="content" th:with="pageType='power'">
+	<h2 style="text-align: left;">파워</h2>
+    <!-- 필터 UI -->
+    <form id="filter-form">
+    <!-- 제조사 -->
+    <div>
+        <h4>제조사</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="manufacturer" value="시소닉"> 시소닉</label>
+        	<label><input type="checkbox" name="manufacturer" value="잘만"> 잘만</label>
+        	<label><input type="checkbox" name="manufacturer" value="앱코"> 앱코</label>
+        	<label><input type="checkbox" name="manufacturer" value="MSI"> MSI</label>
+        	<label><input type="checkbox" name="manufacturer" value="마이크로닉스"> 마이크로닉스</label>
+        	<label><input type="checkbox" name="manufacturer" value="맥스엘리트"> 맥스엘리트</label>
+        </div>
+    </div>
+
+    <!-- 제품 분류 -->
+    <div>
+        <h4>제품 분류</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="psuStandard" value="ATX"> ATX파워</label>
+        	<label><input type="checkbox" name="psuStandard" value="M-ATX"> M-ATX(SFX)파워</label>
+        	<label><input type="checkbox" name="psuStandard" value="TFX"> TFX파워</label>
+        	<label><input type="checkbox" name="psuStandard" value="서버용 파워"> 서버용 파워</label>
+        	<label><input type="checkbox" name="psuStandard" value="Flex-ATX 파워"> Flex-ATX 파워</label>
+        </div>
+    </div>
+
+    <!-- 정격출력 -->
+    <div>
+        <h4>정격출력</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="ratedOutput" value="1050W"> 1050W</label>
+        	<label><input type="checkbox" name="ratedOutput" value="850W"> 850W</label>
+        	<label><input type="checkbox" name="ratedOutput" value="700W"> 700W</label>
+        	<label><input type="checkbox" name="ratedOutput" value="650w"> 650w</label>
+        	<label><input type="checkbox" name="ratedOutput" value="600w"> 600w</label>
+        </div>
+    </div>
+    
+    <!-- 80PLUS인증 -->
+    <div>
+        <h4>80PLUS인증</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="efficiencyCertification" value="80 PLUS 티타늄"> 80 PLUS 티타늄</label>
+        	<label><input type="checkbox" name="efficiencyCertification" value="80 PLUS 플래티넘"> 80 PLUS 플래티넘</label>
+        	<label><input type="checkbox" name="efficiencyCertification" value="80 PLUS 골드"> 80 PLUS 골드</label>
+        	<label><input type="checkbox" name="efficiencyCertification" value="80 PLUS 실버"> 80 PLUS 실버</label>
+        	<label><input type="checkbox" name="efficiencyCertification" value="80 PLUS 브론즈"> 80 PLUS 브론즈</label>
+        </div>
+    </div>
+    
+    <!-- ETA인증 -->
+    <div>
+        <h4>ETA인증</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="etaCertification" value="TITANIUM"> TITANIUM</label>
+        	<label><input type="checkbox" name="etaCertification" value="PLATINUM"> PLATINUM</label>
+        	<label><input type="checkbox" name="etaCertification" value="GOLD"> GOLD</label>
+        	<label><input type="checkbox" name="etaCertification" value="SILVER"> SILVER</label>
+        	<label><input type="checkbox" name="etaCertification" value="BRONZE"> BRONZE</label>
+        </div>
+    </div>
+    
+	</form>
+	<!-- 세개의 탭 -->
+	<div class="tabs">
+    	<button class="tab-button" data-sort="newest">신상품 순</button>
+    	<button class="tab-button" data-sort="low-price">낮은 가격순</button>
+    	<button class="tab-button" data-sort="high-price">높은 가격순</button>
+	</div>
+
+    <div class="product-list">
+        <!-- 상품을 반복적으로 렌더링 -->
+        <div class="product-item" th:each="power : ${powers}">
+            <div class="product-image">
+    		<!-- 제품 ID를 기반으로 이미지 파일을 동적으로 설정 -->
+    			<img th:src="@{'/images/product/power/' + 'power' + (${power != null && power.powerId != null ? power.powerId : 'default'}) + '.png'}" 
+         				alt="Power Image" style="width:120px; height:120px;">
+			</div>
+            <div class="product-info">
+            	<a th:href="@{/powerproducts/${power.powerId}}">
+    				<h2 class="product-name" th:text="${power.productName}"></h2>
+    			</a>
+    			<p th:text="'제조사: ' + ${power.manufacturer} + ', 제품 분류: ' + ${power.psuStandard} + ', 정격출력: ' + ${power.ratedOutput} + ', 80PLUS인증: ' + ${power.efficiencyCertification} + ', ETA인증: ' + ${power.etaCertification}"></p>
+				<p th:text="${power.formattedReleaseDate}"></p>
+		
+			</div>
+            <div class="product-price">
+                <p th:text="${power.formattedPrice}"></p>
+                <form action="/cart/add" method="post">
+                    <input type="hidden" name="powerId" th:value="${power.powerId}">
+                    <button type="submit">장바구니</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="/js/product/powerCategoryFilter.js"></script>
+</body>
+</html>

@@ -30,7 +30,10 @@ form label {
 form div {
     margin-bottom: 15px;
 }
-
+.checkbox-container label {
+    margin-right: 50px; /* 체크박스 간 가로 간격 */
+    display: inline-block; /* 가로 정렬 유지 */
+}
 .product-name {
     font-size: 18px;
     font-weight: bold; /* 필터링 후에도 굵기가 유지되도록 설정 */
@@ -80,23 +83,23 @@ form div {
 }
 
 .product-price p {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: bold;
     margin: 0 0 10px 0;
     color: #000;
 }
 
 .product-price button {
-    background-color: #28a745;
-    color: #fff;
-    border: none;
+    background-color: white;
+    color: #0C4CBC;
+    border: 1px solid #0C4CBC;
     padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
 }
 
 .product-price button:hover {
-    background-color: #218838;
+    background-color: #D9D9D8;
 }
 
 .tabs {

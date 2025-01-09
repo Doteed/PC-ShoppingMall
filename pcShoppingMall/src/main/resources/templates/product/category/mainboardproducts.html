@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:fragment="title">mainboard products</title>
+    <link rel="stylesheet" href="/css/product/productCategory.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+	<div layout:fragment="content" th:with="pageType='mainboard'">
+	<h2 style="text-align: left;">메인보드</h2>
+    <!-- 필터 UI -->
+    <form id="filter-form">
+    <!-- 제조사 -->
+    <div>
+        <h4>제조사</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="manufacturer" value="MSI"> MSI</label>
+        	<label><input type="checkbox" name="manufacturer" value="ASUS"> ASUS</label>
+        	<label><input type="checkbox" name="manufacturer" value="ASRock"> ASRock</label>
+        	<label><input type="checkbox" name="manufacturer" value="GIGABYTE"> GIGABYTE</label>
+        	<label><input type="checkbox" name="manufacturer" value="ECS"> ECS</label>
+        </div>
+    </div>
+
+    <!-- 제품 분류 -->
+    <div>
+        <h4>제품 분류</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="productClassification" value="인텔 CPU용"> 인텔 CPU용</label>
+        	<label><input type="checkbox" name="productClassification" value="AMD CPU용"> AMD CPU용</label>
+        	<label><input type="checkbox" name="productClassification" value="임베디드"> 임베디드</label>
+        	<label><input type="checkbox" name="productClassification" value="주변기기"> 주변기기</label>
+        </div>
+    </div>
+
+    <!-- CPU 소켓 -->
+    <div>
+        <h4>CPU 소켓</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="socket" value="인텔(소켓1851)"> 인텔(소켓1851)</label>
+        	<label><input type="checkbox" name="socket" value="인텔(소켓1700)"> 인텔(소켓1700)</label>
+        	<label><input type="checkbox" name="socket" value="인텔(소켓1200)"> 인텔(소켓(1200)</label>
+        	<label><input type="checkbox" name="socket" value="AMD(소켓AM5)"> AMD(소켓AM5)</label>
+        	<label><input type="checkbox" name="socket" value="AMD(소켓AM4)"> AMD(소켓AM4)</label>
+        </div>
+    </div>
+    
+    <!-- 세부 칩셋 -->
+    <div>
+        <h4>세부 칩셋</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="detailedChipset" value="인텔 Z890"> 인텔 Z890</label>
+        	<label><input type="checkbox" name="detailedChipset" value="AMD X870E"> AMD X870E</label>
+        	<label><input type="checkbox" name="detailedChipset" value="AMD X870"> AMD X870</label>
+        	<label><input type="checkbox" name="detailedChipset" value="AMD X670E"> AMD X670E</label>
+        	<label><input type="checkbox" name="detailedChipset" value="AMD B650"> AMD B650</label>
+        </div>
+    </div>
+    
+    <!-- 폼펙터 -->
+    <div>
+        <h4>폼펙터</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="formFactor" value="ATX"> ATX</label>
+        	<label><input type="checkbox" name="formFactor" value="M-ATX"> M-ATX</label>
+        	<label><input type="checkbox" name="formFactor" value="M-iTX"> M-iTX</label>
+        	<label><input type="checkbox" name="formFactor" value="E-ATX"> E-ATX</label>
+        </div>
+    </div>
+    
+    <!-- Vcore출력합계 -->
+    <div>
+        <h4>Vcore출력합계</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="vcoreOutputTotal" value="1440A"> 1440A</label>
+        	<label><input type="checkbox" name="vcoreOutputTotal" value="1280A"> 1280A</label>
+        	<label><input type="checkbox" name="vcoreOutputTotal" value="1260A"> 1260A</label>
+        	<label><input type="checkbox" name="vcoreOutputTotal" value="1120A"> 1120A</label>
+        	<label><input type="checkbox" name="vcoreOutputTotal" value="960A"> 960A</label>
+        </div>
+    </div>
+	</form>
+	
+	<!-- 세개의 탭 -->
+	<div class="tabs">
+    	<button class="tab-button" data-sort="newest">신상품 순</button>
+    	<button class="tab-button" data-sort="low-price">낮은 가격순</button>
+    	<button class="tab-button" data-sort="high-price">높은 가격순</button>
+	</div>
+
+    <div class="product-list">
+        <!-- 상품을 반복적으로 렌더링 -->
+        <div class="product-item" th:each="mainboard : ${mainboards}">
+            <div class="product-image">
+    		<!-- 제품 ID를 기반으로 이미지 파일을 동적으로 설정 -->
+    			<img th:src="@{'/images/product/mainboard/' + 'mb' + (${mainboard != null && mainboard.mainboardId != null ? mainboard.mainboardId : 'default'}) + '.png'}" 
+         				alt="Mainboard Image" style="width:120px; height:120px;">
+			</div>
+            <div class="product-info">
+            	<a th:href="@{/mainboardproducts/${mainboard.mainboardId}}">
+    				<h2 class="product-name" th:text="${mainboard.productName}"></h2>
+    			</a>
+    			<p th:text="'제조사: ' + ${mainboard.manufacturer} + ', 제품 분류: ' + ${mainboard.productClassification} + ', CPU 소켓: ' + ${mainboard.socket} + ', 세부 칩셋: ' + ${mainboard.detailedChipset} + ', 폼펙터: ' + ${mainboard.formFactor} + ', Vcore 출력합계: ' + ${mainboard.vcoreOutputTotal} + ', 지원 메모리 규격: ' + ${mainboard.supportedMemoryStandard}"></p>
+				<p th:text="${mainboard.formattedReleaseDate}"></p>
+		
+			</div>
+            <div class="product-price">
+                <p th:text="${mainboard.formattedPrice}"></p>
+                <form action="/cart/add" method="post">
+                    <input type="hidden" name="mainboardId" th:value="${mainboard.mainboardId}">
+                    <button type="submit">장바구니</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="/js/product/mainboardCategoryFilter.js"></script>
+</body>
+</html>

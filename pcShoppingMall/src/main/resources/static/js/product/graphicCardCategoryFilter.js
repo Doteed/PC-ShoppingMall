@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filterData.sort = [currentSort];
 		console.log('Sending filter data:', filterData); // 디버깅 로그
         // 서버로 POST 요청 전송
-        fetch('/product/category/cpuproducts/cpuCategoryFilter', {
+        fetch('/product/category/graphicCardproducts/graphicCardCategoryFilter', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(filterData),
@@ -60,20 +60,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 제품 목록을 업데이트하는 함수
 	function updateProductList(products) {
-	        productList.innerHTML = products.map(cpu => `
+	        productList.innerHTML = products.map(graphicCard => `
 	            <div class="product-item">
 	                <div class="product-image">
-	                    <img src="/images/product/cpu/cpu${cpu.cpuId}.png" alt="Product Image" style="width:120px; height:120px;">
+	                    <img src="/images/product/graphicCard/gc${graphicCard.graphicCardId}.png" alt="Product Image" style="width:120px; height:120px;">
 	                </div>
 	                <div class="product-info">
-	                    <a href="/cpuproducts/${cpu.cpuId}">
-	                        <h2>${cpu.productName}</h2>
+	                    <a href="/graphicCardproducts/${graphicCard.graphicCardId}">
+	                        <h2>${graphicCard.productName}</h2>
 	                    </a>
-	                    <p>제조사: ${cpu.manufacturer}, CPU 종류: ${cpu.intelType || cpu.amdType}, 소켓: ${cpu.socket}, 코어: ${cpu.coreTypes}, 메모리: ${cpu.supportedMemoryStandard}</p>
-	                    <p>출시일: ${cpu.releaseDate}</p>
+	                    <p>제조사: ${graphicCard.manufacturer}, 침셋 제조사: ${graphicCard.chipsetManufacturer}, 칩셋: ${graphicCard.chipset}, VGA 길이: ${graphicCard.vgaLength}mm</p>
+	                    <p>출시일: ${graphicCard.releaseDate}</p>
 	                </div>
 	                <div class="product-price">
-	                    <p>${cpu.formattedPrice}</p>
+	                    <p>${graphicCard.formattedPrice}</p>
 	                    <button type="button">장바구니</button>
 	                </div>
 	            </div>

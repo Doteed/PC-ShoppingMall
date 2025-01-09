@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:fragment="title">cooler products</title>
+    <link rel="stylesheet" href="/css/product/productCategory.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+	<div layout:fragment="content" th:with="pageType='cooler'">
+	<h2 style="text-align: left;">쿨러</h2>
+    <!-- 필터 UI -->
+    <form id="filter-form">
+    <!-- 제조사 -->
+    <div>
+        <h4>제조사</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="manufacturer" value="잘만"> 잘만</label>
+        	<label><input type="checkbox" name="manufacturer" value="맥스엘리트"> 맥스엘리트</label>
+        	<label><input type="checkbox" name="manufacturer" value="PCCOOLER"> PCCOOLER</label>
+        	<label><input type="checkbox" name="manufacturer" value="MSI"> MSI</label>
+        	<label><input type="checkbox" name="manufacturer" value="쿨러마스터"> 쿨러마스터</label>
+        	<label><input type="checkbox" name="manufacturer" value="이엠텍"> 이엠텍</label>
+        	<label><input type="checkbox" name="manufacturer" value="darkFlash"> darkFlash</label>
+        	<label><input type="checkbox" name="manufacturer" value="DEEPCOOL"> DEEPCOOL</label>
+        </div>
+    </div>
+
+    <!-- 냉각방식 -->
+    <div>
+        <h4>냉각 방식</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="coolingMethod" value="공랭"> 공랭</label>
+        	<label><input type="checkbox" name="coolingMethod" value="수랭"> 수랭</label>
+        </div>
+    </div>
+
+    <!-- A/S 기간 -->
+    <div>
+        <h4>A/S 기간</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="warrantyPeriod" value="5년"> 5년</label>
+        	<label><input type="checkbox" name="warrantyPeriod" value="4년"> 4년</label>
+        	<label><input type="checkbox" name="warrantyPeriod" value="3년"> 3년</label>
+        	<label><input type="checkbox" name="warrantyPeriod" value="2년"> 2년</label>
+        	<label><input type="checkbox" name="warrantyPeriod" value="1년"> 1년</label>
+        </div>
+    </div>
+	</form>
+	<!-- 세개의 탭 -->
+	<div class="tabs">
+    	<button class="tab-button" data-sort="newest">신상품 순</button>
+    	<button class="tab-button" data-sort="low-price">낮은 가격순</button>
+    	<button class="tab-button" data-sort="high-price">높은 가격순</button>
+	</div>
+
+    <div class="product-list">
+        <!-- 상품을 반복적으로 렌더링 -->
+        <div class="product-item" th:each="cooler : ${coolers}">
+            <div class="product-image">
+    		<!-- 제품 ID를 기반으로 이미지 파일을 동적으로 설정 -->
+    			<img th:src="@{'/images/product/cooler/' + 'cooler' + (${cooler != null && cooler.coolerId != null ? cooler.coolerId : 'default'}) + '.png'}" 
+         				alt="Cooler Image" style="width:120px; height:120px;">
+			</div>
+            <div class="product-info">
+            	<a th:href="@{/coolerproducts/${cooler.coolerId}}">
+    				<h2 class="product-name" th:text="${cooler.productName}"></h2>
+    			</a>
+    			<p th:text="'제조사: ' + ${cooler.manufacturer} + ', 냉각 방식: ' + ${cooler.coolingMethod} + ', A/S 기간: ' + ${cooler.warrantyPeriod}"></p>
+				<p th:text="${cooler.formattedReleaseDate}"></p>
+		
+			</div>
+            <div class="product-price">
+                <p th:text="${cooler.formattedPrice}"></p>
+                <form action="/cart/add" method="post">
+                    <input type="hidden" name="coolerId" th:value="${cooler.coolerId}">
+                    <button type="submit">장바구니</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="/js/product/coolerCategoryFilter.js"></script>
+</body>
+</html>

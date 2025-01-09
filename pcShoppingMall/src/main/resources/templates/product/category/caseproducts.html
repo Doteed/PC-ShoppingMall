@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:fragment="title">case products</title>
+    <link rel="stylesheet" href="/css/product/productCategory.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+	<div layout:fragment="content" th:with="pageType='case'">
+	<h2 style="text-align: left;">케이스</h2>
+    <!-- 필터 UI -->
+    <form id="filter-form">
+    <!-- 제조사 -->
+    <div>
+        <h4>제조사</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="manufacturer" value="앱코"> 앱코</label>
+        	<label><input type="checkbox" name="manufacturer" value="마이크로닉스"> 마이크로닉스</label>
+        	<label><input type="checkbox" name="manufacturer" value="darkFlash"> darkFlash</label>
+        	<label><input type="checkbox" name="manufacturer" value="Fractal Design"> Fractal Design</label>
+        	<label><input type="checkbox" name="manufacturer" value="잘만"> 잘만</label>
+        	<label><input type="checkbox" name="manufacturer" value="마이크로닉스"> 마이크로닉스</label>
+        	<label><input type="checkbox" name="manufacturer" value="CHENBRO"> CHENBRO</label>
+        	<label><input type="checkbox" name="manufacturer" value="아이구주"> 아이구주</label>
+        	<label><input type="checkbox" name="manufacturer" value="COX"> COX</label>
+        </div>
+    </div>
+
+    <!-- 제품 분류 -->
+    <div>
+        <h4>제품 분류</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="productClassification" value="PC케이스(ATX)"> PC케이스(ATX)</label>
+        	<label><input type="checkbox" name="productClassification" value="PC케이스(M-ATX)"> PC케이스(M-ATX)</label>
+        	<label><input type="checkbox" name="productClassification" value="미니ITX"> 미니ITX</label>
+        	<label><input type="checkbox" name="productClassification" value="HTPC케이스"> HTPC케이스</label>
+        	<label><input type="checkbox" name="productClassification" value="튜닝 케이스"> 튜닝 케이스</label>
+        </div>
+    </div>
+
+    <!-- 케이스 크기 -->
+    <div>
+        <h4>케이스 크기</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="caseSize" value="빅타워"> 빅타워</label>
+        	<label><input type="checkbox" name="caseSize" value="미들타워"> 미들타워</label>
+        	<label><input type="checkbox" name="caseSize" value="미니타워"> 미니타워</label>
+        	<label><input type="checkbox" name="caseSize" value="미니타워(LP)"> 미니타워(LP)</label>
+        	<label><input type="checkbox" name="caseSize" value="미니ITX(리틀밸리)"> 미니ITX(리틀밸리)</label>
+        </div>
+    </div>
+    
+    <!-- 13.3.cm베이 -->
+    <div>
+        <h4>13.3.cm베이</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="bay13_3CM" value="5"> 5개</label>
+        	<label><input type="checkbox" name="bay13_3CM" value="4"> 4개</label>
+        	<label><input type="checkbox" name="bay13_3CM" value="3"> 3개</label>
+        	<label><input type="checkbox" name="bay13_3CM" value="2"> 2개</label>
+        	<label><input type="checkbox" name="bay13_3CM" value="1"> 1개</label>
+        </div>
+    </div>
+    
+    <!-- 8.9cm베이 -->
+    <div>
+        <h4>8.9cm베이</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="bay8_9CM" value="8"> 8개</label>
+        	<label><input type="checkbox" name="bay8_9CM" value="7"> 7개</label>
+        	<label><input type="checkbox" name="bay8_9CM" value="6"> 6개</label>
+        	<label><input type="checkbox" name="bay8_9CM" value="5"> 5개</label>
+        	<label><input type="checkbox" name="bay8_9CM" value="4"> 4개</label>
+        	<label><input type="checkbox" name="bay8_9CM" value="3"> 3개</label>
+        	<label><input type="checkbox" name="bay8_9CM" value="2"> 2개</label>
+        	<label><input type="checkbox" name="bay8_9CM" value="1"> 1개</label>
+        </div>
+    </div>
+    
+	</form>
+	<!-- 세개의 탭 -->
+	<div class="tabs">
+    	<button class="tab-button" data-sort="newest">신상품 순</button>
+    	<button class="tab-button" data-sort="low-price">낮은 가격순</button>
+    	<button class="tab-button" data-sort="high-price">높은 가격순</button>
+	</div>
+
+    <div class="product-list">
+        <!-- 상품을 반복적으로 렌더링 -->
+        <div class="product-item" th:each="Case : ${cases}">
+            <div class="product-image">
+    		<!-- 제품 ID를 기반으로 이미지 파일을 동적으로 설정 -->
+    			<img th:src="@{'/images/product/case/' + 'case' + (${Case != null && Case.caseId != null ? Case.caseId : 'default'}) + '.png'}" 
+         				alt="Case Image" style="width:120px; height:120px;">
+			</div>
+            <div class="product-info">
+            	<a th:href="@{/caseproducts/${Case.caseId}}">
+    				<h2 class="product-name" th:text="${Case.productName}"></h2>
+    			</a>
+    			<p th:text="'제조사: ' + ${Case.manufacturer} + ', 제품 분류: ' + ${Case.productClassification} + ', 케이스 크기: ' + ${Case.caseSize} + ', 지원 파워 규격: ' + ${Case.powerSupplyStandard} + ', 지원 보드 규격: ' + ${Case.supportedBoardStandard} + ', 13.3.cm베이: ' + ${Case.bay13_3CM} + ', 8.9cm베이: ' + ${Case.bay8_9CM} + ', VGA길이: ' + ${Case.vgaLength}"></p>
+				<p th:text="${Case.formattedReleaseDate}"></p>
+		
+			</div>
+            <div class="product-price">
+                <p th:text="${Case.formattedPrice}"></p>
+                <form action="/cart/add" method="post">
+                    <input type="hidden" name="caseId" th:value="${Case.caseId}">
+                    <button type="submit">장바구니</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="/js/product/caseCategoryFilter.js"></script>
+</body>
+</html>

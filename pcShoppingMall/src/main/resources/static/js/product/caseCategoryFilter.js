@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filterData.sort = [currentSort];
 		console.log('Sending filter data:', filterData); // 디버깅 로그
         // 서버로 POST 요청 전송
-        fetch('/product/category/cpuproducts/cpuCategoryFilter', {
+        fetch('/product/category/caseproducts/caseCategoryFilter', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(filterData),
@@ -60,20 +60,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 제품 목록을 업데이트하는 함수
 	function updateProductList(products) {
-	        productList.innerHTML = products.map(cpu => `
+	        productList.innerHTML = products.map(Case => `
 	            <div class="product-item">
 	                <div class="product-image">
-	                    <img src="/images/product/cpu/cpu${cpu.cpuId}.png" alt="Product Image" style="width:120px; height:120px;">
+	                    <img src="/images/product/case/case${Case.caseId}.png" alt="Product Image" style="width:120px; height:120px;">
 	                </div>
 	                <div class="product-info">
-	                    <a href="/cpuproducts/${cpu.cpuId}">
-	                        <h2>${cpu.productName}</h2>
+	                    <a href="/caseproducts/${Case.caseId}">
+	                        <h2>${Case.productName}</h2>
 	                    </a>
-	                    <p>제조사: ${cpu.manufacturer}, CPU 종류: ${cpu.intelType || cpu.amdType}, 소켓: ${cpu.socket}, 코어: ${cpu.coreTypes}, 메모리: ${cpu.supportedMemoryStandard}</p>
-	                    <p>출시일: ${cpu.releaseDate}</p>
+	                    <p>제조사: ${Case.manufacturer}, 제품 분류: ${Case.productClassification}, 케이스 크기: ${Case.caseSize}, 지원 파워 규격: ${Case.powerSupplyStandard}, 지원 보드 규격: ${Case.supportedBoardStandard}, 13.3.cm베이: ${Case.bay13_3CM}, VGA길이: ${Case.vgaLength} 8.9cm베이: ${Case.bay8_9CM}</p>
+	                    <p>출시일: ${Case.releaseDate}</p>
 	                </div>
 	                <div class="product-price">
-	                    <p>${cpu.formattedPrice}</p>
+	                    <p>${Case.formattedPrice}</p>
 	                    <button type="button">장바구니</button>
 	                </div>
 	            </div>

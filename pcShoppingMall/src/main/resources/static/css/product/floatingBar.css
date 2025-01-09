@@ -4,7 +4,7 @@
     left: 0;
     width: 100%;
     background-color: #f9f9f9;
-    border-top: 1px solid #ccc;
+    border-top: 3px solid #0C4CBC;
     padding: 10px;
     display: flex;
     justify-content: space-between;
@@ -13,14 +13,17 @@
     z-index: 1000;
 }
 
-.hidden {
-    display: none;
-}
 
 .floating-bar-content {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 20px;
+    max-width: 1200px;
+    width: 100%;
+    margin: auto;
+    background: white;
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px;
 }
 
 .quantity-control {
@@ -29,8 +32,50 @@
     gap: 5px;
 }
 
+
+
+
+
+
+.floating-buttons {
+    display: flex;
+    justify-content: space-between; /* 버튼 사이에 간격을 균등 배치 */
+    gap: 10px; /* 버튼 간격 추가 */
+}
 .floating-buttons button {
-    margin-left: 10px;
+    flex: 1;
+    display: flex;
+    gap: 10px;
+}
+#floating-add-to-cart {
+	background-color: white;
+    color: #0C4CBC;
+    border: 1px solid #0C4CBC;
+    border-radius: 4px;
+}
+#floating-add-to-cart:hover {
+	background-color: #D9D9D8;
+}
+#floating-buy-now{
+	background-color: #0C4CBC;
+    color: white;
+    border-radius: 4px;
+}
+#floating-buy-now:hover{
+	background-color: #007bff;
+}
+
+
+
+
+
+
+
+
+
+
+#floating-price {
+    margin-left: auto; /* 주문 수량과 가격 사이 간격 확장 */
 }
 
 #toggle-floating-bar {
