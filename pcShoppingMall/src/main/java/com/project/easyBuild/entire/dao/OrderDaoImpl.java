@@ -154,7 +154,8 @@ public class OrderDaoImpl implements OrderDao {
 	
 	@Override
 	public int insert (OrderDto dto) {
-		String sql = " INSERT INTO ORDER_TABLE ot VALUES (orderId, deliveryId, userId, auth_id, productId, totalPrice, paymentMethod, orderDate, productName, deliveryStatus, addressee, address, phone) ";
+		String sql = " INSERT INTO ORDER_TABLE ot VALUES (orderId, deliveryId, userId, productId, totalPrice,"
+				+ "paymentMethod, orderDate, productName, deliveryStatus, addressee, address, phone) ";
 		return jdbcTemplate.update(sql, 
 				dto.getOrderId(),
 				dto.getDeliveryId(),

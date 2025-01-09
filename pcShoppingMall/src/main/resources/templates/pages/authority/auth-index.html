@@ -160,7 +160,7 @@
 					    </tr>
                         <tr th:unless="${notices == null || notices.totalElements == 0}" th:each="notice, iterStat : ${notices.content}" th:if="${iterStat.index < 5}" >
                             <td th:text="${notices.totalElements - (notices.number * notices.size + iterStat.index)}"></td>
-                            <td><a th:href="@{'/announcements/' + ${notice.announcId}}" th:text="${notice.title}"></a></td>
+                            <td class="title"><a th:href="@{'/announcements/' + ${notice.announcId}}" th:text="${notice.title}"></a></td>
                             <td th:text="${#temporals.format(notice.createdDate, 'yyyy-MM-dd')}"></td>
                         </tr>
                     </tbody>
@@ -193,7 +193,7 @@
 					    </tr>
                         <tr th:unless="${qnas == null || qnas.totalElements == 0}" th:each="qna, iterStat : ${qnas.content}" th:if="${iterStat.index < 5}">
                             <td th:text="${qnas.totalElements - (qnas.number * qnas.size + iterStat.index)}"></td>
-                            <td><a th:href="@{'/qnas/' + ${qna.qnaId}}" th:text="${qna.title}"></a></td>
+                            <td class="title"><a th:href="@{'/qnas/' + ${qna.qnaId}}" th:text="${qna.title}"></a></td>
                             <td th:text="${qna.userId}"></td>
                             <td th:text="${#temporals.format(qna.createdDate, 'yyyy-MM-dd')}"></td>
                             <td>
