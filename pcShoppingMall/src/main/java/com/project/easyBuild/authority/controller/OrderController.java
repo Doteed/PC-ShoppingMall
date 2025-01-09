@@ -39,8 +39,12 @@ public class OrderController {
 
     @GetMapping("/{orderId}")
     @ResponseBody
-    public ResponseEntity<OrderDto> getOrderDetails(@PathVariable int orderId, @RequestParam String userId) {
-        OrderDto order = orderBiz.listOne(orderId, userId);
+    public ResponseEntity<OrderDto> getOrderDetails(@PathVariable int orderId, HttpSession session) {
+        MemberDto user = (MemberDto) session.getAttribute("dto");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        OrderDto order = orderBiz.listOne(orderId, user.getUserId());
         if (order != null) {
             return ResponseEntity.ok(order);
         } else {
