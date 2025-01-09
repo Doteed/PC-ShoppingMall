@@ -10,10 +10,10 @@
 <body>  
     <div id="product-info-section" class="product-detail-container">
         <div class="product-image-section">
-            <img id="product-image" th:src="@{'/images/product/cpu/' + 'cpu' + ${product.cpuId} + '.png'}" alt="Product Image">
+            <img id="product-image" th:src="@{'/images/product/graphicCard/' + 'gc' + ${graphicCard.graphicCardId} + '.png'}" alt="Product Image">
         </div>
         <div class="product-info-section">
-            <h1 id="product-name" th:text="${product.productName}"></h1>
+            <h1 id="product-name" th:text="${graphicCard.productName}"></h1>
             <div class="quantity-price-section">
             <!-- 수량 조절 및 버튼 -->
             	<div class="quantity-section">
@@ -21,7 +21,7 @@
                 	<input id="quantity" type="number" value="1" min="1" class="quantity-input">
                 	<button id="increase-quantity" class="quantity-btn">+</button>
             	</div>
-            	<strong id="total-price" th:text="'총 합계금액: ' + ${product.formattedPrice}"></strong>
+            	<strong id="total-price" th:text="'총 합계금액: ' + ${graphicCard.formattedPrice}"></strong>
             </div>
             <div class="action-buttons">
                 <button id="add-to-cart" class="action-btn">장바구니</button>
@@ -45,32 +45,26 @@
         	<table class="product-details-table">
     			<tr>
         			<th>제조사</th>
-        			<td id="manufacturer" th:text="${product.manufacturer}"></td>
+        			<td id="manufacturer" th:text="${graphicCard.manufacturer}"></td>
     			</tr>
     			<tr>
-        			<th>CPU 종류</th>
-        			<td id="cpu-type" th:text="${product.intelType} ?: ${product.amdType}"></td>
+        			<th>침셋 제조사</th>
+        			<td id="cooler-type" th:text="${graphicCard.chipsetManufacturer}"></td>
     			</tr>
-   		 	<tr>
-        			<th>소켓</th>
-        			<td id="socket" th:text="${product.socket}"></td>
-    			</tr>
-    			<tr>
-        			<th>코어 수</th>
-        			<td id="core-types" th:text="${product.coreTypes}"></td>
+   		 		<tr>
+        			<th>칩셋</th>
+        			<td id="warrantyPeriod" th:text="${graphicCard.chipset}"></td>
     			</tr>
     			<tr>
-        			<th>지원 메모리</th>
-        			<td id="memory-support" th:text="${product.supportedMemoryStandard}"></td>
-    			</tr>
-    			<tr>
-        			<th>출시일</th>
-        			<td id="release-date" th:text="${product.releaseDate}"></td>
+        			<th>VGA 길이</th>
+        			<td id="warrantyPeriod" th:text="${graphicCard.vgaLength + ' mm'}"></td>
     			</tr>
 			</table>
 			<!-- 상품 정보 이미지 -->
         	<div class="product-info-image">
-    			<img th:src="@{'/images/product/cpu/cpu_info/' + 'cpu' + (${product.cpuId} ?: 'default') + '_infor.png'}" alt="Product Information Image">
+    			<div class="cooler-images">
+    				<img th:src="@{'/images/product/graphicCard/gc_info/' + 'gc' + (${graphicCard.graphicCardId} ?: 'default') + '_infor.png'}" alt="GraphicCard Information Image">
+				</div>
 			</div>
         </div>
     </div>
@@ -176,12 +170,12 @@
 	<!-- 플로팅바 -->
     <div id="floating-bar" class="hidden">
         <div class="floating-bar-content">
-            <strong id="product-name" th:text="${product.productName}"></strong>
+            <strong id="product-name" th:text="${graphicCard.productName}"></strong>
             <div class="quantity-control">
                 <button id="decrease-floating-quantity">-</button>
                 <input id="floating-quantity" type="number" value="1" min="1">
                 <button id="increase-floating-quantity">+</button>
-                <strong id="floating-price" th:text="'가격: ' + ${product.formattedPrice}"></strong>
+                <strong id="floating-price" th:text="'가격: ' + ${graphicCard.formattedPrice}"></strong>
             </div>
             <div class="floating-buttons">
                 <button id="floating-add-to-cart">장바구니</button>

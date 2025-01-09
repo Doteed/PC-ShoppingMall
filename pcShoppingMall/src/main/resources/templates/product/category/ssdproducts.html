@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:fragment="title">ssd products</title>
+    <link rel="stylesheet" href="/css/product/productCategory.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+	<div layout:fragment="content" th:with="pageType='ssd'">
+	<h2 style="text-align: left;">SSD</h2>
+    <!-- 필터 UI -->
+    <form id="filter-form">
+    <!-- 제조사 -->
+    <div>
+        <h4>제조사</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="manufacturer" value="삼성전자"> 삼성전자</label>
+        	<label><input type="checkbox" name="manufacturer" value="SK하이닉스"> SK하이닉스</label>
+        	<label><input type="checkbox" name="manufacturer" value="마이크론"> 마이크론</label>
+        	<label><input type="checkbox" name="manufacturer" value="Seagate"> Seagate</label>
+        	<label><input type="checkbox" name="manufacturer" value="솔리다임"> 솔리다임</label>
+        	<label><input type="checkbox" name="manufacturer" value="Western Digital"> Western Digital</label>
+        </div>
+    </div>
+
+    <!-- 폼펙터 -->
+    <div>
+        <h4>폼펙터</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="formFactor" value="M.2 (2280)"> M.2 (2280)</label>
+        	<label><input type="checkbox" name="formFactor" value="6.4cm(2.5형)"> 6.4cm(2.5형)</label>
+        	<label><input type="checkbox" name="formFactor" value="M.2 (2242)"> M.2 (2242)</label>
+        	<label><input type="checkbox" name="formFactor" value="Mini SATA(mSTATA)"> Mini SATA(mSTATA)</label>
+        </div>
+    </div>
+
+    <!-- 용량 -->
+    <div>
+        <h4>용량</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="capacity" value="3TB"> 3TB</label>
+        	<label><input type="checkbox" name="capacity" value="2TB"> 2TB</label>
+        	<label><input type="checkbox" name="capacity" value="1TB"> 1TB</label>
+        	<label><input type="checkbox" name="capacity" value="500GB"> 500GB</label>
+        	<label><input type="checkbox" name="capacity" value="256GB"> 256GB</label>
+        </div>
+    </div>
+	</form>
+	<!-- 세개의 탭 -->
+	<div class="tabs">
+    	<button class="tab-button" data-sort="newest">신상품 순</button>
+    	<button class="tab-button" data-sort="low-price">낮은 가격순</button>
+    	<button class="tab-button" data-sort="high-price">높은 가격순</button>
+	</div>
+
+    <div class="product-list">
+        <!-- 상품을 반복적으로 렌더링 -->
+        <div class="product-item" th:each="ssd : ${ssds}">
+            <div class="product-image">
+    		<!-- 제품 ID를 기반으로 이미지 파일을 동적으로 설정 -->
+    			<img th:src="@{'/images/product/ssd/' + 'ssd' + (${ssd != null && ssd.ssdId != null ? ssd.ssdId : 'default'}) + '.png'}" 
+         				alt="Ssd Image" style="width:120px; height:120px;">
+			</div>
+            <div class="product-info">
+            	<a th:href="@{/ssdproducts/${ssd.ssdId}}">
+    				<h2 class="product-name" th:text="${ssd.productName}"></h2>
+    			</a>
+    			<p th:text="'제조사: ' + ${ssd.manufacturer} + ', 폼펙터: ' + ${ssd.formFactor} + ', 용량: ' + ${ssd.capacity} + ', 인터페이스: ' + ${ssd.interFace} + ', 프로토콜: ' + ${ssd.protocol}"></p>
+				<p th:text="${ssd.formattedReleaseDate}"></p>
+		
+			</div>
+            <div class="product-price">
+                <p th:text="${ssd.formattedPrice}"></p>
+                <form action="/cart/add" method="post">
+                    <input type="hidden" name="ssdId" th:value="${ssd.ssdId}">
+                    <button type="submit">장바구니</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="/js/product/ssdCategoryFilter.js"></script>
+</body>
+</html>

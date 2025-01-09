@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:fragment="title">memory products</title>
+    <link rel="stylesheet" href="/css/product/productCategory.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+	<div layout:fragment="content" th:with="pageType='memory'">
+	<h2 style="text-align: left;">메모리</h2>
+    <!-- 필터 UI -->
+    <form id="filter-form">
+    <!-- 제조사 -->
+    <div>
+        <h4>제조사</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="manufacturer" value="삼성전자"> 삼성전자</label>
+        	<label><input type="checkbox" name="manufacturer" value="마이크론"> 마이크론</label>
+        	<label><input type="checkbox" name="manufacturer" value="G.SKILL"> G.SKILL</label>
+        	<label><input type="checkbox" name="manufacturer" value="TeamGroup"> TeamGroup</label>
+        	<label><input type="checkbox" name="manufacturer" value="이메이션"> 이메이션</label>
+        </div>
+    </div>
+
+    <!-- 제품 분류 -->
+    <div>
+        <h4>제품 분류</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="productClassification" value="DDR5"> DDR5</label>
+        	<label><input type="checkbox" name="productClassification" value="DDR4"> DDR4</label>
+        	<label><input type="checkbox" name="productClassification" value="DDR3"> DDR3</label>
+        	<label><input type="checkbox" name="productClassification" value="DDR2"> DDR2</label>
+        </div>
+    </div>
+
+    <!-- 메모리 용량 -->
+    <div>
+        <h4>메모리 용량</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="capacity" value="64GB"> 64GB</label>
+        	<label><input type="checkbox" name="capacity" value="32GB"> 32GB</label>
+        	<label><input type="checkbox" name="capacity" value="16GB"> 16GB</label>
+        	<label><input type="checkbox" name="capacity" value="8GB"> 8GB</label>
+        	<label><input type="checkbox" name="capacity" value="4GB"> 4GB</label>
+        </div>
+    </div>
+    
+    <!-- 동작클럭 -->
+    <div>
+        <h4>동작클럭(대역폭)</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="operatingClock" value="6000MHz (PC5-48000)"> 6000MHz (PC5-48000)</label>
+        	<label><input type="checkbox" name="operatingClock" value="5600MHz (PC5-44800)"> 5600MHz (PC5-44800)</label>
+        	<label><input type="checkbox" name="operatingClock" value="4800MHz (PC5-38400)"> 4800MHz (PC5-38400)</label>
+        	<label><input type="checkbox" name="operatingClock" value="4133MHz (PC4-33000)"> 4133MHz (PC4-33000)</label>
+        	<label><input type="checkbox" name="operatingClock" value="4000MHz (PC4-32000)"> 4000MHz (PC4-32000)</label>
+        </div>
+    </div>
+    
+	</form>
+	<!-- 세개의 탭 -->
+	<div class="tabs">
+    	<button class="tab-button" data-sort="newest">신상품 순</button>
+    	<button class="tab-button" data-sort="low-price">낮은 가격순</button>
+    	<button class="tab-button" data-sort="high-price">높은 가격순</button>
+	</div>
+
+    <div class="product-list">
+        <!-- 상품을 반복적으로 렌더링 -->
+        <div class="product-item" th:each="memory : ${memorys}">
+            <div class="product-image">
+    		<!-- 제품 ID를 기반으로 이미지 파일을 동적으로 설정 -->
+    			<img th:src="@{'/images/product/memory/' + 'memory' + (${memory != null && memory.memoryId != null ? memory.memoryId : 'default'}) + '.png'}" 
+         				alt="Cooler Image" style="width:120px; height:120px;">
+			</div>
+            <div class="product-info">
+            	<a th:href="@{/memoryproducts/${memory.memoryId}}">
+    				<h2 class="product-name" th:text="${memory.productName}"></h2>
+    			</a>
+    			<p th:text="'제조사: ' + ${memory.manufacturer} + ', 제품 분류: ' + ${memory.productClassification} + ', 메모리 용량: ' + ${memory.capacity} + ', 동작클럭: ' + ${memory.operatingClock}"></p>
+				<p th:text="${memory.formattedReleaseDate}"></p>
+		
+			</div>
+            <div class="product-price">
+                <p th:text="${memory.formattedPrice}"></p>
+                <form action="/cart/add" method="post">
+                    <input type="hidden" name="memoryId" th:value="${memory.memoryId}">
+                    <button type="submit">장바구니</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="/js/product/memoryCategoryFilter.js"></script>
+</body>
+</html>

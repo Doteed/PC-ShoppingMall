@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:fragment="title">hdd products</title>
+    <link rel="stylesheet" href="/css/product/productCategory.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+	<div layout:fragment="content" th:with="pageType='hdd'">
+	<h2 style="text-align: left;">HDD</h2>
+    <!-- 필터 UI -->
+    <form id="filter-form">
+    <!-- 제조사 -->
+    <div>
+        <h4>제조사</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="manufacturer" value="Seagate"> Seagate</label>
+        	<label><input type="checkbox" name="manufacturer" value="Western Digital"> Western Digital</label>
+        	<label><input type="checkbox" name="manufacturer" value="도시바"> 도시바</label>
+        	<label><input type="checkbox" name="manufacturer" value="CENTURY"> CENTURY</label>
+        	<label><input type="checkbox" name="manufacturer" value="DELL"> DELL</label>
+        </div>
+    </div>
+
+    <!-- 제품 분류 -->
+    <div>
+        <h4>제품 분류</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="productClassification" value="HDD (PC용)"> HDD (PC용)</label>
+        	<label><input type="checkbox" name="productClassification" value="HDD (노트북용)"> HDD (노트북용)</label>
+        	<label><input type="checkbox" name="productClassification" value="HDD (NAS용)"> HDD (NAS용)</label>
+        	<label><input type="checkbox" name="productClassification" value="HDD (CCTV용)"> HDD (CCTV용)</label>
+        	<label><input type="checkbox" name="productClassification" value="HDD (기업용)"> HDD (기업용)</label>
+        </div>
+    </div>
+
+    <!-- 디스크 크기 -->
+    <div>
+        <h4>디스크 크기</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="diskSize" value="8.9cm(3.5인치)"> 8.9cm(3.5인치)</label>
+        	<label><input type="checkbox" name="diskSize" value="6.4cm(2.5인치)"> 6.4cm(2.5인치)</label>
+        	<label><input type="checkbox" name="diskSize" value="4.6cm(1.8인치)"> 4.6cm(1.8인치)</label>
+        </div>
+    </div>
+    
+    <!-- 디스크 용량 -->
+    <div>
+        <h4>디스크 용량</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="capacity" value="8TB"> 8TB</label>
+        	<label><input type="checkbox" name="capacity" value="4TB"> 4TB</label>
+        	<label><input type="checkbox" name="capacity" value="3TB"> 3TB</label>
+        	<label><input type="checkbox" name="capacity" value="2TB"> 2TB</label>
+        	<label><input type="checkbox" name="capacity" value="1TB"> 1TB</label>
+        </div>
+    </div>
+    
+	</form>
+	<!-- 세개의 탭 -->
+	<div class="tabs">
+    	<button class="tab-button" data-sort="newest">신상품 순</button>
+    	<button class="tab-button" data-sort="low-price">낮은 가격순</button>
+    	<button class="tab-button" data-sort="high-price">높은 가격순</button>
+	</div>
+
+    <div class="product-list">
+        <!-- 상품을 반복적으로 렌더링 -->
+        <div class="product-item" th:each="memory : ${memorys}">
+            <div class="product-image">
+    		<!-- 제품 ID를 기반으로 이미지 파일을 동적으로 설정 -->
+    			<img th:src="@{'/images/product/hdd/' + 'hdd' + (${hdd != null && hdd.hddId != null ? hdd.hddId : 'default'}) + '.png'}" 
+         				alt="Hdd Image" style="width:120px; height:120px;">
+			</div>
+            <div class="product-info">
+            	<a th:href="@{/hddproducts/${hdd.hddId}}">
+    				<h2 class="product-name" th:text="${hdd.productName}"></h2>
+    			</a>
+    			<p th:text="'제조사: ' + ${hdd.manufacturer} + ', 제품 분류: ' + ${hdd.productClassification} + ', 디스크 크기: ' + ${hdd.diskSize} + ', 디스크 용량: ' + ${hdd.capacity} + ', 인터페이스: ' + ${hdd.interFace}"></p>
+				<p th:text="${hdd.formattedReleaseDate}"></p>
+		
+			</div>
+            <div class="product-price">
+                <p th:text="${hdd.formattedPrice}"></p>
+                <form action="/cart/add" method="post">
+                    <input type="hidden" name="hddId" th:value="${hdd.hddId}">
+                    <button type="submit">장바구니</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="/js/product/hddCategoryFilter.js"></script>
+</body>
+</html>
