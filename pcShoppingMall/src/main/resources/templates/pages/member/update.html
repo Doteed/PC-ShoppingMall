@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/auth-layout}">
+<head>
+    <title>회원 상세 정보</title>
+    <style>
+        .content-box { display: flex; flex-wrap: nowrap; }
+        .side-menu { flex: 0 0 250px; }
+        .main-content { flex: 1; padding: 20px; }
+        .detail-container { padding: 20px; max-width: 1200px; width: 100%; margin: 0 auto; }
+        .button-group { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
+        .table th { width: 200px; text-align: left; white-space: nowrap; }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content" class="detail-container">
+        <h1 class="text-center">회원 정보 수정</h1>
+        <ul class="nav nav-tabs" id="memberTabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="info-tab" data-bs-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">기본 정보</a>
+            </li>
+        </ul>
+        
+        <form action="member/updateform" method="post">
+            <input type="hidden" id="userId" th:value="${dto.userId}">
+            <div class="tab-content" id="memberTabsContent">
+                <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                    <table class="table table-striped mt-3">
+                        <tr>
+                            <th>아이디</th>
+                            <td th:text="${dto.userId}"></td>
+                        </tr>
+                        <tr>
+                            <th>회원명</th>
+                            <td>
+                                <div class="form-group">
+                                    <label for="userName">회원명</label>
+                                    <input type="text" id="userName" class="form-control" th:value="${dto.userName}" required>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>비밀번호</th>
+                            <td>
+                                <div class="form-group">
+                                    <label for="password">비밀번호</label>
+                                    <input type="text" id="password" class="form-control" placeholder="비밀번호를 입력하세요" required>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>성별</th>
+                            <td th:text="${dto.gender == 'M' ? '남자' : '여자'}"></td>
+                        </tr>
+                        <tr>
+                            <th>이메일</th>
+                            <td th:text="${dto.email}"></td>
+                        </tr>
+                        <tr>
+                            <th>전화번호</th>
+                            <td>
+                                <div class="form-group">
+                                    <label for="phone">전화번호</label>
+                                    <input type="text" id="phone" class="form-control" th:value="${dto.phone}" required>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">저장</button>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='my/mydetail?userId=${dto.userId}'">취소</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

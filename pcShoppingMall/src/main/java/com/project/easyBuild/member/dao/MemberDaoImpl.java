@@ -1,11 +1,16 @@
 package com.project.easyBuild.member.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -109,6 +114,45 @@ public class MemberDaoImpl implements MemberDao {
             member.setMemberStatus(rs.getString("MEMBER_STATUS"));
             return member;
         });
+    }
+    
+    @Override
+    public int update(MemberDto dto) {
+    	int res = 0;
+    	String sql = "UPDATE MEMBER SET USERNAME=?,PASSWORD=?,PHONE=? WHERE USER_ID=?";
+    	
+    	return jdbcTemplate.update(sql,dto.getUserName(),dto.getPassword(),dto.getPhone(),dto.getUserId());
+    }
+
+    @Override
+    public MemberDto find_id(MemberDto dto) {
+        try {
+            String sql = "SELECT USER_ID FROM MEMBER WHERE USERNAME = ? AND EMAIL = ?";
+            
+            // 직접 RowMapper를 구현하여 필요한 필드만 설정
+            return jdbcTemplate.queryForObject(sql, new Object[]{dto.getUserName(), dto.getEmail()},
+                    (rs, rowNum) -> {
+                        MemberDto member = new MemberDto();
+                        member.setUserId(rs.getString("USER_ID")); // USER_ID만 설정
+                        return member;
+                    });
+        } catch (EmptyResultDataAccessException e) {
+            return null; // 회원이 없으면 null 반환
+        }
+    }
+
+    @Override
+    public int findPwCheck(MemberDto dto) throws Exception {
+        String sql = "SELECT COUNT(*) FROM MEMBER WHERE USERNAME = ? AND EMAIL = ?";
+        logger.debug("Checking password reset eligibility for user: {}", dto.getUserName());
+        return jdbcTemplate.queryForObject(sql, new Object[]{dto.getUserName(), dto.getEmail()}, Integer.class);
+    }
+
+    @Override
+    public int findPw(String password, String email, String userId) throws Exception {
+        String sql = "UPDATE MEMBER SET PASSWORD = ? WHERE EMAIL = ? AND USER_ID = ?";
+        logger.debug("Updating password for userId={} and email={}", userId, email);
+        return jdbcTemplate.update(sql, password, email, userId);
     }
 
 }

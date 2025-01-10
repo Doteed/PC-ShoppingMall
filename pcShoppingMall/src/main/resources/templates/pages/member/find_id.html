@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인</title>
+    <title>아이디 찾기</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -70,27 +70,27 @@
     </style>
 </head>
 <body>
-	<form class="login-form" action="member/login" method="POST">
-        <h2>로그인</h2>
+	<form class="login-form" action="member/find_id" method="POST">
+        <h2>아이디 찾기</h2>
 
         <div class="form-group">
-            <label for="userId">아이디</label>
-            <input type="text" id="userId" name="userId" placeholder="아이디" required>
+            <label for="userName">이름</label>
+            <input type="text" id="userName" name="userName" placeholder="이름" required>
         </div>
 
         <div class="form-group">
-            <label for="password">비밀번호</label>
-            <input type="password" id="password" name="password" placeholder="비밀번호" required>
+            <label for="email">이메일</label>
+            <input type="text" id="email" name="email" placeholder="이메일" required>
         </div>
 
         <div id="error-message" class="error-message">
-            로그인에 실패했습니다. 아이디와 비밀번호를 확인하세요.
+            이름과 이메일을 확인해주세요.
         </div>
 
-        <button type="submit" class="submit-btn">로그인</button>
+        <button type="submit" class="submit-btn">아이디 찾기</button>
 
 		<div class="footer">
-		    <a href="find_idform">아이디 찾기</a> | 
+		    <a href="loginform">로그인</a> | 
 		    <a href="find_pwform">비밀번호 찾기</a> | 
 		    <a href="sign_up">회원가입</a>
 		</div>

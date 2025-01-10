@@ -14,4 +14,12 @@ public interface MemberDao {
 	public int delete(String userId);
 	
 	public MemberDto selectOne(String userId);
+	
+	public int update(MemberDto dto);
+	
+	public MemberDto find_id(MemberDto dto);
+	
+	public int findPwCheck(MemberDto dto)throws Exception; 
+	
+	public int findPw(String password,String email,String userId)throws Exception;
 }

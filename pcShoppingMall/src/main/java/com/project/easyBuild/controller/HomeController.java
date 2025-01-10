@@ -312,7 +312,15 @@ public class HomeController {
 	    }
 	}
 
-
+	@GetMapping("/find_idform")
+	public String find_idform() {
+		return "pages/member/find_id";
+	}
+	
+	@GetMapping("/find_pwform")
+	public String find_pwform() {
+		return "pages/member/find_pw";
+	}
 	
     @GetMapping("/sign_up")
     public String sign_up() {
@@ -349,5 +357,30 @@ public class HomeController {
         session.invalidate();  // 세션 무효화
         return "redirect:/";  // 로그아웃 후 홈 페이지로 리다이렉트
     }
+    
+    @GetMapping("/member/update")
+    public String update(@RequestParam String userId, Model model) {
+        if (userId == null || userId.isEmpty()) {
+            return "redirect:/loginform";  // 예시: 유효하지 않은 userId가 있을 경우
+        }
+        MemberDto res = memberbiz.selectOne(userId);
+        model.addAttribute("dto", res);
+        return "pages/member/update";
+    }
 
+    
+    @GetMapping("/member/updateform")
+    public String updateform(String userName,String password, String phone,String userId) {
+    	MemberDto dto = new MemberDto();
+    	dto.setUserName(userName);
+    	dto.setPassword(password);
+    	dto.setPhone(phone);
+    	dto.setUserId(userId);
+    	int res = memberbiz.update(dto);
+    	if(res>0) {
+    		return "redirect:/my/mydetail";
+    	}else {
+    		return "redirect:/member/update";
+    	}
+    }
 }
