@@ -12,6 +12,12 @@ import com.project.easyBuild.member.biz.MemberBiz;
 import com.project.easyBuild.member.dto.MemberDto;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import com.project.easyBuild.member.biz.MemberBiz;
+import com.project.easyBuild.member.dto.MemberDto;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/member")
@@ -52,4 +58,41 @@ public class MemberController {
     
     
 
+    
+    @PostMapping("/find_id")
+    public String find_id(Model model, String userName, String email, MemberDto dto) {
+        try {
+            dto.setUserName(userName);
+            dto.setEmail(email);
+
+            MemberDto id = memberBiz.find_id(dto); // 서비스에서 DAO 호출
+
+            if (id == null) {
+                model.addAttribute("msg", "아이디를 찾을 수 없습니다.");
+            } else {
+                model.addAttribute("findId", id); // findId가 null이 아닐 때 객체 전달
+            }
+        } catch (Exception e) {
+            model.addAttribute("msg", "오류가 발생되었습니다.");
+            e.printStackTrace();
+        }
+        return "pages/member/findIdResult"; // Thymeleaf 템플릿을 반환
+    }
+
+    @PostMapping("/find_pw")
+    public String findPw(MemberDto dto,Model model) throws Exception{
+		
+		if(memberBiz.findPwCheck(dto)==0) {
+			model.addAttribute("msg", "아이디와 이메일를 확인해주세요");
+			
+			return "/member/findPwView";
+		}else {
+	
+		memberBiz.findPw(dto.getEmail(),dto.getUserId());
+		model.addAttribute("member", dto.getEmail());
+		
+		return "redirect:/loginform";
+		}
+	}
+    
 }
