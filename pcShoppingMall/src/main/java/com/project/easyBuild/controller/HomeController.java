@@ -358,7 +358,7 @@ public class HomeController {
         return "redirect:/";  // 로그아웃 후 홈 페이지로 리다이렉트
     }
     
-    @GetMapping("/member/update")
+    @GetMapping("/my/member/update")
     public String update(@RequestParam String userId, Model model) {
         if (userId == null || userId.isEmpty()) {
             return "redirect:/loginform";  // 예시: 유효하지 않은 userId가 있을 경우
@@ -369,7 +369,7 @@ public class HomeController {
     }
 
     
-    @GetMapping("/member/updateform")
+    @GetMapping("/my/member/updateform")
     public String updateform(String userName,String password, String phone,String userId) {
     	MemberDto dto = new MemberDto();
     	dto.setUserName(userName);
