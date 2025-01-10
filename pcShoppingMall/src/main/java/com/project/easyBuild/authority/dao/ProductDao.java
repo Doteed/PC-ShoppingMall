@@ -31,5 +31,10 @@ public interface ProductDao {
 	public int updateProduct(int productId, int stock, int pReportstock, String saleStatus, String pSoldout);
 	
 	public ProductDto getProductById(int productId);
+	
+	public Page<ProductDto> listByCategory1(Long categoryId, Pageable pageable);
+	public Page<ProductDto> listByCategory2(Long categoryId, Pageable pageable);
+	public Page<ProductDto> listByCategory3(Long categoryId, Pageable pageable);
 
+	public int deleteProduct(int productId)
 }
