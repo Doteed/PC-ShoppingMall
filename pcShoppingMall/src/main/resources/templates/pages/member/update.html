@@ -20,7 +20,7 @@
             </li>
         </ul>
         
-        <form action="member/updateform" method="post">
+        <form action="updateform" method="post">
             <input type="hidden" id="userId" th:value="${dto.userId}">
             <div class="tab-content" id="memberTabsContent">
                 <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
@@ -43,7 +43,7 @@
                             <td>
                                 <div class="form-group">
                                     <label for="password">비밀번호</label>
-                                    <input type="text" id="password" class="form-control" placeholder="비밀번호를 입력하세요" required>
+                                    <input type="text" id="password" class="form-control" th:value="${dto.password}" required>
                                 </div>
                             </td>
                         </tr>
