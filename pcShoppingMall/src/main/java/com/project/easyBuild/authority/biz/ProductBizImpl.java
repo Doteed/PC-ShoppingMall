@@ -127,5 +127,36 @@ public class ProductBizImpl implements ProductBiz {
 	    if (categoryIds.size() > 2) dto.setCategoryId3(categoryIds.get(2));
 	    return dao.insert(dto);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Page<ProductDto> listByCategory1(Long categoryId, Pageable pageable) {
+	    logger.info("Fetching products for category1 id: {}, page: {}, size: {}", 
+	                categoryId, pageable.getPageNumber(), pageable.getPageSize());
+	    return dao.listByCategory1(categoryId, pageable);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Page<ProductDto> listByCategory2(Long categoryId, Pageable pageable) {
+	    logger.info("Fetching products for category2 id: {}, page: {}, size: {}", 
+	                categoryId, pageable.getPageNumber(), pageable.getPageSize());
+	    return dao.listByCategory2(categoryId, pageable);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Page<ProductDto> listByCategory3(Long categoryId, Pageable pageable) {
+	    logger.info("Fetching products for category3 id: {}, page: {}, size: {}", 
+	                categoryId, pageable.getPageNumber(), pageable.getPageSize());
+	    return dao.listByCategory3(categoryId, pageable);
+	}
+	
+	@Override
+	@Transactional
+	public boolean deleteProduct(int productId) {
+	    logger.info("Deleting product with id: {}", productId);
+	    return dao.deleteProduct(productId) > 0;
+	}
 
 }

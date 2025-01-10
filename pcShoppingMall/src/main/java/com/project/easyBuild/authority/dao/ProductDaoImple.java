@@ -169,4 +169,56 @@ public class ProductDaoImple implements ProductDao {
             return null; // 제품이 없는 경우 null 반환
         }
     }
+    
+    @Override
+    public Page<ProductDto> listByCategory1(Long categoryId, Pageable pageable) {
+        String query = "SELECT * FROM PRODUCT WHERE CATEGORY_ID_1 = ? ORDER BY P_ENROLL DESC LIMIT ? OFFSET ?";
+        List<ProductDto> products = jdbcTemplate.query(
+            query,
+            rowMapper,
+            categoryId,
+            pageable.getPageSize(),
+            pageable.getOffset()
+        );
+        String countQuery = "SELECT COUNT(*) FROM PRODUCT WHERE CATEGORY_ID_1 = ?";
+        long total = jdbcTemplate.queryForObject(countQuery, Long.class, categoryId);
+        return new PageImpl<>(products, pageable, total);
+    }
+
+    @Override
+    public Page<ProductDto> listByCategory2(Long categoryId, Pageable pageable) {
+        String query = "SELECT * FROM PRODUCT WHERE CATEGORY_ID_2 = ? ORDER BY P_ENROLL DESC LIMIT ? OFFSET ?";
+        List<ProductDto> products = jdbcTemplate.query(
+            query,
+            rowMapper,
+            categoryId,
+            pageable.getPageSize(),
+            pageable.getOffset()
+        );
+        String countQuery = "SELECT COUNT(*) FROM PRODUCT WHERE CATEGORY_ID_2 = ?";
+        long total = jdbcTemplate.queryForObject(countQuery, Long.class, categoryId);
+        return new PageImpl<>(products, pageable, total);
+    }
+
+    @Override
+    public Page<ProductDto> listByCategory3(Long categoryId, Pageable pageable) {
+        String query = "SELECT * FROM PRODUCT WHERE CATEGORY_ID_3 = ? ORDER BY P_ENROLL DESC LIMIT ? OFFSET ?";
+        List<ProductDto> products = jdbcTemplate.query(
+            query,
+            rowMapper,
+            categoryId,
+            pageable.getPageSize(),
+            pageable.getOffset()
+        );
+        String countQuery = "SELECT COUNT(*) FROM PRODUCT WHERE CATEGORY_ID_3 = ?";
+        long total = jdbcTemplate.queryForObject(countQuery, Long.class, categoryId);
+        return new PageImpl<>(products, pageable, total);
+    }
+
+    @Override
+    public int deleteProduct(int productId) {
+        String sql = "DELETE FROM PRODUCT WHERE PRODUCT_ID = ?";
+        return jdbcTemplate.update(sql, productId);
+    }
+
 }
