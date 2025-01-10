@@ -71,7 +71,7 @@ public class MemberBizImpl implements MemberBiz {
 							"<br/>비밀번호 찾기를 통한 임시 비밀번호입니다."+
 							"<br/>임시비밀번호 :   <h2>"+memberKey+"</h2>"+
 							"<br/>로그인 후 비밀번호 변경을 해주세요."+
-							"<a href='http://localhost:8080/member/loginView"+
+							"<a href='http://localhost:8080/member/login"+
 							">로그인 페이지</a>");
 			sendMail.setFrom("[보낼이메일]", "PC-Shoppingmall");
 			sendMail.setTo(email);

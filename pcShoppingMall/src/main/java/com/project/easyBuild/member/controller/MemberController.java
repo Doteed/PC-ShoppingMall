@@ -85,7 +85,7 @@ public class MemberController {
 		if(memberBiz.findPwCheck(dto)==0) {
 			model.addAttribute("msg", "아이디와 이메일를 확인해주세요");
 			
-			return "/member/findPwView";
+			return "/pages/member/find_pw";
 		}else {
 	
 		memberBiz.findPw(dto.getEmail(),dto.getUserId());
