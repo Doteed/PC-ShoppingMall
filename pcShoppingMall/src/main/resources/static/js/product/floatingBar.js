@@ -36,18 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         updateFloatingPrice();
     });
-
-	// 닫기 버튼 클릭 이벤트
-	document.getElementById('close-floating-bar').addEventListener('click', () => {
-	    floatingBar.classList.add('hidden');
-	    toggleButton.classList.remove('hidden');
-	});
-
-	// 열기 버튼 클릭 이벤트
-	toggleButton.addEventListener('click', () => {
-	    floatingBar.classList.remove('hidden');
-	    toggleButton.classList.add('hidden');
-	});
 	
 	// "장바구니" 버튼 클릭 이벤트
 	document.getElementById('floating-add-to-cart').addEventListener('click', () => {

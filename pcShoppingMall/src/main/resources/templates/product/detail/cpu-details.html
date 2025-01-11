@@ -14,12 +14,14 @@
         </div>
         <div class="product-info-section">
             <h1 id="product-name" th:text="${product.productName}"></h1>
-            <p id="total-price" th:text="'가격: ' + ${product.formattedPrice}"></p>
-             <!-- 수량 조절 및 버튼 -->
-            <div class="quantity-section">
-                <button id="decrease-quantity" class="quantity-btn">-</button>
-                <input id="quantity" type="number" value="1" min="1" class="quantity-input">
-                <button id="increase-quantity" class="quantity-btn">+</button>
+            <div class="quantity-price-section">
+            <!-- 수량 조절 및 버튼 -->
+            	<div class="quantity-section">
+                	<button id="decrease-quantity" class="quantity-btn">-</button>
+                	<input id="quantity" type="number" value="1" min="1" class="quantity-input">
+                	<button id="increase-quantity" class="quantity-btn">+</button>
+            	</div>
+            	<strong id="total-price" th:text="'총 합계금액: ' + ${product.formattedPrice}"></strong>
             </div>
             <div class="action-buttons">
                 <button id="add-to-cart" class="action-btn">장바구니</button>
@@ -179,17 +181,15 @@
                 <button id="decrease-floating-quantity">-</button>
                 <input id="floating-quantity" type="number" value="1" min="1">
                 <button id="increase-floating-quantity">+</button>
-                <p id="floating-price" th:text="'가격: ' + ${product.formattedPrice}"></p>
+                <strong id="floating-price" th:text="'가격: ' + ${product.formattedPrice}"></strong>
             </div>
             <div class="floating-buttons">
                 <button id="floating-add-to-cart">장바구니</button>
                 <button id="floating-buy-now">구매하기</button>
             </div>
-            <button id="close-floating-bar">닫기</button>
         </div>
     </div>
 
-    <button id="toggle-floating-bar" class="toggle-button hidden">열기</button>
 
     <script src="/js/product/productDetails.js"></script>
     <script src="/js/product/floatingBar.js"></script>

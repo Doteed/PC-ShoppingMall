@@ -151,14 +151,6 @@ public class OrderDaoImpl implements OrderDao {
 	}
 
 	@Override
-	public int insert(OrderDto dto) {
-		String sql = " INSERT INTO ORDER_TABLE ot VALUES (orderId, deliveryId, userId, auth_id, productId, totalPrice, paymentMethod, orderDate, productName, deliveryStatus, addressee, address, phone) ";
-		return jdbcTemplate.update(sql, dto.getOrderId(), dto.getDeliveryId(), dto.getUserId(), dto.getAuthId(),
-				dto.getProductId(), dto.getTotalPrice(), dto.getPaymentMethod(), dto.getOrderDate(),
-				dto.getProductName(), dto.getDeliveryStatus(), dto.getAddressee(), dto.getAddress(), dto.getPhone());
-	}
-
-	@Override
 	public int insertFromCart(OrderRequestDto dto) {
 	    //delivery insert
 	    String deliverySql = " INSERT INTO DELIVERY " +
@@ -212,6 +204,25 @@ public class OrderDaoImpl implements OrderDao {
 	    }
 
 	    return result;
+    
+	public int insert (OrderDto dto) {
+		String sql = " INSERT INTO ORDER_TABLE ot VALUES (orderId, deliveryId, userId, productId, totalPrice,"
+				+ "paymentMethod, orderDate, productName, deliveryStatus, addressee, address, phone) ";
+		return jdbcTemplate.update(sql, 
+				dto.getOrderId(),
+				dto.getDeliveryId(),
+				dto.getUserId(),
+				dto.getAuthId(),
+				dto.getProductId(),
+				dto.getTotalPrice(),
+				dto.getPaymentMethod(),
+				dto.getOrderDate(),
+				dto.getProductName(),
+				dto.getDeliveryStatus(),
+				dto.getAddressee(),
+				dto.getAddress(),
+				dto.getPhone()				
+				);
 	}
 
 }

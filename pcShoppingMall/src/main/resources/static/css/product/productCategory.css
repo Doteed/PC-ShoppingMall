@@ -1,0 +1,129 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    line-height: 1.6;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+form {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+form label input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+form label {
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+}
+
+form div {
+    margin-bottom: 15px;
+}
+.checkbox-container label {
+    margin-right: 50px; /* 체크박스 간 가로 간격 */
+    display: inline-block; /* 가로 정렬 유지 */
+}
+.product-name {
+    font-size: 18px;
+    font-weight: bold; /* 필터링 후에도 굵기가 유지되도록 설정 */
+    margin: 0;
+}
+
+.product-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.product-item {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.product-image img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.product-info {
+    flex-grow: 1;
+    margin-left: 20px;
+}
+
+.product-info h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.product-info p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 14px;
+}
+
+.product-price {
+    text-align: right;
+}
+
+.product-price p {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+    color: #000;
+}
+
+.product-price button {
+    background-color: white;
+    color: #0C4CBC;
+    border: 1px solid #0C4CBC;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.product-price button:hover {
+    background-color: #D9D9D8;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    padding: 10px 20px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.tab-button:hover {
+    background-color: #ddd;
+}
+
+.tab-button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}

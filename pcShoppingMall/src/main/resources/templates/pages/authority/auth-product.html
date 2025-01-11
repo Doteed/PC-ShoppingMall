@@ -5,7 +5,65 @@
 <head>
 	<title>상품 관리 페이지</title>
 	<script>
+		const categoryData = JSON.parse(/*[[${categoryDataJson}]]*/ '[]');
+	    
 		document.addEventListener('DOMContentLoaded', function() {
+		    //카테고리 검색
+		    const category1 = document.getElementById('category1');
+		    const category2 = document.getElementById('category2');
+		    const category3 = document.getElementById('category3');
+		    const searchButton = document.getElementById('searchButton');
+		
+		    console.log("categoryData: "+categoryData);
+		    const structuredCategories = {};
+	        if (Array.isArray(categoryData)) {
+	            categoryData.forEach(category => {
+		        const { categoryId, parentId, categoryLevel, categoryName } = category;
+		        if (!structuredCategories[parentId]) {
+		            structuredCategories[parentId] = {};
+		        }
+		        structuredCategories[parentId][categoryId] = categoryName;
+	            });
+	        } else {
+	            console.error('categoryData is not an array');
+	        }
+
+		    category1.addEventListener('change', function() {
+		        const selectedCat1 = this.value;
+		        populateCategory(category2, structuredCategories[selectedCat1] || {});
+		        category3.innerHTML = '<option value="">3차 카테고리</option>';
+		    });
+		
+		    category2.addEventListener('change', function() {
+		        const selectedCat1 = category1.value;
+		        const selectedCat2 = this.value;
+		        populateCategory(category3, categoryData[selectedCat1][selectedCat2] || {});
+		    });
+		
+		    searchButton.addEventListener('click', function() {
+		        const cat1Value = category1.value;
+		        const cat2Value = category2.value;
+		        const cat3Value = category3.value;
+		
+		        let searchUrl = '/auth-product?';
+		        if (cat3Value) searchUrl += `category3=${cat3Value}`;
+		        else if (cat2Value) searchUrl += `category2=${cat2Value}`;
+		        else if (cat1Value) searchUrl += `category1=${cat1Value}`;
+		
+		        window.location.href = searchUrl;
+		    });
+
+            function populateCategory(selectElement, options) {
+                selectElement.innerHTML = `<option value="">${selectElement.getAttribute('aria-label')}</option>`;
+                for (const [id, name] of Object.entries(options)) {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.textContent = name;
+                    selectElement.appendChild(option);
+                }
+            }
+	        
+			//수정
 		    const updateButtons = document.querySelectorAll('.update-product');
 		    updateButtons.forEach(button => {
 		        button.addEventListener('click', function() {
@@ -14,6 +72,7 @@
 		        });
 		    });
 		    
+		    
 		    function updateProduct(productId) {
 		        const row = document.querySelector(`tr[data-product-id="${productId}"]`);
 		        const stock = parseInt(row.querySelector('.stock-input').value, 10);
@@ -21,7 +80,7 @@
 		        const saleStatus = row.querySelector('.sale-status').checked ? 'Y' : 'N';
 		        const pSoldout = row.querySelector('.out-of-stock').checked ? 'Y' : 'N';  // 품절 상태 추가
 
-		        fetch('/api/product/update', {
+		        fetch('/product/update', {
 		            method: 'POST',
 		            headers: {
 		                'Content-Type': 'application/json',
@@ -51,6 +110,27 @@
 		    }
 
 		});
+		
+		function deleteProduct(productId) {
+	        if (confirm('정말로 이 상품을 삭제하시겠습니까?')) {
+	            fetch(`/product/delete/${productId}`, {
+	                method: 'DELETE',
+	            })
+	            .then(response => response.json())
+	            .then(data => {
+	                if (data.success) {
+	                    alert(data.message);
+	                    location.reload(); // 페이지 새로고침
+	                } else {
+	                    alert(data.message);
+	                }
+	            })
+	            .catch(error => {
+	                console.error('Error:', error);
+	                alert('상품 삭제 중 오류가 발생했습니다.');
+	            });
+	        }
+	    }
 
 	</script>
 </head>
@@ -58,26 +138,33 @@
 	<div layout:fragment="content" class="d-flex flex-column gap-3 w-100">
 		<h5>상품재고관리</h5>
 		<div class="d-flex">
-			<select class="form-select form-select-sm" aria-label="Small select example">
-			  <option selected>Open this select menu</option>
-			  <option value="1">One</option>
-			  <option value="2">Two</option>
-			  <option value="3">Three</option>
-			</select>
-			
-			<!-- 대분류에서 받아오는 소분류 -->
-			<select class="form-select form-select-sm" aria-label="Small select example">
-			  <option selected>Open this select menu</option>
-			  <option value="4">One</option>
-			  <option value="5">Two</option>
-			  <option value="6">Three</option>
-			</select>
-			
-			<!-- 검색바 -->
-			<!-- <div class="input-group mb-3">
-			  <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2">
-			  <button class="btn btn-outline-secondary" type="button" id="button-addon2">Button</button>
-			</div> -->
+		    <select id="category1" name="category1">
+		        <option value="">1차 카테고리 선택</option>
+		       <option th:each="category : ${allCategories}" 
+				        th:if="${category.categoryLevel == 1}"
+				        th:value="${category.categoryId}" 
+				        th:text="${category.categoryName}">
+				</option>
+		    </select>
+		    
+		    <select id="category2" name="category2">
+		        <option value="">2차 카테고리 선택</option>
+		        <option th:each="category : ${allCategories}" 
+		                th:if="${category.categoryLevel == 2 && category.parentId == category1}"
+		                th:value="${category.categoryId}" 
+		                th:text="${category.categoryName}">
+		        </option>
+		    </select>
+		
+		    <select id="category3" name="category3">
+		        <option value="">3차 카테고리 선택</option>
+		        <option th:each="category : ${allCategories}" 
+		                th:if="${category.categoryLevel == 3 && category.parentId == category2}"
+		                th:value="${category.categoryId}" 
+		                th:text="${category.categoryName}">
+		        </option>
+		    </select>
+		    <button id="searchButton" class="btn btn-outline-secondary" type="button">검색</button>
 		</div>
 		<div>
 			<table class="table-type-a">
@@ -138,7 +225,7 @@
 				        <td>
 				            <div class="d-flex">
 				                <button type="button" class="btn btn-primary update-product" th:data-product-id="${product.productId}">수정</button>
-				                <button type="button" class="btn btn-danger">삭제</button>									
+				                <button type="button" class="btn btn-danger" th:onclick="deleteProduct([[${product.productId}]])">삭제</button>									
 				            </div>
 				        </td>
 				    </tr>

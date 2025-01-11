@@ -20,6 +20,15 @@ public class MemberDto {
 	private String memberStatus;
 	
 	public MemberDto() {}
+	
+	
+
+	public MemberDto(String userName, String email) {
+		super();
+		this.userName = userName;
+		this.email = email;
+	}
+
 
 
 	public MemberDto(String userId, int authId, String password, String userName, String gender, String email,

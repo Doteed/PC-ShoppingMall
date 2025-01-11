@@ -11,8 +11,13 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,38 +31,80 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-
+import com.project.easyBuild.authority.biz.CategoryBiz;
 import com.project.easyBuild.authority.biz.GitHubService;
 import com.project.easyBuild.authority.biz.ProductBiz;
+import com.project.easyBuild.authority.dto.CategoryDto;
 import com.project.easyBuild.authority.dto.ProductDto;
 
 @Controller
-@RequestMapping("/api/product")
+@RequestMapping("/product")
 public class ProductController {
     private final Logger logger = LoggerFactory.getLogger(ProductController.class);
     private final ProductBiz productBiz;
     private final GitHubService gitHubService;
     private final ObjectMapper objectMapper;
+    private final ProductBiz productbiz;
+    private final CategoryBiz categorybiz;
         
     @Autowired
-    public ProductController(ProductBiz productBiz, GitHubService gitHubService, ObjectMapper objectMapper) {
+    public ProductController(ProductBiz productBiz, GitHubService gitHubService, ObjectMapper objectMapper, ProductBiz productbiz, CategoryBiz categorybiz) {
         this.productBiz = productBiz;
         this.gitHubService = gitHubService;
         this.objectMapper = objectMapper;
+        this.productbiz = productbiz;
+        this.categorybiz = categorybiz;
+    }
+
+    @GetMapping("/list")
+    public String listProducts(Model model,
+                               @RequestParam(defaultValue = "0") int page,
+                               @RequestParam(required = false) Long category1,
+                               @RequestParam(required = false) Long category2,
+                               @RequestParam(required = false) Long category3) {
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<ProductDto> productPage;
+
+        if (category3 != null) {
+            productPage = productbiz.listByCategory3(category3, pageable);
+        } else if (category2 != null) {
+            productPage = productbiz.listByCategory2(category2, pageable);
+        } else if (category1 != null) {
+            productPage = productbiz.listByCategory1(category1, pageable);
+        } else {
+            productPage = productbiz.listAllPaginated(pageable);
+        }
+
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", productPage.getNumber());
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("totalItems", productPage.getTotalElements());
+
+        // 카테고리 데이터 추가
+        List<CategoryDto> categories = categorybiz.listAll();
+        logger.info("Categories size: {}", categories.size());
+        try {
+            String categoryDataJson = objectMapper.writeValueAsString(categories);
+            model.addAttribute("categoryDataJson", categoryDataJson);
+        } catch (JsonProcessingException e) {
+            logger.error("Error converting categories to JSON", e);
+            model.addAttribute("categoryDataJson", "[]");
+        }
+        model.addAttribute("category1", category1);
+        model.addAttribute("category2", category2);
+        model.addAttribute("category3", category3);
+
+        return "pages/authority/auth-product";
     }
     
-    @GetMapping("/list")
+    @GetMapping("/all")
     public ResponseEntity<List<ProductDto>> getProductList() {
         logger.info("Fetching all products");
         List<ProductDto> products = productBiz.listAll();
         return ResponseEntity.ok(products);
-    }
-
-    @GetMapping("/productDto")
-    public ResponseEntity<List<ProductDto>> getRest() {
-        logger.info("Fetching all products");
-        return ResponseEntity.ok(productBiz.listAll());
     }
 
     @PostMapping("/updateStockStatus")
@@ -224,5 +271,22 @@ public class ProductController {
 
         return ResponseEntity.ok(product);
     }
+    
+    @DeleteMapping("/delete/{productId}")
+    public ResponseEntity<?> deleteProduct(@PathVariable int productId) {
+        try {
+            boolean deleted = productBiz.deleteProduct(productId);
+            if (deleted) {
+                return ResponseEntity.ok().body(Map.of("success", true, "message", "상품이 성공적으로 삭제되었습니다."));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("success", false, "message", "상품을 찾을 수 없습니다."));
+            }
+        } catch (Exception e) {
+            logger.error("Error deleting product", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "message", "상품 삭제 중 오류가 발생했습니다."));
+        }
+    }
+
 
 }

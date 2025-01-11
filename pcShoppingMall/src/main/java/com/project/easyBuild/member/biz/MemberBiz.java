@@ -10,4 +10,12 @@ public interface MemberBiz {
 	public int delete(String userId);
 	
 	public MemberDto selectOne(String userId);
+	
+	public int update(MemberDto dto);
+	
+	public MemberDto find_id(MemberDto dto);
+	
+	public void findPw(String email,String userId)throws Exception;
+
+	public int findPwCheck(MemberDto dto)throws Exception;
 }

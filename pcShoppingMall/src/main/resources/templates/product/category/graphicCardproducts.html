@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:fragment="title">graphicCard products</title>
+    <link rel="stylesheet" href="/css/product/productCategory.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+	<div layout:fragment="content" th:with="pageType='graphicCard'">
+	<h2 style="text-align: left;">그래픽카드</h2>
+    <!-- 필터 UI -->
+    <form id="filter-form">
+    <!-- 제조사 -->
+    <div>
+        <h4>제조사</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="manufacturer" value="MSI"> MSI</label>
+        	<label><input type="checkbox" name="manufacturer" value="ASUS"> ASUS</label>
+        	<label><input type="checkbox" name="manufacturer" value="이엠텍"> 이엠텍</label>
+        	<label><input type="checkbox" name="manufacturer" value="GIGABYTE"> GIGABYTE</label>
+        	<label><input type="checkbox" name="manufacturer" value="GAINWARD"> GAINWARD</label>
+        	<label><input type="checkbox" name="manufacturer" value="COLORFUL"> COLORFUL</label>
+        </div>
+    </div>
+
+    <!-- 칩셋 제조사 -->
+    <div>
+        <h4>침셋 제조사</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="chipsetManufacturer" value="NVIDIA"> NVIDIA</label>
+        	<label><input type="checkbox" name="chipsetManufacturer" value="AMD"> AMD</label>
+        	<label><input type="checkbox" name="chipsetManufacturer" value="Intel"> Intel</label>
+        </div>
+    </div>
+
+    <!-- NVIDIA/AMD/인텔 칩셋 -->
+    <div>
+        <h4>NVIDIA/AMD/인텔 칩셋</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="chipset" value="RTX 4080 SUPER"> RTX 4080 SUPER</label>
+        	<label><input type="checkbox" name="chipset" value="RTX 4070"> RTX 4070</label>
+        	<label><input type="checkbox" name="chipset" value="RTX 4060 Ti"> RTX 4060 Ti</label>
+        	<label><input type="checkbox" name="chipset" value="RTX 4060"> RTX 4060</label>
+        	<label><input type="checkbox" name="chipset" value="RX 7800 XT"> RX 7800 XT</label>
+        	<label><input type="checkbox" name="chipset" value="RX 7600"> RX 7600</label>
+        </div>
+    </div>
+	</form>
+	<!-- 세개의 탭 -->
+	<div class="tabs">
+    	<button class="tab-button" data-sort="newest">신상품 순</button>
+    	<button class="tab-button" data-sort="low-price">낮은 가격순</button>
+    	<button class="tab-button" data-sort="high-price">높은 가격순</button>
+	</div>
+
+    <div class="product-list">
+        <!-- 상품을 반복적으로 렌더링 -->
+        <div class="product-item" th:each="graphicCard : ${graphicCards}">
+            <div class="product-image">
+    		<!-- 제품 ID를 기반으로 이미지 파일을 동적으로 설정 -->
+    			<img th:src="@{'/images/product/graphicCard/' + 'gc' + (${graphicCard != null && graphicCard.graphicCardId != null ? graphicCard.graphicCardId : 'default'}) + '.png'}" 
+         				alt="GraphicCard Image" style="width:120px; height:120px;">
+			</div>
+            <div class="product-info">
+            	<a th:href="@{/graphicCardproducts/${graphicCard.graphicCardId}}">
+    				<h2 class="product-name" th:text="${graphicCard.productName}"></h2>
+    			</a>
+    			<p th:text="'제조사: ' + ${graphicCard.manufacturer} + ', 칩셋 제조사: ' + ${graphicCard.chipsetManufacturer} + ', 칩셋: ' + ${graphicCard.chipset} + ', VGA 길이: ' + ${graphicCard.vgaLength} + 'mm'"></p>
+				<p th:text="${graphicCard.formattedReleaseDate}"></p>
+		
+			</div>
+            <div class="product-price">
+                <p th:text="${graphicCard.formattedPrice}"></p>
+                <form action="/cart/add" method="post">
+                    <input type="hidden" name="graphicCardId" th:value="${graphicCard.graphicCardId}">
+                    <button type="submit">장바구니</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="/js/product/graphicCardCategoryFilter.js"></script>
+</body>
+</html>

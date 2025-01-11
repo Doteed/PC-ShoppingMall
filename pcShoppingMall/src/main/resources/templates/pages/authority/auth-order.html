@@ -10,34 +10,49 @@
             const orderIds = document.querySelectorAll('.order-id');
             orderIds.forEach(orderId => {
                 orderId.addEventListener('click', function() {
-                    showOrderDetails(this.getAttribute('data-order-id'));
+                    const orderIdValue = this.getAttribute('data-order-id');
+                    if (orderIdValue) {
+                        showOrderDetails(orderIdValue);
+                    } else {
+                        console.error('Order ID is undefined');
+                    }
                 });
             });
         });
 
         function showOrderDetails(orderId) {
-            fetch('/orders/' + orderId)
-                .then(response => response.json())
+            fetch('/order/' + orderId)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('서버 응답 오류');
+                    }
+                    return response.json();
+                })
                 .then(order => {
                     document.getElementById('orderId').value = order.orderId;
                     document.getElementById('deliveryId').value = order.deliveryId;
                     document.getElementById('userId').value = order.userId;
                     document.getElementById('productId').value = order.productId;
+                    document.getElementById('productName').value = order.productName;
                     document.getElementById('totalPrice').value = order.totalPrice;
                     document.getElementById('paymentMethod').value = order.paymentMethod;
-                    document.getElementById('orderDate').value = order.orderDate;
+                    document.getElementById('phone').value = order.phone;
+                    document.getElementById('address').value = order.address;
+                    document.getElementById('addressee').value = order.addressee;
+                    document.getElementById('deliveryStatus').value = order.deliveryStatus;
                     
                     var orderModal = new bootstrap.Modal(document.getElementById('orderModal'));
                     orderModal.show();
                 })
                 .catch(error => {
+                    console.error('오류:', error);
                     alert('주문 정보를 불러오는데 실패했습니다.');
                 });
         }
 
         function updateOrder() {
             var formData = new FormData(document.getElementById('orderForm'));
-            fetch('/orders/update', {
+            fetch('/order/update', {
                 method: 'POST',
                 body: formData
             })
@@ -56,7 +71,7 @@
         function cancelOrder() {
             var orderId = document.getElementById('orderId').value;
             if (confirm('정말로 이 주문을 취소하시겠습니까?')) {
-                fetch('/orders/cancel/' + orderId, {
+                fetch('/order/cancel/' + orderId, {
                     method: 'POST'
                 })
                 .then(response => response.json())
@@ -106,7 +121,7 @@
                         <td colspan="7" class="text-center">주문 목록이 비어있습니다.</td>
                     </tr>
                     <tr th:unless="${#lists.isEmpty(orders)}" th:each="order : ${orders}">
-                        <td><span class="order-id" th:text="${order.orderId}" data-order-id="#orderModal" style="cursor: pointer;"></span></td>
+                        <td><span class="order-id" th:text="${order.orderId}" th:data-order-id="${order.orderId}" data-bs-toggle="modal" data-bs-target="#orderModal" style="color:#007bff;cursor: pointer;"></span></td>
                         <td th:text="${order.deliveryId}"></td>
                         <td th:text="${order.userId}"></td>
                         <td th:text="${order.productId}"></td>
@@ -117,7 +132,6 @@
                 </tbody>
             </table>
         </div>
-        <button data-bs-toggle="modal" data-bs-target="#orderModal">modal</button>
         <!-- Modal -->
 		<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
 		    <div class="modal-dialog modal-lg">
@@ -145,8 +159,8 @@
 		                            <input type="number" class="form-control" id="productId" name="productId" />
 		                        </div>
 		                        <div class="col-md-6 mb-3">
-		                            <label for="totalPrice">총 가격</label>
-		                            <input type="number" class="form-control" id="totalPrice" name="totalPrice" />
+		                            <label for="productId">상품명</label>
+		                            <input type="text" class="form-control" id="productName" name="productName" />
 		                        </div>
 		                    </div>
 		                    <div class="row">
@@ -155,8 +169,8 @@
 		                            <input type="text" class="form-control" id="paymentMethod" name="paymentMethod" />
 		                        </div>
 		                        <div class="col-md-6 mb-3">
-		                            <label for="phone">전화번호</label>
-		                            <input type="text" class="form-control" id="phone" name="phone" />
+		                            <label for="totalPrice">총 가격</label>
+		                            <input type="number" class="form-control" id="totalPrice" name="totalPrice" />
 		                        </div>
 		                    </div>
 		                    <div class="row">
@@ -173,6 +187,10 @@
 		                    </div>
 		                    <div class="row">
 		                        <div class="col-md-6 mb-3">
+		                            <label for="phone">전화번호</label>
+		                            <input type="text" class="form-control" id="phone" name="phone" />
+		                        </div>
+		                        <div class="col-md-6 mb-3">
 		                            <label for="deliveryStatus">배송 상태</label>
 		                            <input type="text" class="form-control" id="deliveryStatus" name="deliveryStatus" />
 		                        </div>
@@ -180,9 +198,8 @@
 		                </form>
 		            </div>
 		            <div class="modal-footer">
-		                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-		                <button type="button" class="btn btn-primary" onclick="updateOrder()">저장</button>
 		                <button type="button" class="btn btn-danger" onclick="cancelOrder()">주문 취소</button>
+		                <button type="button" class="btn btn-primary" onclick="updateOrder()">저장</button>
 		            </div>
 		        </div>
 		    </div>

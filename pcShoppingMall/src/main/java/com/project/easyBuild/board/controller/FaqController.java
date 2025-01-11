@@ -33,29 +33,40 @@ public class FaqController {
     @GetMapping
     public String listFaqs(
             @PageableDefault(size = 10, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable,
+            HttpSession session,
             Model model) {
-        // 서비스에서 null 방지 처리
-        Page<Faq> page = faqService.findAll(pageable);
 
-        // 모델에 데이터를 추가
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+        model.addAttribute("loggedInUser", loggedInUser);
+
+        Page<Faq> page = faqService.findAll(pageable);
         model.addAttribute("page", page);
         model.addAttribute("faqs", page.getContent());
         model.addAttribute("emptyPage", page.isEmpty());
 
         return TEMPLATE_DIR + "list";
     }
-    
 
     // FAQ 상세보기
     @GetMapping("/{id}")
-    public String getFaqDetail(@PathVariable Long id, Model model) {
-        model.addAttribute("faq", faqService.getFaqById(id));
+    public String getFaqDetail(@PathVariable Long id, HttpSession session, Model model) {
+        Faq faq = faqService.getFaqById(id);
+        model.addAttribute("faq", faq);
+
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+        model.addAttribute("loggedInUser", loggedInUser);
+
         return TEMPLATE_DIR + "detail";
     }
 
     // FAQ 작성 페이지
     @GetMapping("/new")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(HttpSession session, Model model) {
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+        if (loggedInUser == null || loggedInUser.getAuthId() != 2) {
+            return "error/403"; // 관리자 권한이 없는 경우 접근 제한
+        }
+
         model.addAttribute("faq", new Faq());
         return TEMPLATE_DIR + "create";
     }
@@ -66,16 +77,12 @@ public class FaqController {
             return TEMPLATE_DIR + "create";
         }
 
-        // 로그인한 사용자 정보 가져오기
         MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
-        if (loggedInUser == null) {
-            return "redirect:/loginform"; // 로그인되지 않은 경우 로그인 페이지로 이동
+        if (loggedInUser == null || loggedInUser.getAuthId() != 2) {
+            return "error/403";
         }
 
-        // 로그인한 사용자 아이디 설정
         faq.setUserId(loggedInUser.getUserId());
-
-        // 기본값 설정
         faq.setAuthId(2L); // 관리자 권한
         faq.setBoardId(102L); // FAQ 게시판 ID
         faqService.saveFaq(faq);
@@ -83,11 +90,19 @@ public class FaqController {
         return "redirect:/faqs";
     }
 
-
     // FAQ 수정 페이지
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        model.addAttribute("faq", faqService.getFaqById(id));
+    public String showEditForm(@PathVariable Long id, HttpSession session, Model model) {
+        Faq faq = faqService.getFaqById(id);
+
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+        if (loggedInUser == null || loggedInUser.getAuthId() != 2) {
+            return "error/403"; // 관리자 권한이 없는 경우 접근 제한
+        }
+
+        model.addAttribute("faq", faq);
+        model.addAttribute("loggedInUser", loggedInUser);
+
         return TEMPLATE_DIR + "edit";
     }
 
@@ -103,36 +118,33 @@ public class FaqController {
             return TEMPLATE_DIR + "edit";
         }
 
-        // 로그인한 사용자 정보 가져오기
         MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
-        if (loggedInUser == null) {
-            return "redirect:/loginform"; // 로그인되지 않은 경우 로그인 페이지로 이동
-        }
-
-        // 로그인한 사용자 아이디 설정
-        faq.setUserId(loggedInUser.getUserId());
-
-        // 기본값 설정
-        if (faq.getBoardId() == null) {
-            faq.setBoardId(102L); // 기본값 설정
+        if (loggedInUser == null || loggedInUser.getAuthId() != 2) {
+            return "error/403";
         }
 
         faq.setFaqId(id);
+        faq.setUserId(loggedInUser.getUserId());
         faqService.updateFaq(faq);
 
         return "redirect:/faqs";
     }
 
-
     // FAQ 삭제 처리
     @GetMapping("/delete/{id}")
-    public String deleteFaq(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String deleteFaq(@PathVariable Long id, HttpSession session, RedirectAttributes redirectAttributes) {
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+        if (loggedInUser == null || loggedInUser.getAuthId() != 2) {
+            return "error/403";
+        }
+
         try {
             faqService.deleteFaq(id);
             redirectAttributes.addFlashAttribute("message", "FAQ deleted successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to delete FAQ.");
         }
+
         return "redirect:/faqs";
     }
 }

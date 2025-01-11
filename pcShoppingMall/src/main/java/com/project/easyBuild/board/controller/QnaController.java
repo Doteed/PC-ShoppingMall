@@ -42,13 +42,18 @@ public class QnaController {
 
     // QnA 상세보기
     @GetMapping("/{id}")
-    public String getQnaDetail(@PathVariable Long id, Model model) {
+    public String getQnaDetail(@PathVariable Long id, HttpSession session, Model model) {
         Qna qna = qnaService.getQnaById(id);
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
 
         model.addAttribute("qna", qna);
-        model.addAttribute("isAuthenticated", false); // 초기값은 인증되지 않음
+        model.addAttribute("loggedInUser", loggedInUser); // 사용자 정보 추가
+        model.addAttribute("isAuthenticated", false); // 초기값 설정
+
         return TEMPLATE_DIR + "detail";
     }
+
+    
 
     // 비밀번호 검증 처리
     @PostMapping("/verify/{id}")
@@ -118,17 +123,27 @@ public class QnaController {
 
     // 답변 작성 페이지
     @GetMapping("/answer/{id}")
-    public String showAnswerForm(@PathVariable Long id, Model model) {
+    public String showAnswerForm(@PathVariable Long id, HttpSession session, Model model) {
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+        if (loggedInUser == null || loggedInUser.getAuthId() != 2) {
+            return "error/403"; // 권한 없는 사용자 접근 차단
+        }
         model.addAttribute("qna", qnaService.getQnaById(id));
         return TEMPLATE_DIR + "answer";
     }
 
+
     // 답변 작성/수정 처리
     @PostMapping("/answer/{id}")
-    public String saveAnswer(@PathVariable Long id, @RequestParam("answer") String answer) {
+    public String saveAnswer(@PathVariable Long id, @RequestParam("answer") String answer, HttpSession session) {
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+        if (loggedInUser == null || loggedInUser.getAuthId() != 2) {
+            return "error/403"; // 권한 없는 사용자 접근 차단
+        }
         qnaService.saveAnswer(id, answer);
         return "redirect:/qnas/" + id;
     }
+
 
     // QnA 수정 페이지
     @GetMapping("/edit/{id}")

@@ -97,7 +97,10 @@
 						</tr>
 					</thead>
 					<tbody>
-					    <tr th:each="sale : ${monthlySales}">
+						<tr th:if="${#lists.isEmpty(list)}">
+					        <td colspan="3">----게시물이 없습니다.----</td>
+					    </tr>
+					    <tr  th:unless="${#lists.isEmpty(list)}" th:each="sale, iterStat : ${monthlySales}" th:if="${iterStat.index < 5}">
 					        <td th:text="${#temporals.format(sale.date, 'yyyy-MM-dd')}"></td>
 					        <td th:text="${sale.orderCount}"></td>
 					        <td th:text="${#numbers.formatDecimal(sale.totalSales, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
@@ -122,34 +125,90 @@
 							<th>평점</th>
 						</tr>
 					</thead>
-					<tbody>
-						<!-- <tr th:each="sale : ${monthlySales}">
-							<td th:text="${sale.date}"></td>
-							<td th:text="${sale.orderCount}"></td>
-							<td th:text="${sale.totalSales}"></td>
-							<td th:text="${sale.inquiryCount}"></td>
-							<td th:text="${sale.reviewCount}"></td>
-						</tr> -->
-					<tr th:if="${#lists.isEmpty(list)}">
-                        <td colspan="8">----게시물이 없습니다.----</td>
-                    </tr>
-                    <tr th:each="item : ${list}" th:unless="${#lists.isEmpty(list)}">
-                        <td th:text="${item.productId}"></td>
-                        <td th:text="${item.userId}"></td>
-                        <td th:text="${item.categoryId1}"></td>
-                        <td th:text="${item.categoryId2}"></td>
-                        <td th:text="${item.categoryId3}"></td>
-                        <td th:text="${item.authId}"></td>
-                        <td th:text="${item.pPrice}"></td>
-                        <td th:text="${item.pName}"></td>
-                        <td th:text="${item.pStock}"></td>
-                        <td th:text="${item.pEnroll}"></td>
-                    </tr>
-					</tbody>
+						<tbody>
+						    <tr th:if="${#lists.isEmpty(list)}">
+						        <td colspan="3">----게시물이 없습니다.----</td>
+						    </tr>
+						    <tr th:unless="${#lists.isEmpty(list)}" th:each="sale, iterStat : ${monthlySales}" th:if="${iterStat.index < 5}">
+						        <td th:text="${sale.title}"></td>
+						        <td th:text="${sale.writer}"></td>
+						        <td th:text="${sale.score}"></td>
+						    </tr>
+						</tbody>
 				</table>
 			</div>
 		</div>
-		<div>기타 등등...</div>
+		<div class="d-flex gap-5">
+			<div class="w-100">
+				<h5>공지사항</h5>
+				<table class="table-type-a">
+					<colgroup>
+						<col width="10%" />
+						<col width="*" />			
+						<col width="20%" />
+					</colgroup>
+					<thead>
+                        <tr>
+                            <th>No</th>
+                            <th>제목</th>
+                            <th>날짜</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    	<tr th:if="${notices == null || notices.totalElements == 0}">
+					        <td colspan="3">----게시물이 없습니다.----</td>
+					    </tr>
+                        <tr th:unless="${notices == null || notices.totalElements == 0}" th:each="notice, iterStat : ${notices.content}" th:if="${iterStat.index < 5}" >
+                            <td th:text="${notices.totalElements - (notices.number * notices.size + iterStat.index)}"></td>
+                            <td class="title"><a th:href="@{'/announcements/' + ${notice.announcId}}" th:text="${notice.title}"></a></td>
+                            <td th:text="${#temporals.format(notice.createdDate, 'yyyy-MM-dd')}"></td>
+                        </tr>
+                    </tbody>
+				</table>
+			</div>
+			<div class="w-100">
+				<h5>Q&A</h5>
+				<table class="table-type-a">
+					<colgroup>
+						<col width="10%" />
+						<col width="*" />
+						<col width="15%" />
+						<col width="20%" />
+						<col width="15%" />
+						<col width="15%" />
+					</colgroup>
+					 <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>제목</th>
+                            <th>작성자</th>
+                            <th>작성일</th>
+                            <th>비밀 여부</th>
+                            <th>답변 상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                     	<tr th:if="${qnas == null || qnas.totalElements == 0}">
+					        <td colspan="3">----게시물이 없습니다.----</td>
+					    </tr>
+                        <tr th:unless="${qnas == null || qnas.totalElements == 0}" th:each="qna, iterStat : ${qnas.content}" th:if="${iterStat.index < 5}">
+                            <td th:text="${qnas.totalElements - (qnas.number * qnas.size + iterStat.index)}"></td>
+                            <td class="title"><a th:href="@{'/qnas/' + ${qna.qnaId}}" th:text="${qna.title}"></a></td>
+                            <td th:text="${qna.userId}"></td>
+                            <td th:text="${#temporals.format(qna.createdDate, 'yyyy-MM-dd')}"></td>
+                            <td>
+                                <span th:if="${qna.isSecret}" class="badge bg-warning">비밀글</span>
+                                <span th:if="${!qna.isSecret}" class="badge bg-success">공개</span>
+                            </td>
+                            <td>
+                                <span th:if="${qna.answer != null}" class="badge bg-success">답변 완료</span>
+                                <span th:if="${qna.answer == null}" class="badge bg-warning">미답변</span>
+                            </td>
+                        </tr>
+                    </tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 </body>
 </html>

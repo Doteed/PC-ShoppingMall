@@ -34,5 +34,11 @@ public interface ProductBiz {
 	public ProductDto getProductById(int productId);
 	
 	public int insertWithCategories(ProductDto dto, List<Integer> categoryIds);
+	
+	public Page<ProductDto> listByCategory1(Long categoryId, Pageable pageable);
+	public Page<ProductDto> listByCategory2(Long categoryId, Pageable pageable);
+	public Page<ProductDto> listByCategory3(Long categoryId, Pageable pageable);
+	
+	public boolean deleteProduct(int productId)
 
 }

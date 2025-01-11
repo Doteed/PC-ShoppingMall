@@ -12,6 +12,15 @@
 	<script th:src="@{/js/bootstrap.min.js}"></script>
 	<script th:src="@{/js/qna.js}"></script>
 	<script th:src="@{/js/main.js}"></script> <!-- main, qna.js 파일 추가 -->
+	<script th:if="${pageType == 'cooler'}" th:src="@{/js/product/coolerCategoryFilter.js}"></script> <!-- coolerCategoryFilter.js 파일추가 -->
+	<script th:if="${pageType == 'cpu'}" th:src="@{/js/product/cpuCategoryFilter.js}"></script> <!-- cpuCategoryFilter.js 파일추가 -->
+	<script th:if="${pageType == 'mainboard'}" th:src="@{/js/product/mainboardCategoryFilter.js}"></script> <!-- mainboardCategoryFilter.js 파일추가 -->
+	<script th:if="${pageType == 'memory'}" th:src="@{/js/product/memoryCategoryFilter.js}"></script> <!-- memoryCategoryFilter.js 파일추가 -->
+	<script th:if="${pageType == 'graphicCard'}" th:src="@{/js/product/graphicCardCategoryFilter.js}"></script> <!-- graphicCardCategoryFilter.js 파일추가 -->
+	<script th:if="${pageType == 'ssd'}" th:src="@{/js/product/ssdCategoryFilter.js}"></script> <!-- ssdCategoryFilter.js 파일추가 -->
+	<script th:if="${pageType == 'hdd'}" th:src="@{/js/product/hddCategoryFilter.js}"></script> <!-- hddCategoryFilter.js 파일추가 -->
+	<script th:if="${pageType == 'case'}" th:src="@{/js/product/caseCategoryFilter.js}"></script> <!-- caseCategoryFilter.js 파일추가 -->
+	<script th:if="${pageType == 'power'}" th:src="@{/js/product/powerCategoryFilter.js}"></script> <!-- powerCategoryFilter.js 파일추가 -->
 </head>
 <body>
 	<!-- 각 레이아웃 별로 하단 태그와 동일한 태그 사용 -->

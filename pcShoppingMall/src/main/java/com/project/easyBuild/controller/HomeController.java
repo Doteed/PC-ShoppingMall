@@ -22,6 +22,12 @@ import com.project.easyBuild.authority.biz.MemberBoardBiz;
 import com.project.easyBuild.authority.biz.ProductBiz;
 import com.project.easyBuild.authority.dto.MemberBoardDto;
 import com.project.easyBuild.authority.dto.ProductDto;
+import com.project.easyBuild.board.entity.Announcement;
+import com.project.easyBuild.board.entity.Faq;
+import com.project.easyBuild.board.entity.Qna;
+import com.project.easyBuild.board.service.AnnouncementService;
+import com.project.easyBuild.board.service.FaqService;
+import com.project.easyBuild.board.service.QnaService;
 import com.project.easyBuild.entire.biz.OrderBiz;
 import com.project.easyBuild.entire.dto.OrderDto;
 import com.project.easyBuild.member.biz.MemberBiz;
@@ -63,17 +69,42 @@ public class HomeController {
 	//관리자페이지 관련
 	@Autowired
 	private ProductBiz productbiz;
+	@Autowired
+	private AnnouncementService announcementService;
+	@Autowired
+    private FaqService faqService;
+	@Autowired
+    private QnaService qnaService;
+
 
 	@GetMapping("/auth-index")
-	public String authIndex(HttpSession session, Model model) {
+	public String authIndex(HttpSession session, Model model, @RequestParam(defaultValue = "0") int page) {
+		int pageSize = 5;
+		
 	    MemberDto user = (MemberDto) session.getAttribute("dto");
 	    if (user == null || user.getAuthId() != 2) {
 	        System.out.println("Access denied. User: " + (user != null ? user.getUserId() : "null"));
 	        return "error/403"; // 권한 없음 에러 페이지
 	    }
 	    System.out.println("Access granted for admin: " + user.getUserId());
-	    List<ProductDto> res = productbiz.listAll();
+	    List<ProductDto> res = productbiz.listAll();        
 	    model.addAttribute("list", res);
+	    
+	    // 공지사항
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Announcement> announcements = announcementService.getAllAnnouncements(pageable);
+        model.addAttribute("notices", announcements);
+        
+        // FAQ
+        Pageable faqPageable = PageRequest.of(page, pageSize);
+        Page<Faq> faqs = faqService.getAllFaqs(faqPageable);
+        model.addAttribute("faqs", faqs);
+
+        // QnA
+        Pageable qnaPageable = PageRequest.of(page, pageSize);
+        Page<Qna> qnas = qnaService.getAllQnas(qnaPageable);
+        model.addAttribute("qnas", qnas);
+
 	    return "pages/authority/auth-index";
 	}
 
@@ -281,7 +312,15 @@ public class HomeController {
 	    }
 	}
 
-
+	@GetMapping("/find_idform")
+	public String find_idform() {
+		return "pages/member/find_id";
+	}
+	
+	@GetMapping("/find_pwform")
+	public String find_pwform() {
+		return "pages/member/find_pw";
+	}
 	
     @GetMapping("/sign_up")
     public String sign_up() {
@@ -318,5 +357,30 @@ public class HomeController {
         session.invalidate();  // 세션 무효화
         return "redirect:/";  // 로그아웃 후 홈 페이지로 리다이렉트
     }
+    
+    @GetMapping("/my/member/update")
+    public String update(@RequestParam String userId, Model model) {
+        if (userId == null || userId.isEmpty()) {
+            return "redirect:/loginform";  // 예시: 유효하지 않은 userId가 있을 경우
+        }
+        MemberDto res = memberbiz.selectOne(userId);
+        model.addAttribute("dto", res);
+        return "pages/member/update";
+    }
 
+    
+    @GetMapping("/my/member/updateform")
+    public String updateform(String userName,String password, String phone,String userId) {
+    	MemberDto dto = new MemberDto();
+    	dto.setUserName(userName);
+    	dto.setPassword(password);
+    	dto.setPhone(phone);
+    	dto.setUserId(userId);
+    	int res = memberbiz.update(dto);
+    	if(res>0) {
+    		return "redirect:/my/mydetail";
+    	}else {
+    		return "redirect:/member/update";
+    	}
+    }
 }

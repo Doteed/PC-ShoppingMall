@@ -18,11 +18,13 @@
             <div class="content-box">
                 <p th:utext="${faq.content}"></p>
             </div>
-            <div class="button-container">
-				<a th:href="@{'/faqs/edit/' + ${faq.faqId}}" class="btn btn-warning btn-sm">수정</a>
-				<a th:href="@{'/faqs/delete/' + ${faq.faqId}}" class="btn btn-danger btn-sm" onclick="return confirm('삭제하시겠습니까?');">삭제</a>
-                <a href="/faqs" class="btn btn-secondary">목록</a>
-            </div>
+			<div class="button-container">
+			    <a th:if="${loggedInUser != null and loggedInUser.authId == 2}" 
+			       th:href="@{'/faqs/edit/' + ${faq.faqId}}" class="btn btn-warning btn-sm">수정</a>
+			    <a th:if="${loggedInUser != null and loggedInUser.authId == 2}" 
+			       th:href="@{'/faqs/delete/' + ${faq.faqId}}" class="btn btn-danger btn-sm" onclick="return confirm('삭제하시겠습니까?');">삭제</a>
+			    <a href="/faqs" class="btn btn-secondary">목록</a>
+			</div>
         </div>
 
     </div>
