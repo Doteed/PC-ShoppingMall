@@ -260,7 +260,7 @@ public class HomeController {
 
     // 회원 상세 정보 페이지
     @GetMapping("/auth-member/{userId}")
-    public String authMemberDetail(@PathVariable("userId") String userId, Model model) {
+    public String authMemberDetail(@PathVariable String userId, Model model) {
         System.out.println("Received userId: " + userId);
 
         // 회원 정보를 가져옴
@@ -270,13 +270,19 @@ public class HomeController {
         if (member == null) {
             System.out.println("회원 정보를 찾을 수 없습니다. userId: " + userId);
             model.addAttribute("errorMessage", "회원 정보를 찾을 수 없습니다.");
-            return "pages/authority/error-page"; // 에러 페이지 따로 생성
+            return "pages/authority/error-page"; // 에러 페이지 반환
         }
 
-        // 회원 정보를 모델에 추가
-        model.addAttribute("member", member);
-        return "pages/authority/auth-member-detail";
+        // 주문 내역을 가져옴
+        List<OrderDto> orders = orderbiz.mylistAll(userId);
+
+        // 모델에 회원 정보와 주문 내역을 추가
+        model.addAttribute("member", member); // 회원 정보 전달
+        model.addAttribute("orders", orders); // 주문 내역 전달
+
+        return "pages/authority/auth-member-detail"; // Thymeleaf 템플릿 반환
     }
+
 
 
     
@@ -290,6 +296,18 @@ public class HomeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    
+    @GetMapping("/auth-member/{userId}/orders")
+    public ResponseEntity<?> getUserOrders(@PathVariable String userId) {
+        try {
+            List<OrderDto> memberOrders = orderbiz.mylistAll(userId); // 주문 내역 가져오기
+            return ResponseEntity.ok(memberOrders); // 성공 시 리스트 반환
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 주문 내역 조회 중 오류가 발생했습니다.");
+        }
+    }
+
     
     @Autowired
     private MemberBiz memberbiz;

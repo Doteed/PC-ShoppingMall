@@ -31,12 +31,13 @@
 	            });
 	        }
 	    }
-
+		
 	    window.goToMemberManagement = function () {
 	        window.location.href = '/auth-member';
 	    }
 	</script>
-	
+	<script th:src="@{/js/editor.js}"></script>
+	<script th:src="@{/js/mylist.js}"></script>
     <style>
 		.content-box {
 		    display: flex;
@@ -145,10 +146,37 @@
 	            <!-- 주문 내역 -->
 	            <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
 	                <h3 class="mt-3">주문 내역</h3>
-	                <ul>
-	                    <li th:each="order : ${memberOrders}" th:text="${order}"></li>
-	                </ul>
+						<table class="table table-striped mt-3">
+						    <thead>
+						        <tr>
+						            <th>주문 번호</th>
+						            <th>주문 날짜</th>
+						            <th>상품명</th>
+						            <th>총 금액</th>
+						            <th>상태</th>
+						            <th>상세보기</th>
+						        </tr>
+						    </thead>
+							<tbody>
+							    <tr th:if="${#lists.isEmpty(orders)}">
+							        <td colspan="6">---- 구매내역이 없습니다. ----</td>
+							    </tr>
+							    <tr th:each="item : ${orders}" th:unless="${#lists.isEmpty(orders)}">
+							        <td th:text="${item.orderId}"></td>
+							        <td th:text="${item.orderDate}"></td>
+							        <td th:text="${item.productName}"></td>
+							        <td th:text="${item.totalPrice}"></td>
+							        <td th:text="${item.deliveryStatus}"></td>
+							        <td>
+							            <button class="btn btn-primary order-detail-button" th:attr="data-order-id=${item.orderId}">상세보기</button>
+							        </td>
+							    </tr>
+							</tbody>
+						</table>
 	            </div>
+				<div id="entityDetailContainer">
+					<!-- 상세 내용 -->
+				</div>
 	        </div>
 	
 	        <div class="button-group">
