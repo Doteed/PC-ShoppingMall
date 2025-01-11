@@ -1,5 +1,6 @@
 package com.project.easyBuild.entire.dao;
 
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,17 +12,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.project.easyBuild.authority.dto.CategoryDto;
 import com.project.easyBuild.entire.dto.OrderDto;
+import com.project.easyBuild.user.dto.OrderRequestDto;
+
 
 @Repository
 public class OrderDaoImpl implements OrderDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	//private static final int authId = 2; // 관리자 권한
+	// private static final int authId = 2; // 관리자 권한
 
 	private RowMapper<OrderDto> orderRowMapper = (rs, rowNum) -> {
 		OrderDto order = new OrderDto();
@@ -50,31 +56,25 @@ public class OrderDaoImpl implements OrderDao {
 	@Override
 	public List<OrderDto> mylistAll(String userId) {
 		String sql = "SELECT ot.*, p.P_NAME, d.DELIVERY_STATUS, d.ADDRESSEE, d.ADDRESS, d.PHONE "
-                + " FROM ORDER_TABLE ot "
-                + " JOIN PRODUCT p ON ot.PRODUCT_ID = p.PRODUCT_ID "
-                + " JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID "
-                + " WHERE ot.USER_ID = ? "
-                + " ORDER BY ot.ORDER_ID DESC";
+				+ " FROM ORDER_TABLE ot " + " JOIN PRODUCT p ON ot.PRODUCT_ID = p.PRODUCT_ID "
+				+ " JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID " + " WHERE ot.USER_ID = ? "
+				+ " ORDER BY ot.ORDER_ID DESC";
 		return jdbcTemplate.query(sql, new Object[] { userId }, orderRowMapper);
 	}
 
 	@Override
 	public List<OrderDto> listAll() {
 		String sql = "SELECT ot.*, p.P_NAME, d.DELIVERY_STATUS, d.ADDRESSEE, d.ADDRESS, d.PHONE"
-                + " FROM ORDER_TABLE ot "
-                + " JOIN PRODUCT p ON ot.PRODUCT_ID = p.PRODUCT_ID "
-                + " JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID "
-                + " ORDER BY ot.ORDER_ID DESC";
+				+ " FROM ORDER_TABLE ot " + " JOIN PRODUCT p ON ot.PRODUCT_ID = p.PRODUCT_ID "
+				+ " JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID " + " ORDER BY ot.ORDER_ID DESC";
 		return jdbcTemplate.query(sql, orderRowMapper);
 	}
 
 	@Override
 	public OrderDto listOne(int orderId, String userId) {
 		String sql = "SELECT ot.*, p.P_NAME, d.DELIVERY_STATUS, d.ADDRESSEE, d.ADDRESS, d.PHONE"
-                + " FROM ORDER_TABLE ot "
-                + " JOIN PRODUCT p ON ot.PRODUCT_ID = p.PRODUCT_ID "
-                + " JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID "
-                + " WHERE ot.ORDER_ID = ? AND ot.USER_ID = ?";
+				+ " FROM ORDER_TABLE ot " + " JOIN PRODUCT p ON ot.PRODUCT_ID = p.PRODUCT_ID "
+				+ " JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID " + " WHERE ot.ORDER_ID = ? AND ot.USER_ID = ?";
 
 		try {
 			return jdbcTemplate.queryForObject(sql, orderRowMapper, orderId, userId);
@@ -86,44 +86,42 @@ public class OrderDaoImpl implements OrderDao {
 		}
 	}
 
-	//배송 정보 업데이트(사용자)
+	// 배송 정보 업데이트(사용자)
 	@Override
 	public int update(OrderDto dto, String userId) {
 		String sql = "UPDATE DELIVERY d SET d.ADDRESSEE = ?, d.ADDRESS = ?, d.PHONE = ? "
 				+ " WHERE d.DELIVERY_ID = ? AND d.DELIVERY_ID IN ( "
 				+ " SELECT DELIVERY_ID FROM ORDER_TABLE ot WHERE ot.USER_ID = ?)";
 
+		System.out.println(dto);
 		return jdbcTemplate.update(sql, dto.getAddressee(), dto.getAddress(), dto.getPhone(), dto.getDeliveryId(),
 				userId);
 	}
 
-    //TODO: 컨트롤러에서 관리자인지 확인 필요.
-	//배송 상태 업데이트(관리자)
-    @Override
-    public int update(int deliveryId, String deliveryStatus) {
-        String sql = "UPDATE DELIVERY SET DELIVERY_STATUS = ? WHERE DELIVERY_ID = ?";
-        
-        return jdbcTemplate.update(sql, deliveryStatus, deliveryId);
-    }
-    
-    //TODO:
+	// TODO: 컨트롤러에서 관리자인지 확인 필요.
+	// 배송 상태 업데이트(관리자)
+	@Override
+	public int update(int deliveryId, String deliveryStatus) {
+		String sql = "UPDATE DELIVERY SET DELIVERY_STATUS = ? WHERE DELIVERY_ID = ?";
+
+		return jdbcTemplate.update(sql, deliveryStatus, deliveryId);
+	}
+
 	@Override
 	public int cancle(int orderId, String userId, int authId) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("UPDATE DELIVERY d SET d.DELIVERY_STATUS = ? ")
-		   .append("WHERE d.DELIVERY_ID = ( ")
-		   .append("SELECT ot.DELIVERY_ID FROM ORDER_TABLE ot ")
-		   .append("WHERE ot.ORDER_ID = ? ");
-		
+		sql.append("UPDATE DELIVERY d SET d.DELIVERY_STATUS = ? ").append("WHERE d.DELIVERY_ID = ( ")
+				.append("SELECT ot.DELIVERY_ID FROM ORDER_TABLE ot ").append("WHERE ot.ORDER_ID = ? ");
+
 		List<Object> params = new ArrayList<>();
 		params.add("취소");
 		params.add(orderId);
-		
-		if(authId == 2) {
-			sql.append(")"); //관리자일때 조건없이 닫기만
-		} else if(authId == 1) {
-			sql.append(" AND ot.USER_ID = ? )"); //일반 유저는 본인글만
-	        params.add(userId);
+
+		if (authId == 2) {
+			sql.append(")"); // 관리자일때 조건없이 닫기만
+		} else if (authId == 1) {
+			sql.append(" AND ot.USER_ID = ? )"); // 일반 유저는 본인글만
+			params.add(userId);
 		}
 
 		return jdbcTemplate.update(sql.toString(), params.toArray());
@@ -135,41 +133,85 @@ public class OrderDaoImpl implements OrderDao {
 				+ "JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID "
 				+ "WHERE ot.USER_ID = ? GROUP BY DELIVERY_STATUS";
 
-        //초기화
-        List<String> predefinedStatuses = List.of("입금대기", "결제완료", "배송중", "배송완료", "취소");
-        Map<String, Integer> result = predefinedStatuses.stream()
-                .collect(Collectors.toMap(status -> status, status -> 0));
-        
-        jdbcTemplate.query(sql, new Object[] { userId }, rs -> {
-            while (rs.next()) {
-                String status = rs.getString("DELIVERY_STATUS");
-                int count = rs.getInt("COUNT(*)");
-                result.put(status, count);
-            }
-            return null; //업데이트만
-        });
+		// 초기화
+		List<String> predefinedStatuses = List.of("입금대기", "결제완료", "배송중", "배송완료", "취소");
+		Map<String, Integer> result = predefinedStatuses.stream()
+				.collect(Collectors.toMap(status -> status, status -> 0));
 
-        return result;
+		jdbcTemplate.query(sql, new Object[] { userId }, rs -> {
+			while (rs.next()) {
+				String status = rs.getString("DELIVERY_STATUS");
+				int count = rs.getInt("COUNT(*)");
+				result.put(status, count);
+			}
+			return null; // 업데이트만
+		});
+
+		return result;
 	}
-	
+
 	@Override
-	public int insert (OrderDto dto) {
+	public int insert(OrderDto dto) {
 		String sql = " INSERT INTO ORDER_TABLE ot VALUES (orderId, deliveryId, userId, auth_id, productId, totalPrice, paymentMethod, orderDate, productName, deliveryStatus, addressee, address, phone) ";
-		return jdbcTemplate.update(sql, 
-				dto.getOrderId(),
-				dto.getDeliveryId(),
-				dto.getUserId(),
-				dto.getAuthId(),
-				dto.getProductId(),
-				dto.getTotalPrice(),
-				dto.getPaymentMethod(),
-				dto.getOrderDate(),
-				dto.getProductName(),
-				dto.getDeliveryStatus(),
-				dto.getAddressee(),
-				dto.getAddress(),
-				dto.getPhone()				
-				);
+		return jdbcTemplate.update(sql, dto.getOrderId(), dto.getDeliveryId(), dto.getUserId(), dto.getAuthId(),
+				dto.getProductId(), dto.getTotalPrice(), dto.getPaymentMethod(), dto.getOrderDate(),
+				dto.getProductName(), dto.getDeliveryStatus(), dto.getAddressee(), dto.getAddress(), dto.getPhone());
+	}
+
+	@Override
+	public int insertFromCart(OrderRequestDto dto) {
+	    //delivery insert
+	    String deliverySql = " INSERT INTO DELIVERY " +
+	                         " VALUES (SEQ_DELIVERY.NEXTVAL, ?, ?, ?, ?)";
+
+	    //keyholder를 사용해 insert한 delivery_id를 반환받음
+	    GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+	    jdbcTemplate.update(connection -> {
+	        PreparedStatement ps = connection.prepareStatement(deliverySql, new String[]{"DELIVERY_ID"});
+	        ps.setString(1, dto.getAddressee());
+	        ps.setString(2, dto.getAddress());
+	        ps.setString(3, dto.getPhone());
+	        ps.setString(4, dto.getPaymentMethod());
+	        return ps;
+	    }, keyHolder);
+
+	    Number deliveryId = keyHolder.getKey();
+	    if (deliveryId == null) {
+	        throw new RuntimeException("배송 정보를 삽입을 실패했습니다.");
+	    }
+
+	    //delivery status 설정
+	    String deliveryStatus = "결제완료";
+	    if ("가상계좌".equals(dto.getPaymentMethod())) {
+	        deliveryStatus = "입금대기";
+	    }
+
+	    //order_table insert
+	    String orderSql = "INSERT INTO ORDER_TABLE " +
+	                      " (ORDER_ID, DELIVERY_ID, USER_ID, AUTH_ID, PRODUCT_ID, TOTAL_PRICE, PAYMENT_METHOD, ORDER_DATE) " +
+	                      " SELECT SEQ_ORDER_TABLE.NEXTVAL, ?, ?, ?, c.PRODUCT_ID, (c.QUANTITY * p.P_PRICE), ?, SYSDATE " +
+	                      " FROM CART c " +
+	                      " JOIN PRODUCT p ON c.PRODUCT_ID = p.PRODUCT_ID " +
+	                      " WHERE c.CART_ID IN (:cartIds)";
+
+	    //cartIds 바인딩
+	    MapSqlParameterSource parameters = new MapSqlParameterSource();
+	    parameters.addValue("cartIds", dto.getCartIds());
+	    parameters.addValue("deliveryId", deliveryId.intValue());
+	    parameters.addValue("userId", dto.getUserId());
+	    parameters.addValue("authId", dto.getAuthId());
+	    parameters.addValue("paymentMethod", dto.getPaymentMethod());
+
+	    NamedParameterJdbcTemplate namedJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+	    int result = namedJdbcTemplate.update(orderSql, parameters);
+
+	    if (result > 0) {
+	    	//결제된 cart 데이터 삭제
+//	        String deleteCartSql = "DELETE FROM CART WHERE CART_ID IN (:cartIds)";
+//	        namedJdbcTemplate.update(deleteCartSql, parameters);
+	    }
+
+	    return result;
 	}
 
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.easyBuild.entire.dao.OrderDao;
 import com.project.easyBuild.entire.dto.OrderDto;
+import com.project.easyBuild.user.dto.OrderRequestDto;
 
 @Service
 public class OrderBizImpl implements OrderBiz {
@@ -53,4 +54,9 @@ public class OrderBizImpl implements OrderBiz {
     public int insert(OrderDto order) {
         return dao.insert(order);
     }
+
+	@Override
+	public int insertFromCart(OrderRequestDto dto) {
+		return dao.insertFromCart(dto);
+	}
 }
