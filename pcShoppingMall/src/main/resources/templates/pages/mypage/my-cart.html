@@ -8,46 +8,33 @@
 <script
 	src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
-    //전체 선택 체크박스 클릭
-    document.getElementById("selectAll").addEventListener("change", function() {
-        const checkboxes = document.querySelectorAll(".item-checkbox");
-        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-        updateTotalPrice();
-    });
-
-    //선택 삭제 버튼 클릭
-    document.getElementById("deleteSelected").addEventListener("click", function() {
-        const selectedItems = document.querySelectorAll(".item-checkbox:checked");
-        selectedItems.forEach(item => {
-            item.closest("tr").remove();
-        });
-        updateTotalPrice();
-    });
-
-    //전체 삭제 버튼 클릭
-    document.getElementById("deleteAll").addEventListener("click", function() {
-        const allItems = document.querySelectorAll(".item-checkbox");
-        allItems.forEach(item => {
-            item.closest("tr").remove();
-        });
-        updateTotalPrice();
-    });
-
-    //총 금액 출력
+document.addEventListener('DOMContentLoaded', function() {
+    // 총 금액 출력
     function updateTotalPrice() {
         let totalPrice = 0;
         const selectedItems = document.querySelectorAll(".item-checkbox:checked");
         selectedItems.forEach(item => {
             const row = item.closest("tr");
-            const price = parseFloat(row.querySelector("td:nth-child(3)").textContent.replace(/[^\d.-]/g, ""));
-            const quantity = parseInt(row.querySelector("td:nth-child(4)").textContent, 10);
+            const price = parseFloat(row.querySelector("td:nth-child(4)").textContent.replace(/[^\d.-]/g, ""));
+            const quantity = parseInt(row.querySelector("td:nth-child(5)").textContent, 10);
             totalPrice += price * quantity;
         });
-        document.getElementById("totalPriceText").textContent = "총 금액: " + totalPrice + " 원";
+
+        // 총 금액을 totalPriceText에 업데이트
+        const totalPriceText = document.getElementById("totalPriceText");
+        totalPriceText.textContent = "총 금액: " + totalPrice + " 원";
     }
+
+    // 체크박스 클릭 시 즉시 총 금액 계산
+    document.querySelectorAll(".item-checkbox").forEach(checkbox => {
+        checkbox.addEventListener("change", updateTotalPrice);
+    });
+});
 </script>
+<script src="https://js.tosspayments.com/v1"></script>
 <script th:src="@{/js/editor.js}"></script>
-<script th:src="@{/js/mylist.js}"></script>
+<script type="module" th:src="@{/js/mylist.js}"></script>
+<script type="module" th:src="@{/js/order.js}"></script>
 </head>
 <body>
 	<section layout:fragment="content" class="content-box d-flex"
@@ -86,7 +73,7 @@
 								th:unless="${#lists.isEmpty(carts)}">
 								<!-- 상품별 체크박스 -->
 								<td><input type="checkbox" class="item-checkbox"
-									data-order-id="${item.orderId}" /></td>
+									th:attr="data-cart-id=${item.cartId}" /></td>
 								<td th:text="${item.productImageUrl}" />
 								<td th:text="${item.productName}" />
 								<td th:text="${item.productPrice}" />
@@ -99,10 +86,13 @@
 				<div class="mt-3 d-flex justify-content-start gap-2">
 					<button class="btn btn-secondary" id="deleteAll">장바구니 비우기</button>
 					<button class="btn btn-danger" id="deleteSelected">선택 삭제</button>
-					<button class="btn btn-primary" id="checkCompatibilityBtn">부품 호환성 체크</button>
+					<button class="btn btn-primary" id="checkCompatibilityBtn">부품
+						호환성 체크</button>
 				</div>
-				<div id="entityDetailContainer">
+				<div id="totalPriceContainer">
 					<!-- 총 금액 출력 -->
+					<span id="totalPriceText">총 금액: 0 원</span>
+					<button class="btn btn-success" id="placeOrderBtn" data-flag="cart">주문하기</button>
 				</div>
 			</div>
 		</div>
