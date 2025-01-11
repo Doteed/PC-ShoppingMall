@@ -36,5 +36,5 @@ public interface ProductDao {
 	public Page<ProductDto> listByCategory2(Long categoryId, Pageable pageable);
 	public Page<ProductDto> listByCategory3(Long categoryId, Pageable pageable);
 
-	public int deleteProduct(int productId)
+	public int deleteProduct(int productId);
 }

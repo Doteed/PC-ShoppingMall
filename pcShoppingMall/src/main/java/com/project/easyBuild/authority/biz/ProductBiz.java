@@ -39,6 +39,6 @@ public interface ProductBiz {
 	public Page<ProductDto> listByCategory2(Long categoryId, Pageable pageable);
 	public Page<ProductDto> listByCategory3(Long categoryId, Pageable pageable);
 	
-	public boolean deleteProduct(int productId)
+	public boolean deleteProduct(int productId);
 
 }
