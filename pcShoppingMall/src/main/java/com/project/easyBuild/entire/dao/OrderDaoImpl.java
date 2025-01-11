@@ -204,7 +204,8 @@ public class OrderDaoImpl implements OrderDao {
 	    }
 
 	    return result;
-    
+	}
+	
 	public int insert (OrderDto dto) {
 		String sql = " INSERT INTO ORDER_TABLE ot VALUES (orderId, deliveryId, userId, productId, totalPrice,"
 				+ "paymentMethod, orderDate, productName, deliveryStatus, addressee, address, phone) ";
