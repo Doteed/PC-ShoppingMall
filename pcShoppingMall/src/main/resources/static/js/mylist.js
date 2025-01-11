@@ -1,10 +1,11 @@
-// 날짜 포멧팅
-function formatDate(timestamp) {
+// 날짜 포맷팅
+export function formatDate(timestamp) {
 	const date = new Date(timestamp);
 	return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
-function formatPhone(phone) {
+// 번호 포맷팅
+export function formatPhone(phone) {
     // 숫자만 남기기
     const digits = phone.replace(/[^0-9]/g, '');
     let formattedPhone = '';
@@ -20,7 +21,20 @@ function formatPhone(phone) {
     return formattedPhone;
 }
 
+/*export function initializeAddressSearch(inputElementId) {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            const fullAddress = data.address;
+            const inputElement = document.getElementById(inputElementId);
+            if (inputElement) {
+                inputElement.value = fullAddress;
+            }
+        }
+    }).open();
+}*/
+
 document.addEventListener('DOMContentLoaded', function() {
+	console.log("aaa");
 	// QnA & Review
 	const entityTitles = document.querySelectorAll('.my-title');
 	entityTitles.forEach((title) => {
@@ -207,8 +221,8 @@ document.addEventListener('DOMContentLoaded', function() {
 						message.textContent = '취소된 주문은 수정하거나 취소할 수 없습니다.';
 						popupWindow.document.body.appendChild(message);
 					}
-
-					// 다음 주소 API
+					
+					//다음 주소 API
 					const searchAddressBtn = popupWindow.document.getElementById('searchAddressBtn');
 					searchAddressBtn.addEventListener('click', () => {
 						new daum.Postcode({
@@ -219,26 +233,9 @@ document.addEventListener('DOMContentLoaded', function() {
 						}).open();
 					});
 
-					// 전화번호 포맷팅
-					/*const phoneInput = popupWindow.document.getElementById('phone');
-					phoneInput.addEventListener('input', (event) => {
-						const value = event.target.value.replace(/[^0-9]/g, '');
-						let formattedValue = '';
-
-						if (value.length <= 3) {
-							formattedValue = value;
-						} else if (value.length <= 7) {
-							formattedValue = `${value.slice(0, 3)}-${value.slice(3)}`;
-						} else {
-							formattedValue = `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7, 11)}`;
-						}
-
-						event.target.value = formattedValue;
-					});*/
-
 					// 저장
 					updateBtn.addEventListener('click', () => {
-						const deliveryId = data.deliveryId;
+						const deliveryId = data.order.deliveryId;
 						const addressee = popupWindow.document.getElementById('addressee').value;
 						const phone = popupWindow.document.getElementById('phone').value;
 						const address = popupWindow.document.getElementById('address').value;

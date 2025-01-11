@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.project.easyBuild.entire.dto.OrderDto;
+import com.project.easyBuild.user.dto.OrderRequestDto;
 
 public interface OrderDao {
 	public List<OrderDto> mylistAll(String userId);
@@ -14,4 +15,5 @@ public interface OrderDao {
 	public int cancle(int orderId, String userId, int authId);
 	public Map<String, Integer> count(String userId);
 	public int insert(OrderDto dto);
+	public int insertFromCart(OrderRequestDto dto);
 }

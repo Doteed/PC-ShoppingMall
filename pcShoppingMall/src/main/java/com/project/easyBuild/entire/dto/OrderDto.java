@@ -12,6 +12,7 @@ import lombok.ToString;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class OrderDto {
 	private int orderId;			//주문아이디
 	private int deliveryId;			//배송아이디
@@ -29,7 +30,7 @@ public class OrderDto {
 	private String address;			//주소(delivery table)
     private String phone;			//전화번호(delivery table)
     
-    //
+    //insert
     public OrderDto(String paymentMethod, String addressee, String address, String phone) {
         super();
         this.paymentMethod = paymentMethod;

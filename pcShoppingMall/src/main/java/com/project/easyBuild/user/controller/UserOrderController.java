@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.easyBuild.entire.biz.OrderBiz;
 import com.project.easyBuild.entire.dto.OrderDto;
 import com.project.easyBuild.member.dto.MemberDto;
+import com.project.easyBuild.user.dto.OrderRequestDto;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -56,6 +58,26 @@ public class UserOrderController {
 		}
 	}
 
+	@PostMapping("/insert/cart")
+	public ResponseEntity<?> insertFromCart(@RequestBody OrderRequestDto orderRequestDto, HttpSession session) {
+	    MemberDto user = (MemberDto) session.getAttribute("dto");
+	    if (user == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
+	    }
+
+	    orderRequestDto.setUserId(user.getUserId());
+	    orderRequestDto.setAuthId(user.getAuthId());
+
+	    try {
+	        int result = orderbiz.insertFromCart(orderRequestDto);
+	        return result > 0 ?
+	                ResponseEntity.ok(Map.of("success", true, "message", "주문이 성공적으로 처리되었습니다.")) :
+	                ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("success", false, "message", "주문 처리가 실패하였습니다."));
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", e.getMessage()));
+	    }
+	}
+
 	@PutMapping("/update") // 주소 변경
 	public ResponseEntity<?> myUpdate(@RequestBody OrderDto orderDto, HttpSession session) {
 		MemberDto user = (MemberDto) session.getAttribute("dto");
@@ -67,6 +89,7 @@ public class UserOrderController {
 
 		Map<String, Object> response = new HashMap<>();
 
+		System.out.println("update");
 		if (result > 0) {
 			response.put("success", true);
 			response.put("message", "해당 주문이 성공적으로 수정되었습니다.");
