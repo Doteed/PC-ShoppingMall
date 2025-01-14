@@ -1,7 +1,10 @@
 package com.project.easyBuild.product.controller;
 
+import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.power;
 import com.project.easyBuild.product.service.PowerService;
+
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -30,7 +34,10 @@ public class PowerController {
 
     // 1) 상품 목록을 반환하는 메서드
     @GetMapping("/powerproducts")
-    public String showPowerProducts(Model model) {
+    public String showPowerProducts(Model model, HttpSession session) {
+    	// 로그인 상태 확인
+        Boolean isLoggedIn = session.getAttribute("user") != null;
+        model.addAttribute("isLoggedIn", isLoggedIn);
     	List<power> powers = powerService.getAllPowers(); // 5개 데이터
         
     	//가격 포맷팅
@@ -62,16 +69,21 @@ public class PowerController {
     }
     // 제품 상세페이지 처리
     @GetMapping("/powerproducts/{powerId}")
-    public String getPowerDetail(@PathVariable Long powerId, Model model) {
-    	power power = powerService.getPowerById(powerId);
-        if (power == null) {
+    public String getPowerDetail(@PathVariable Long powerId, Model model, HttpSession session) {
+    	// 상품 정보 로드
+        Optional<power> power = powerService.findById(powerId);
+        if (power.isEmpty()) {
         	model.addAttribute("error", "해당 제품을 찾을 수 없습니다.");
             return "error"; // error.html 템플릿
         }
+        power powerItem = power.get();
         // 가격 포맷팅 설정
-        power.setFormattedPrice(String.format("%,d원", power.getPrice()));
+        powerItem.setFormattedPrice(String.format("%,d원", powerItem.getPrice()));
+     // 로그인 상태 확인
+        Boolean isLoggedIn = session.getAttribute("user") != null;
+        model.addAttribute("isLoggedIn", isLoggedIn);
         
-        model.addAttribute("power", power);
+        model.addAttribute("power", powerItem);
         return "product/detail/power-details"; // templates/product/detail/power-details.html
     }
 }

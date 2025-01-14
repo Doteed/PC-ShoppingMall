@@ -1,7 +1,10 @@
 package com.project.easyBuild.product.controller;
 
+import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.hdd;
 import com.project.easyBuild.product.service.HddService;
+
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -31,7 +35,10 @@ public class HddController {
 
     // 1) 상품 목록을 반환하는 메서드
     @GetMapping("/hddproducts")
-    public String showHddProducts(Model model) {
+    public String showHddProducts(Model model, HttpSession session) {
+    	// 로그인 상태 확인
+        Boolean isLoggedIn = session.getAttribute("user") != null;
+        model.addAttribute("isLoggedIn", isLoggedIn);
     	List<hdd> hdds = hddService.getAllHdds(); // 5개 데이터
         
     	//가격 포맷팅
@@ -62,16 +69,21 @@ public class HddController {
     }
     // 제품 상세페이지 처리
     @GetMapping("/hddproducts/{hddId}")
-    public String getHddDetail(@PathVariable Long hddId, Model model) {
-    	hdd hdd = hddService.getHddById(hddId);
-        if (hdd == null) {
+    public String getHddDetail(@PathVariable Long hddId, Model model, HttpSession session) {
+    	// 상품 정보 로드
+        Optional<hdd> hdd = hddService.findById(hddId);
+        if (hdd.isEmpty()) {
         	model.addAttribute("error", "해당 제품을 찾을 수 없습니다.");
             return "error"; // error.html 템플릿
         }
+        hdd hddItem = hdd.get();
         // 가격 포맷팅 설정
-        hdd.setFormattedPrice(String.format("%,d원", hdd.getPrice()));
+        hddItem.setFormattedPrice(String.format("%,d원", hddItem.getPrice()));
+        // 로그인 상태 확인
+        Boolean isLoggedIn = session.getAttribute("user") != null;
+        model.addAttribute("isLoggedIn", isLoggedIn);
         
-        model.addAttribute("hdd", hdd);
+        model.addAttribute("hdd", hddItem);
         return "product/detail/hdd-details"; // templates/product/detail/hdd-details.html
     }
 }

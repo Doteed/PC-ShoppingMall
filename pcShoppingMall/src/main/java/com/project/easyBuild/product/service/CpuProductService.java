@@ -1,19 +1,23 @@
 package com.project.easyBuild.product.service;
 
+import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.cpu;
 import com.project.easyBuild.product.repository.CpuRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
+import java.util.Optional;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Service
 public class CpuProductService {
-
+	@Autowired
     private final CpuRepository cpuRepository;
     
     // 생성자를 직접 작성
@@ -96,8 +100,8 @@ public class CpuProductService {
                
     }
     
-    public cpu getCpuById(Long cpuId) {
-        return cpuRepository.findById(cpuId).orElse(null);
+    public Optional<cpu> findById(Long id) {
+        return cpuRepository.findById(id);
     }
     
 }
