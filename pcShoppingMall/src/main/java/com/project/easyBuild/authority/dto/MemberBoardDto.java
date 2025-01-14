@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberBoardDto {
-    private int memberNo;          // 작성 번호
     private String userId;         // 사용자 ID
     private int authId;            // 권한 ID
     private String password;       // 비밀번호
@@ -21,6 +20,5 @@ public class MemberBoardDto {
     private String phone;          // 전화번호
     private LocalDateTime registerDate; // 등록일
     private LocalDateTime lastUpdate;   // 마지막 업데이트
-    private int purchaseCount;     // 구매 횟수
     private String memberStatus;   // 회원 상태
 }

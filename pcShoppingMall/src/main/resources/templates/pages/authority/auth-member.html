@@ -29,7 +29,6 @@
 							<th>아이디</th>
 							<th>핸드폰 번호</th>
 							<th>가입일시</th>
-							<th>구매 횟수</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -42,8 +41,7 @@
 								<a th:href="@{'/auth-member/' + ${member.userId}}" th:text="${member.userId}" class="username-link"></a>
 							</td>
 							<td th:text="${member.phone}"></td>
-							<td th:text="${#temporals.format(member.registerDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
-							<td th:text="${member.purchaseCount}"></td>													
+							<td th:text="${#temporals.format(member.registerDate, 'yyyy-MM-dd HH:mm:ss')}"></td>											
 						</tr>
 					</tbody>
 				</table>
