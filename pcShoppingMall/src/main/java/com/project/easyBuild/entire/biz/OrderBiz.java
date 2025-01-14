@@ -14,6 +14,6 @@ public interface OrderBiz {
     public int update(int deliveryId, String deliveryStatus);
 	public int cancle(int orderId, String userId, int authId);
 	public Map<String, Integer> count(String userId);
-	public int insert(OrderDto order);
 	public int insertFromCart(OrderRequestDto dto);
+	public int updateOrder(OrderDto dto, String userId);
 }

@@ -57,7 +57,15 @@ public class HomeController {
 	}
 
 	@GetMapping("/")
-	public String index() {
+	public String index(Model model) {
+        // 최신 공지사항 5개
+        List<Announcement> latestAnnouncements = announcementService.getLatestAnnouncements(5);
+        // 최신 faq 5개
+        List<Faq> latestFaqs = faqService.getLatestFaqs(5);
+
+        // 모델에 데이터를 추가
+        model.addAttribute("latestAnnouncements", latestAnnouncements);
+        model.addAttribute("latestFaqs", latestFaqs);
 		return "index";
 	}
 
