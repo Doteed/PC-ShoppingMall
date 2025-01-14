@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function requestTossPayment(orderData) {
     try {
-      console.log("Sending Payment Request with data:", orderData);
+      console.log("orderData:", orderData);
 
       // 서버로 결제 요청
       const response = await fetch("/api/payment/request", {
@@ -117,6 +117,8 @@ document.addEventListener("DOMContentLoaded", function () {
           orderId: `order-${Date.now()}`,
           orderName: "장바구니 결제",
           customerName: orderData.addressee,
+		  successUrl: "http://localhost:8080/payment/success",
+		  failUrl: "http://localhost:8080/payment/fail"
         }),
       });
 
@@ -167,19 +169,17 @@ document.addEventListener("DOMContentLoaded", function () {
       const response = await fetch("/api/payment/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentKey, orderId, amount }), // 결제 정보를 서버로 전달
+        body: JSON.stringify({ paymentKey, orderId, amount }),
       });
 
       if (!response.ok) {
         throw new Error(`결제 확인 실패: ${await response.text()}`);
       }
 
-      alert("결제가 성공적으로 확인되었습니다!");
-      window.location.href = "/payment/success"; // 결제 성공 페이지로 리디렉션
+      alert("결제가 성공적으로 처리되었습니다");
     } catch (error) {
       console.error("결제 확인 중 오류:", error);
-      alert("결제 확인 중 오류가 발생했습니다.");
-      window.location.href = "/payment/fail"; // 실패 페이지로 리디렉션
+      alert("결제 확인 중 오류가 발생했습니다");
     }
   }
 });
