@@ -1,7 +1,10 @@
 package com.project.easyBuild.product.controller;
 
+import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.memory;
 import com.project.easyBuild.product.service.MemoryService;
+
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -31,7 +35,10 @@ public class MemoryController {
 
     // 1) 상품 목록을 반환하는 메서드
     @GetMapping("/memoryproducts")
-    public String showMemoryProducts(Model model) {
+    public String showMemoryProducts(Model model, HttpSession session) {
+    	// 로그인 상태 확인
+        Boolean isLoggedIn = session.getAttribute("user") != null;
+        model.addAttribute("isLoggedIn", isLoggedIn);
     	List<memory> memorys = memoryService.getAllMemorys(); // 5개 데이터
         
     	//가격 포맷팅
@@ -62,16 +69,21 @@ public class MemoryController {
     }
     // 제품 상세페이지 처리
     @GetMapping("/memoryproducts/{memoryId}")
-    public String getMemoryDetail(@PathVariable Long memoryId, Model model) {
-    	memory memory = memoryService.getMemoryById(memoryId);
-        if (memory == null) {
+    public String getMemoryDetail(@PathVariable Long memoryId, Model model, HttpSession session) {
+    	// 상품 정보 로드
+        Optional<memory> memory = memoryService.findById(memoryId);;
+        if (memory.isEmpty()) {
         	model.addAttribute("error", "해당 제품을 찾을 수 없습니다.");
             return "error"; // error.html 템플릿
         }
+        memory memoryItem = memory.get();
         // 가격 포맷팅 설정
-        memory.setFormattedPrice(String.format("%,d원", memory.getPrice()));
+        memoryItem.setFormattedPrice(String.format("%,d원", memoryItem.getPrice()));
+     // 로그인 상태 확인
+        Boolean isLoggedIn = session.getAttribute("user") != null;
+        model.addAttribute("isLoggedIn", isLoggedIn);
         
-        model.addAttribute("memory", memory);
+        model.addAttribute("memory", memoryItem);
         return "product/detail/memory-details"; // templates/product/detail/memory-details.html
     }
 }

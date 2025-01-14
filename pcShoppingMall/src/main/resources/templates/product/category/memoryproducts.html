@@ -5,13 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title layout:fragment="title">memory products</title>
+    <title layout:fragment="title">RAM : Build-Easy</title>
     <link rel="stylesheet" href="/css/product/productCategory.css">
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
-	<div layout:fragment="content" th:with="pageType='memory'">
-	<h2 style="text-align: left;">메모리</h2>
+	<div layout:fragment="content" th:with="pageType='memory'" th:attr="data-is-logged-in=${isLoggedIn}">
+	<h2 style="text-align: left;">RAM</h2>
     <!-- 필터 UI -->
     <form id="filter-form">
     <!-- 제조사 -->
@@ -87,9 +87,9 @@
 			</div>
             <div class="product-price">
                 <p th:text="${memory.formattedPrice}"></p>
-                <form action="/cart/add" method="post">
+                <form action="/cart" method="post">
                     <input type="hidden" name="memoryId" th:value="${memory.memoryId}">
-                    <button type="submit">장바구니</button>
+                    <button type="submit" class="add-to-cart-btn">장바구니</button>
                 </form>
             </div>
         </div>

@@ -1,7 +1,9 @@
 package com.project.easyBuild.product.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.memory;
 import com.project.easyBuild.product.repository.MemoryRepository;
 
@@ -9,11 +11,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
+import java.util.Optional;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Service
 public class MemoryService {
+	@Autowired
 	private final MemoryRepository memoryRepository;
 	
 	// 생성자를 직접 작성
@@ -91,9 +95,7 @@ public class MemoryService {
         return memorys;
                
     }
-    public memory getMemoryById(Long memoryId) {
-    	memory result = memoryRepository.findById(memoryId).orElse(null);
-        System.out.println("Loaded MEMORY by ID " + memoryId + ": " + result); // 디버깅 로그
-        return result;
+    public Optional<memory> findById(Long id) {
+        return memoryRepository.findById(id);
     }
 }

@@ -5,12 +5,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title layout:fragment="title">graphicCard products</title>
+    <title layout:fragment="title">그래픽카드 : Build-Easy</title>
     <link rel="stylesheet" href="/css/product/productCategory.css">
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
-	<div layout:fragment="content" th:with="pageType='graphicCard'">
+	<div layout:fragment="content" th:with="pageType='graphicCard'" th:attr="data-is-logged-in=${isLoggedIn}">
 	<h2 style="text-align: left;">그래픽카드</h2>
     <!-- 필터 UI -->
     <form id="filter-form">
@@ -75,9 +75,9 @@
 			</div>
             <div class="product-price">
                 <p th:text="${graphicCard.formattedPrice}"></p>
-                <form action="/cart/add" method="post">
+                <form action="/cart" method="post">
                     <input type="hidden" name="graphicCardId" th:value="${graphicCard.graphicCardId}">
-                    <button type="submit">장바구니</button>
+                    <button type="submit" class="add-to-cart-btn">장바구니</button>
                 </form>
             </div>
         </div>

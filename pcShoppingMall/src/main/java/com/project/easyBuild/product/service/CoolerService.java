@@ -1,7 +1,9 @@
 package com.project.easyBuild.product.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.cooler;
 import com.project.easyBuild.product.repository.CoolerRepository;
 
@@ -9,11 +11,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
+import java.util.Optional;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Service
 public class CoolerService {
+	@Autowired
 	private final CoolerRepository coolerRepository;
 	
 	// 생성자를 직접 작성
@@ -84,9 +88,7 @@ public class CoolerService {
         return coolers;
                
     }
-    public cooler getCoolerById(Long coolerId) {
-    	cooler result = coolerRepository.findById(coolerId).orElse(null);
-        System.out.println("Loaded COOLER by ID " + coolerId + ": " + result); // 디버깅 로그
-        return result;
+    public Optional<cooler> findById(Long id) {
+        return coolerRepository.findById(id);
     }
 }
