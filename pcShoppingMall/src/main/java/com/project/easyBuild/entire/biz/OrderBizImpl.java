@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.project.easyBuild.entire.dao.OrderDao;
 import com.project.easyBuild.entire.dto.OrderDto;
@@ -49,14 +50,17 @@ public class OrderBizImpl implements OrderBiz {
 	public Map<String, Integer> count(String userId) {
 		return dao.count(userId);
 	}
-	
-	 @Override
-    public int insert(OrderDto order) {
-        return dao.insert(order);
-    }
 
 	@Override
 	public int insertFromCart(OrderRequestDto dto) {
 		return dao.insertFromCart(dto);
 	}
+	
+	//관리자 주문 수정
+	@Override
+	@Transactional
+	public int updateOrder(OrderDto dto, String userId) {
+	    return dao.updateOrder(dto, userId);
+	}
+
 }
