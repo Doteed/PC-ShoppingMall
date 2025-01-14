@@ -8,7 +8,7 @@
 --DROP TABLE PAY_CARD CASCADE CONSTRAINTS;
 --DROP TABLE PAYMENT_PLAN CASCADE CONSTRAINTS;
 --DROP TABLE ANNOUNCEMENT CASCADE CONSTRAINTS;
---DROP TABLE QA CASCADE CONSTRAINTS;
+--DROP TABLE QNA CASCADE CONSTRAINTS;
 --DROP TABLE FAQ CASCADE CONSTRAINTS;
 --DROP TABLE BOARD CASCADE CONSTRAINTS;
 --DROP TABLE AUTHORITY CASCADE CONSTRAINTS;
@@ -32,8 +32,11 @@
 --DROP SEQUENCE SEQ_PAYCARD;
 --DROP SEQUENCE SEQ_PAYMENT_PLAN;
 --DROP SEQUENCE SEQ_ANNOUNCEMENT;
---DROP SEQUENCE SEQ_QA;
+--DROP SEQUENCE ANNOUNCEMENT_SEQ;
+--DROP SEQUENCE SEQ_QNA;
+--DROP SEQUENCE QNA_SEQ;
 --DROP SEQUENCE SEQ_FAQ;
+--DROP SEQUENCE FAQ_SEQ;
 --DROP SEQUENCE SEQ_BOARD;
 --DROP SEQUENCE SEQ_MEMBER;
 --DROP SEQUENCE SEQ_CPU;
@@ -48,6 +51,12 @@ CREATE TABLE "AUTHORITY" (
     "AUTH_NAME" VARCHAR2(100) NOT NULL,
     "AUTH_ROLE" VARCHAR2(100) NOT NULL
 );
+
+INSERT INTO "AUTHORITY" ("AUTH_ID", "AUTH_NAME", "AUTH_ROLE")
+VALUES (1, '이용자', 'USER');
+
+INSERT INTO "AUTHORITY" ("AUTH_ID", "AUTH_NAME", "AUTH_ROLE")
+VALUES (2, '관리자', 'ADMIN');
 
 -- Member Table
 CREATE TABLE "MEMBER" (
@@ -65,6 +74,45 @@ CREATE TABLE "MEMBER" (
 );
 CREATE SEQUENCE SEQ_MEMBER NOCACHE;
 
+-- 관리자 계정 삽입
+INSERT INTO "MEMBER" ("USER_ID", "AUTH_ID", "PASSWORD", "USERNAME", "GENDER", "EMAIL", "PHONE", "REGISTER_DATE", "MEMBER_STATUS")
+VALUES ('admin01', 2, 'adminpass1', '김기현', 'M', 'admin01@example.com', '010-1111-1111', SYSDATE, 'Y');
+
+INSERT INTO "MEMBER" ("USER_ID", "AUTH_ID", "PASSWORD", "USERNAME", "GENDER", "EMAIL", "PHONE", "REGISTER_DATE", "MEMBER_STATUS")
+VALUES ('admin02', 2, 'adminpass2', '나경수', 'M', 'admin02@example.com', '010-2222-2222', SYSDATE, 'Y');
+
+INSERT INTO "MEMBER" ("USER_ID", "AUTH_ID", "PASSWORD", "USERNAME", "GENDER", "EMAIL", "PHONE", "REGISTER_DATE", "MEMBER_STATUS")
+VALUES ('admin03', 2, 'adminpass3', '이미은', 'F', 'admin03@example.com', '010-3333-3333', SYSDATE, 'Y');
+
+INSERT INTO "MEMBER" ("USER_ID", "AUTH_ID", "PASSWORD", "USERNAME", "GENDER", "EMAIL", "PHONE", "REGISTER_DATE", "MEMBER_STATUS")
+VALUES ('admin04', 2, 'adminpass4', '정병국', 'M', 'admin04@example.com', '010-4444-4444', SYSDATE, 'Y');
+
+INSERT INTO "MEMBER" ("USER_ID", "AUTH_ID", "PASSWORD", "USERNAME", "GENDER", "EMAIL", "PHONE", "REGISTER_DATE", "MEMBER_STATUS")
+VALUES ('admin05', 2, 'adminpass5', '황혜령', 'F', 'admin05@example.com', '010-5555-5555', SYSDATE, 'Y');
+
+-- 이용자 계정 삽입
+INSERT INTO "MEMBER" ("USER_ID", "AUTH_ID", "PASSWORD", "USERNAME", "GENDER", "EMAIL", "PHONE", "REGISTER_DATE", "MEMBER_STATUS")
+VALUES ('user01', 1, 'userpass1', '김민수', 'M', 'user01@example.com', '010-4444-4444', SYSDATE, 'Y');
+
+INSERT INTO "MEMBER" ("USER_ID", "AUTH_ID", "PASSWORD", "USERNAME", "GENDER", "EMAIL", "PHONE", "REGISTER_DATE", "MEMBER_STATUS")
+VALUES ('user02', 1, 'userpass2', '박지연', 'F', 'user02@example.com', '010-5555-5555', SYSDATE, 'Y');
+
+INSERT INTO "MEMBER" ("USER_ID", "AUTH_ID", "PASSWORD", "USERNAME", "GENDER", "EMAIL", "PHONE", "REGISTER_DATE", "MEMBER_STATUS")
+VALUES ('user03', 1, 'userpass3', '이준호', 'M', 'user03@example.com', '010-6666-6666', SYSDATE, 'Y');
+
+INSERT INTO "MEMBER" ("USER_ID", "AUTH_ID", "PASSWORD", "USERNAME", "GENDER", "EMAIL", "PHONE", "REGISTER_DATE", "MEMBER_STATUS")
+VALUES ('user04', 1, 'userpass4', '최수빈', 'F', 'user04@example.com', '010-7777-7777', SYSDATE, 'Y');
+
+INSERT INTO "MEMBER" ("USER_ID", "AUTH_ID", "PASSWORD", "USERNAME", "GENDER", "EMAIL", "PHONE", "REGISTER_DATE", "MEMBER_STATUS")
+VALUES ('user05', 1, 'userpass5', '정민재', 'M', 'user05@example.com', '010-8888-8888', SYSDATE, 'Y');
+
+INSERT INTO "MEMBER" ("USER_ID", "AUTH_ID", "PASSWORD", "USERNAME", "GENDER", "EMAIL", "PHONE", "REGISTER_DATE", "MEMBER_STATUS")
+VALUES ('user06', 1, 'userpass6', '김혜린', 'F', 'user06@example.com', '010-9999-9999', SYSDATE, 'Y');
+
+INSERT INTO "MEMBER" ("USER_ID", "AUTH_ID", "PASSWORD", "USERNAME", "GENDER", "EMAIL", "PHONE", "REGISTER_DATE", "MEMBER_STATUS")
+VALUES ('user07', 1, 'userpass7', '이동혁', 'M', 'user07@example.com', '010-0000-0000', SYSDATE, 'Y');
+
+
 -- Board Table
 CREATE TABLE "BOARD" (
     "BOARD_ID" NUMBER PRIMARY KEY,
@@ -76,8 +124,17 @@ CREATE TABLE "BOARD" (
 );
 CREATE SEQUENCE SEQ_BOARD NOCACHE;
 
-DROP SEQUENCE SEQ_ANNOUNCEMENT;
-DROP SEQUENCE SEQ_QA;
+INSERT INTO "BOARD" ("BOARD_ID", "USER_ID", "AUTH_ID", "BOARD_TYPE")
+VALUES (101, 'admin05', 2, '공지사항');
+
+INSERT INTO "BOARD" ("BOARD_ID", "USER_ID", "AUTH_ID", "BOARD_TYPE")
+VALUES (102, 'admin05', 2, '자주 묻는 질문');
+
+INSERT INTO "BOARD" ("BOARD_ID", "USER_ID", "AUTH_ID", "BOARD_TYPE")
+VALUES (103, 'admin05', 1, 'Q&A');
+
+DROP SEQUENCE ANNOUNCEMENT_SEQ;
+DROP SEQUENCE SEQ_QNA;
 DROP SEQUENCE SEQ_FAQ;
 DROP TABLE "ANNOUNCEMENT" CASCADE CONSTRAINTS;
 CREATE TABLE "ANNOUNCEMENT" (
@@ -109,6 +166,32 @@ BEGIN
     :NEW."ANNOUNC_ID" := ANNOUNCEMENT_SEQ.NEXTVAL;
 END;
 
+-- 공지사항 데이터 삽입
+INSERT INTO "ANNOUNCEMENT" ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "CREATED_DATE")
+VALUES (101, 'admin05', 2, '설 연휴 배송 안내', '설 연휴 기간 동안 배송 일정이 조정됩니다. 1월 20일부터 1월 24일까지는 배송이 일시 중단되며, 1월 25일부터 정상 배송이 재개됩니다. 불편을 드려 죄송합니다.', SYSDATE);
+
+INSERT INTO "ANNOUNCEMENT" ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "CREATED_DATE")
+VALUES (101, 'admin01', 2, '신상품 입고 안내', '인기 상품인 2025년형 최신 CPU와 그래픽카드가 입고되었습니다. 한정 수량으로 제공되오니 서둘러 구매해 주세요!', SYSDATE);
+
+INSERT INTO "ANNOUNCEMENT" ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "CREATED_DATE")
+VALUES (101, 'admin02', 2, '정기점검 공지', '서버 정기점검으로 인해 1월 15일 오전 2시부터 5시까지 일부 서비스 이용이 제한될 수 있습니다. 양해 부탁드립니다.', SYSDATE);
+
+INSERT INTO "ANNOUNCEMENT" ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "CREATED_DATE")
+VALUES (101, 'admin03', 2, '긴급 공지: 악성 메일 주의', '최근 쇼핑몰 관련 악성 메일 사례가 접수되었습니다. 절대로 첨부 파일을 열지 마시고, 의심스러운 경우 고객센터로 문의해 주세요.', SYSDATE);
+
+INSERT INTO "ANNOUNCEMENT" ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "CREATED_DATE")
+VALUES (101, 'admin04', 2, '2025년 설날 선물 세트 출시', '다양한 설날 선물 세트가 출시되었습니다. 인기 상품은 조기 품절될 수 있으니 서둘러 확인해 주세요!', SYSDATE);
+
+INSERT INTO "ANNOUNCEMENT" ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "CREATED_DATE")
+VALUES (101, 'admin05', 2, '긴급 공지: 재고 부족 안내', '현재 인기 상품의 재고가 부족하여 일시적으로 구매가 제한될 수 있습니다. 빠른 시일 내에 추가 입고를 진행하겠습니다.', SYSDATE);
+
+INSERT INTO "ANNOUNCEMENT" ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "CREATED_DATE")
+VALUES (101, 'admin05', 2, '배송 지연 공지', '폭설로 인해 일부 지역의 배송이 지연될 수 있습니다. 불편을 드려 죄송합니다.', SYSDATE);
+
+INSERT INTO "ANNOUNCEMENT" ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "CREATED_DATE")
+VALUES (101, 'admin05', 2, '환경을 생각하는 친환경 포장', '2025년부터 모든 상품 배송 시 친환경 포장재를 사용합니다. 지속 가능한 환경을 위해 노력하겠습니다.', SYSDATE);
+
+
 -- FAQ Table
 CREATE TABLE FAQ (
     "FAQ_ID" NUMBER PRIMARY KEY, -- FAQ 아이디
@@ -138,6 +221,35 @@ FOR EACH ROW
 BEGIN
     :NEW."FAQ_ID" := FAQ_SEQ.NEXTVAL;
 END;
+
+-- 자주 묻는 질문 데이터 삽입
+INSERT INTO FAQ ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "CREATED_DATE")
+VALUES (102, 'admin05', 2, '회원가입은 어떻게 하나요?', 
+'회원가입은 메인 페이지 상단의 "회원가입" 버튼을 클릭하여 간단한 정보를 입력하면 완료됩니다.', SYSDATE);
+
+INSERT INTO FAQ ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "CREATED_DATE")
+VALUES (102, 'admin02', 2, '비밀번호를 잊어버렸어요. 어떻게 해야 하나요?', 
+'"비밀번호 찾기" 메뉴를 통해 이메일 인증 후 새로운 비밀번호를 설정하실 수 있습니다.', SYSDATE);
+
+INSERT INTO FAQ ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "CREATED_DATE")
+VALUES (102, 'admin01', 2, '배송비는 얼마인가요?', 
+'3만원 이상 구매 시 무료 배송이며, 그 외에는 3,000원의 배송비가 부과됩니다.', SYSDATE);
+
+INSERT INTO FAQ ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "CREATED_DATE")
+VALUES (102, 'admin03', 2, '주문 내역은 어디에서 확인하나요?', 
+'로그인 후 "마이페이지" > "주문 내역"에서 확인 가능합니다.', SYSDATE);
+
+INSERT INTO FAQ ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "CREATED_DATE")
+VALUES (102, 'admin03', 2, '배송 상태는 어떻게 확인하나요?', 
+'"마이페이지" > "주문 내역"에서 배송 상태를 조회할 수 있습니다.', SYSDATE);
+
+INSERT INTO FAQ ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "CREATED_DATE")
+VALUES (102, 'admin04', 2, '상품을 교환/반품하고 싶어요.', 
+'상품 수령 후 7일 이내에 고객센터로 교환/반품 요청을 해주세요. 단, 상품 훼손 시 교환/반품이 불가합니다.', SYSDATE);
+
+INSERT INTO FAQ ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "CREATED_DATE")
+VALUES (102, 'admin02', 2, '회원 탈퇴는 어떻게 하나요?', 
+'"마이페이지" > "회원 정보 수정"에서 탈퇴 요청을 하시면 됩니다. 탈퇴 시 데이터는 복구되지 않습니다.', SYSDATE);
 
 -- QNA Table
 CREATE TABLE QNA (
@@ -171,6 +283,35 @@ FOR EACH ROW
 BEGIN
     :NEW."QNA_ID" := QNA_SEQ.NEXTVAL;
 END;
+
+-- QnA 데이터 삽입
+INSERT INTO QNA ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "PASSWORD", "IS_SECRET", "CREATED_DATE")
+VALUES (103, 'user01', 1, '배송이 지연되고 있어요.', 
+'5일 전에 주문한 상품이 아직 도착하지 않았습니다. 배송 상태를 확인해 주세요.', NULL, 0, SYSDATE);
+
+INSERT INTO QNA ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "PASSWORD", "IS_SECRET", "CREATED_DATE")
+VALUES (103, 'user02', 1, '주문 취소는 어떻게 하나요?', 
+'상품을 잘못 주문했는데, 주문을 취소하고 싶습니다. 어떻게 해야 하나요?', NULL, 0, SYSDATE);
+
+INSERT INTO QNA ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "PASSWORD", "IS_SECRET", "CREATED_DATE")
+VALUES (103, 'user03', 1, '교환 신청을 하고 싶습니다.', 
+'받은 상품에 하자가 있어서 교환하고 싶은데, 교환 방법을 알려주세요.', 'userpass3', 1, SYSDATE);
+
+INSERT INTO QNA ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "PASSWORD", "IS_SECRET", "CREATED_DATE")
+VALUES (103, 'user04', 1, '상품 상세 정보 문의', 
+'해당 상품의 크기와 무게에 대한 자세한 정보가 궁금합니다.', NULL, 0, SYSDATE);
+
+INSERT INTO QNA ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "PASSWORD", "IS_SECRET", "CREATED_DATE")
+VALUES (103, 'user05', 1, '상품 재입고 문의', 
+'현재 품절된 상품이 언제 재입고될 예정인지 알고 싶습니다.', NULL, 0, SYSDATE);
+
+INSERT INTO QNA ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "PASSWORD", "IS_SECRET", "CREATED_DATE")
+VALUES (103, 'user06', 1, '결제 오류가 발생했습니다.', 
+'결제를 시도했는데 결제 과정에서 오류가 발생했습니다. 해결 방법을 알려주세요.', 'userpass6', 1, SYSDATE);
+
+INSERT INTO QNA ("BOARD_ID", "USER_ID", "AUTH_ID", "TITLE", "CONTENT", "PASSWORD", "IS_SECRET", "CREATED_DATE")
+VALUES (103, 'user07', 1, 'A/S 서비스 관련 문의', 
+'구매한 제품의 A/S 절차와 보증 기간이 궁금합니다.', NULL, 0, SYSDATE);
 
 -- Category Table
 CREATE TABLE "CATEGORY" (
@@ -258,7 +399,7 @@ CREATE SEQUENCE SEQ_REVIEW NOCACHE;
 -- Delivery Table
 CREATE TABLE "DELIVERY" (
     "DELIVERY_ID" NUMBER PRIMARY KEY, 
-    "ADRESSEE" VARCHAR2(300) NOT NULL,
+    "ADDRESSEE" VARCHAR2(300) NOT NULL,
     "ADDRESS" VARCHAR2(300) NOT NULL, 
     "PHONE" VARCHAR2(30) NOT NULL, 
     "DELIVERY_STATUS" VARCHAR2(100) NOT NULL

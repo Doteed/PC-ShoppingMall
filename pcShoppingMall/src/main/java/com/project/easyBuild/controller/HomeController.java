@@ -283,8 +283,8 @@ public class HomeController {
         return "pages/authority/auth-member-detail"; // Thymeleaf 템플릿 반환
     }
 
-
-
+    
+    
     
     // 회원 탈퇴
     @DeleteMapping("/auth-member/{userId}")
