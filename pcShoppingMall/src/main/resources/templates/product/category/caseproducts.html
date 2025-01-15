@@ -107,7 +107,7 @@
 			</div>
             <div class="product-price">
                 <p th:text="${Case.formattedPrice}"></p>
-                <form action="/cart" method="post">
+                <form action="/my/cart" method="post">
                     <input type="hidden" name="caseId" th:value="${Case.caseId}">
                     <button type="submit" class="add-to-cart-btn">장바구니</button>
                 </form>

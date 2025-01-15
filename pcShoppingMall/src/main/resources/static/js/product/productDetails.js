@@ -59,10 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		 if (action === 'add-to-cart') {
 		     const userAction = confirm("장바구니에 담았습니다. 장바구니로 이동 하시겠습니까?");
 		     if (userAction) {
-		         window.location.href = '/cart'; // 장바구니 페이지로 이동
+		         window.location.href = '/my/cart'; // 장바구니 페이지로 이동
 		     }
 		 } else if (action === 'buy-now') {
-		     window.location.href = '/buynow'; // 구매 페이지로 이동
+		     window.location.href = '/my/order'; // 구매 페이지로 이동
 		 }
 	};
 
