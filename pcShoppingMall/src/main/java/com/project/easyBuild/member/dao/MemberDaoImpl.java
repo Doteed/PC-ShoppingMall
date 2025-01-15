@@ -143,9 +143,9 @@ public class MemberDaoImpl implements MemberDao {
 
     @Override
     public int findPwCheck(MemberDto dto) throws Exception {
-        String sql = "SELECT COUNT(*) FROM MEMBER WHERE USERNAME = ? AND EMAIL = ?";
-        logger.debug("Checking password reset eligibility for user: {}", dto.getUserName());
-        return jdbcTemplate.queryForObject(sql, new Object[]{dto.getUserName(), dto.getEmail()}, Integer.class);
+        String sql = "SELECT COUNT(*) FROM MEMBER WHERE USER_ID = ? AND EMAIL = ?";
+        logger.debug("Checking password reset eligibility for user: {}", dto.getUserId());
+        return jdbcTemplate.queryForObject(sql, new Object[]{dto.getUserId(), dto.getEmail()}, Integer.class);
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.project.easyBuild.member.util.TempKey;
 @Service
 public class MemberBizImpl implements MemberBiz {
 
+	@Autowired
 	private JavaMailSender mailSender;
 	
     private static final Logger logger = LoggerFactory.getLogger(MemberBizImpl.class);
@@ -61,19 +62,17 @@ public class MemberBizImpl implements MemberBiz {
     
     @Override
 	public void findPw(String email,String userId)throws Exception{
-		String memberKey = new TempKey().getKey(6,false);
-		 dao.findPw(email,userId,memberKey);
+		String password = new TempKey().getKey(6,false);
+		 dao.findPw(password,email,userId);
 		 MailUtils sendMail = new MailUtils(mailSender);
 			sendMail.setSubject("[PC-Shoppingmall 임시 비밀번호 입니다.]"); //메일제목
 			sendMail.setText(
 					"<h1>임시비밀번호 발급</h1>" +
 							"<br/>"+userId+"님 "+
 							"<br/>비밀번호 찾기를 통한 임시 비밀번호입니다."+
-							"<br/>임시비밀번호 :   <h2>"+memberKey+"</h2>"+
-							"<br/>로그인 후 비밀번호 변경을 해주세요."+
-							"<a href='http://localhost:8080/member/login"+
-							">로그인 페이지</a>");
-			sendMail.setFrom("[보낼이메일]", "PC-Shoppingmall");
+							"<br/>임시비밀번호 :   <h2>"+password+"</h2>"+
+							"<br/>로그인 후 비밀번호 변경을 해주세요.");
+			sendMail.setFrom("rgs0631@gmail.com", "PC-Shoppingmall");
 			sendMail.setTo(email);
 			sendMail.send();
 	}
