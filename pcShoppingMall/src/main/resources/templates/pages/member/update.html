@@ -21,7 +21,7 @@
         </ul>
         
         <form action="updateform" method="post">
-            <input type="hidden" id="userId" th:value="${dto.userId}">
+            <input type="hidden" id="userId" name="userId" th:value="${dto.userId}">
             <div class="tab-content" id="memberTabsContent">
                 <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
                     <table class="table table-striped mt-3">
@@ -34,7 +34,7 @@
                             <td>
                                 <div class="form-group">
                                     <label for="userName">회원명</label>
-                                    <input type="text" id="userName" class="form-control" th:value="${dto.userName}" required>
+                                    <input type="text" id="userName" name="userName" class="form-control" th:value="${dto.userName}" required>
                                 </div>
                             </td>
                         </tr>
@@ -43,7 +43,7 @@
                             <td>
                                 <div class="form-group">
                                     <label for="password">비밀번호</label>
-                                    <input type="text" id="password" class="form-control" th:value="${dto.password}" required>
+                                    <input type="text" id="password" name="password" class="form-control" th:value="${dto.password}" required>
                                 </div>
                             </td>
                         </tr>
@@ -60,7 +60,7 @@
                             <td>
                                 <div class="form-group">
                                     <label for="phone">전화번호</label>
-                                    <input type="text" id="phone" class="form-control" th:value="${dto.phone}" required>
+                                    <input type="text" id="phone" name="phone" class="form-control" th:value="${dto.phone}" required>
                                 </div>
                             </td>
                         </tr>
@@ -70,7 +70,7 @@
 
             <div class="button-group">
                 <button type="submit" class="btn btn-primary">저장</button>
-                <button type="button" class="btn btn-secondary" onclick="window.location.href='my/mydetail?userId=${dto.userId}'">취소</button>
+                <button type="button" class="btn btn-secondary" onclick="history.back()">취소</button>
             </div>
         </form>
     </div>

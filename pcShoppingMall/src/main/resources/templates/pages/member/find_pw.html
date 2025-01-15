@@ -70,31 +70,38 @@
     </style>
 </head>
 <body>
-	<form class="login-form" action="member/find_pw" method="POST">
-        <h2>비밀번호 찾기</h2>
-
-        <div class="form-group">
-            <label for="userId">아이디</label>
-            <input type="text" id="userId" name="userId" placeholder="아이디" required>
-        </div>
-
-        <div class="form-group">
-            <label for="email">이메일</label>
-            <input type="text" id="email" name="email" placeholder="이메일" required>
-        </div>
-
-        <div id="error-message" class="error-message">
-            아이디와 이메일을 확인해주세요.
-        </div>
-
-        <button type="submit" class="submit-btn">비밀번호 찾기</button>
-
-		<div class="footer">
-		    <a href="loginform">로그인</a> | 
-		    <a href="find_idform">아이디 찾기</a> | 
-		    <a href="sign_up">회원가입</a>
-		</div>
-
-    </form>
+	<form class="login-form" action="find_pw" method="POST">
+	    <h2>비밀번호 찾기</h2>
+	
+	    <div class="form-group">
+	        <label for="userId">아이디</label>
+	        <input type="text" id="userId" name="userId" placeholder="아이디" required>
+	    </div>
+	
+	    <div class="form-group">
+	        <label for="email">이메일</label>
+	        <input type="text" id="email" name="email" placeholder="이메일" required>
+	    </div>
+	
+	    <div id="error-message" class="error-message" th:text="${msg}"></div>
+	
+	    <button type="submit" class="submit-btn">비밀번호 찾기</button>
+	
+	    <div class="footer">
+	        <a href="loginform">로그인</a> | 
+	        <a href="find_idform">아이디 찾기</a> | 
+	        <a href="sign_up">회원가입</a>
+	    </div>
+	</form>
 </body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var errorMessage = document.getElementById('error-message').textContent;
+        if (errorMessage) {
+            alert(errorMessage);
+        }
+    });
+</script>
+
 </html>
