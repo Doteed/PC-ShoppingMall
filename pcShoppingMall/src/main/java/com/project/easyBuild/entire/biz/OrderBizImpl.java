@@ -1,5 +1,6 @@
 package com.project.easyBuild.entire.biz;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,5 +63,11 @@ public class OrderBizImpl implements OrderBiz {
 	public int updateOrder(OrderDto dto, String userId) {
 	    return dao.updateOrder(dto, userId);
 	}
+	
+	//월별 매출
+	@Override
+	public List<OrderDto> getMonthlySales(int year)  {
+        return dao.getMonthlySales(year);
+    }
 
 }

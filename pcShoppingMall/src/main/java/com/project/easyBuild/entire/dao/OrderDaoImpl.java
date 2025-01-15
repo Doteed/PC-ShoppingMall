@@ -227,5 +227,25 @@ public class OrderDaoImpl implements OrderDao {
 	    logger.info("updateOrder 메서드 종료: 최종 결과={}", finalResult);
 	    return finalResult;
 	}
+	
+	//월별 매출
+	public List<OrderDto> getMonthlySales(int year) {
+	    String sql ="SELECT EXTRACT(MONTH FROM ot.order_date) as month, "
+	    			+ "SUM(CASE WHEN d.delivery_status != '취소' THEN ot.total_price ELSE 0 END) as total_sales, " 
+	    			+ "SUM(CASE WHEN d.delivery_status = '취소' THEN ot.total_price ELSE 0 END) as cancelled_sales " 
+	    			+ "FROM order_table ot " 
+	    			+ "JOIN delivery d ON ot.delivery_id = d.delivery_id " 
+	    			+ "WHERE EXTRACT(YEAR FROM ot.order_date) = ? " 
+	    			+ "GROUP BY EXTRACT(MONTH FROM ot.order_date) ORDER BY month";
+
+	    return jdbcTemplate.query(sql, new Object[]{year}, (rs, rowNum) -> {
+	        OrderDto dto = new OrderDto();
+	        dto.setMonth(rs.getInt("month"));
+	        dto.setTotalPrice(rs.getInt("total_sales"));
+	        dto.setCancelledSales(rs.getInt("cancelled_sales"));
+	        return dto;
+	    });
+	}
+
 
 }

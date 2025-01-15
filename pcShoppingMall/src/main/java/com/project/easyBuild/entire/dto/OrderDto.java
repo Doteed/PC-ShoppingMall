@@ -30,6 +30,9 @@ public class OrderDto {
 	private String address;			//주소(delivery table)
     private String phone;			//전화번호(delivery table)
     
+    private int month; 				//주문 월을 저장할 필드
+    private int cancelledSales;		//취소된 매출 저장할 필드
+        
     //insert
     public OrderDto(String paymentMethod, String addressee, String address, String phone) {
         super();

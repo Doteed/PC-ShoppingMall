@@ -98,4 +98,11 @@ public class OrderController {
             return ResponseEntity.badRequest().body("주문 취소에 실패했습니다.");
         }
     }
+    
+    @GetMapping("/monthly-sales/{year}")
+    @ResponseBody
+    public ResponseEntity<List<OrderDto>> getMonthlySales(@PathVariable int year) {
+        List<OrderDto> monthlySales = orderBiz.getMonthlySales(year);
+        return ResponseEntity.ok(monthlySales);
+    }
 }
