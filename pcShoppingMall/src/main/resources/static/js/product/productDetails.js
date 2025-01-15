@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		    const productId = addToCartButton.dataset.productId; // data-product-id에서 가져오기
 		    const quantity = parseInt(quantityInput.value, 10); // 수량 가져오기
 
-		    fetch('/my/cart', {
+		    fetch(`/cart/insert/${productId}?quantity=${quantity}`, {
 		        method: 'POST',
 		        headers: { 'Content-Type': 'application/json' },
 		        body: JSON.stringify({ productId, quantity }), // 데이터 전송
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		    const productId = buyNowButton.dataset.productId; // data-product-id에서 가져오기
 		    const quantity = parseInt(quantityInput.value, 10); // 수량 가져오기
 
-		    fetch('/my/order', {
+		    fetch(`/cart/insert/${productId}?quantity=${quantity}`, {
 		        method: 'POST',
 		        headers: { 'Content-Type': 'application/json' },
 		        body: JSON.stringify({ productId, quantity }), // 데이터 전송
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		        if (!response.ok) {
 		            throw new Error('Failed to proceed to order');
 		        }
-		        window.location.href = '/my/order'; // 성공 시 구매 페이지로 이동
+		        window.location.href = '/my/cart'; // 성공 시 장바구니 페이지로 이동
 		    })
 		    .catch(error => console.error('Error processing order:', error));
 		});

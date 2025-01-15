@@ -86,19 +86,19 @@ document.addEventListener('DOMContentLoaded', () => {
 						const cartButtons = document.querySelectorAll('.add-to-cart-btn');
 						cartButtons.forEach(button => {
 						    button.addEventListener('click', (event) => {
-						        const memoryId = button.getAttribute('data-case-id');
+						        const productId = button.getAttribute('data-case-id');
 						        const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'true';
-
+								const quantity = 1; // 수량을 1로 고정
 						        if (!isLoggedIn) {
 						            const confirmLogin = confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
 						            if (confirmLogin) {
 						                window.location.href = '/loginform';
 						            }
 						         } else {
-						            fetch('/my/cart', {
+						            fetch(`/cart/insert/${productId}?quantity=${quantity}`, {
 						               method: 'POST',
 						               headers: { 'Content-Type': 'application/json' },
-						               body: JSON.stringify({ memoryId: memoryId }),
+						               body: JSON.stringify({ productId, quantity }),
 						          })
 						               .then(response => {
 						                   if (!response.ok) {
