@@ -16,4 +16,5 @@ public interface OrderDao {
 	public Map<String, Integer> count(String userId);
 	public int insertFromCart(OrderRequestDto dto);
 	public int updateOrder(OrderDto dto, String userId);
+	public List<OrderDto> getMonthlySales(int year) ;
 }
