@@ -58,16 +58,17 @@ public class UserOrderController {
 		}
 	}
 
-	@PostMapping("/insert/cart")
+	@PostMapping("/insertFromCart")
 	public ResponseEntity<?> insertFromCart(@RequestBody OrderRequestDto orderRequestDto, HttpSession session) {
-	    MemberDto user = (MemberDto) session.getAttribute("dto");
+		System.out.println("OrderRequestDto: " + orderRequestDto);
+		MemberDto user = (MemberDto) session.getAttribute("dto");
 	    if (user == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
 	    }
 
 	    orderRequestDto.setUserId(user.getUserId());
 	    orderRequestDto.setAuthId(user.getAuthId());
-
+	    System.out.println("OrderRequestDto: " + orderRequestDto);
 	    try {
 	        int result = orderbiz.insertFromCart(orderRequestDto);
 	        return result > 0 ?
