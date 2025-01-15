@@ -21,7 +21,7 @@ public class ProductDaoImple implements ProductDao {
 	private final JdbcTemplate jdbcTemplate;
 	private final RowMapper<ProductDto> rowMapper;
 
-    @Autowired
+	@Autowired
     public ProductDaoImple(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.rowMapper = (rs, rowNum) -> {
@@ -60,37 +60,42 @@ public class ProductDaoImple implements ProductDao {
 
     @Override
     public int insert(ProductDto dto) {
-    	//카테고리 체크
-    	validateCategoryId(dto.getCategoryId1());
-        validateCategoryId(dto.getCategoryId2());
-        validateCategoryId(dto.getCategoryId3());
-        
+        // 카테고리 ID가 null이거나 0인 경우 처리
+        Integer categoryId1 = (dto.getCategoryId1() != null && dto.getCategoryId1() != 0) ? dto.getCategoryId1() : null;
+        Integer categoryId2 = (dto.getCategoryId2() != null && dto.getCategoryId2() != 0) ? dto.getCategoryId2() : null;
+        Integer categoryId3 = (dto.getCategoryId3() != null && dto.getCategoryId3() != 0) ? dto.getCategoryId3() : null;
+
+        // 카테고리 체크
+        if (categoryId1 != null) validateCategoryId(categoryId1);
+        if (categoryId2 != null) validateCategoryId(categoryId2);
+        if (categoryId3 != null) validateCategoryId(categoryId3);
+
         String sql = "INSERT INTO PRODUCT (PRODUCT_ID, USER_ID, CATEGORY_ID_1, CATEGORY_ID_2, CATEGORY_ID_3, AUTH_ID, P_PRICE, P_NAME, P_STOCK, P_REPORTSTOCK, P_ENROLL, IMAGE_URL, P_EXPLAN, P_SALE, P_SOLDOUT, ORDER_WAITING) " +
                      "VALUES (SEQ_PRODUCT.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE, ?, ?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, 
-            dto.getUserId(), 
-            dto.getCategoryId1(), 
-            dto.getCategoryId2(), 
-            dto.getCategoryId3(), 
-            dto.getAuthId(),
-            dto.getPPrice(), 
-            dto.getPName(), 
-            dto.getPStock(), 
-            dto.getPReportstock(), 
-            dto.getImageUrl(), 
-            dto.getPExplan(), 
-            dto.getPSale(), 
-            dto.getPSoldout(), 
-            dto.getOrderWaiting()
+
+        return jdbcTemplate.update(sql,
+                dto.getUserId(),
+                categoryId1,
+                categoryId2,
+                categoryId3,
+                dto.getAuthId(),
+                dto.getPPrice(),
+                dto.getPName(),
+                dto.getPStock(),
+                dto.getPReportstock(),
+                dto.getImageUrl(),
+                dto.getPExplan(),
+                dto.getPSale(),
+                dto.getPSoldout(),
+                dto.getOrderWaiting()
         );
     }
+    
     private void validateCategoryId(Integer categoryId) {
-        if (categoryId != null) {
-            String sql = "SELECT COUNT(*) FROM CATEGORY WHERE CATEGORY_ID = ?";
-            int count = jdbcTemplate.queryForObject(sql, Integer.class, categoryId);
-            if (count == 0) {
-                throw new IllegalArgumentException("유효하지 않은 카테고리 ID: " + categoryId);
-            }
+        String sql = "SELECT COUNT(*) FROM CATEGORY WHERE CATEGORY_ID = ?";
+        int count = jdbcTemplate.queryForObject(sql, Integer.class, categoryId);
+        if (count == 0) {
+            throw new IllegalArgumentException("유효하지 않은 카테고리 ID: " + categoryId);
         }
     }
     

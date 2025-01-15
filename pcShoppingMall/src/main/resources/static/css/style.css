@@ -38,11 +38,10 @@ p{margin-bottom:0;}
 .section-box:last-child {margin-right: 0;}
 .section-box h2 {margin-bottom: 10px;border-bottom: 2px solid #333;padding-bottom: 5px;font-size: 1.5rem;}
 .section-box ul {padding: 0;list-style: none;}
-.section-box li {margin: 5px 0;}
-.section-box a {text-decoration: none;color: #007bff;}
+.section-box li { display: flex;justify-content: space-between;align-items: center;margin: 5px 0;}
+.section-box a {flex-grow: 1;text-decoration: none;color: #007bff;}
 .section-box a:hover {text-decoration: underline;}
-.section-box span {float: right;font-size: 0.9rem;color: #999;}
-.section-box span::aftoer{display:block;clear:both;}
+.section-box span {margin-left: 10px;font-size: 0.9rem;color: #999;white-space: nowrap;}
 
 /* table type A - 관리자페이지, 상품관리, 주문관리 */
 .table-type-a{width: 100%;}
