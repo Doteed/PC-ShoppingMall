@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						                window.location.href = '/loginform';
 						            }
 						         } else {
-						            fetch('/cart', {
+						            fetch('/my/cart', {
 						               method: 'POST',
 						               headers: { 'Content-Type': 'application/json' },
 						               body: JSON.stringify({ coolerId: coolerId }),
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						                   }
 						                   const confirmCart = confirm("장바구니에 담겼습니다. 장바구니 페이지로 이동하시겠습니까?");
 						                   if (confirmCart) {
-						                       window.location.href = '/cart';
+						                       window.location.href = '/my/cart';
 						                   }
 						                })
 						                .catch(error => console.error('Error adding to cart:', error));

@@ -24,8 +24,8 @@
             	<strong id="total-price" th:text="'총 합계금액: ' + ${mainboard.formattedPrice}"></strong>
             </div>
             <div class="action-buttons">
-                <button id="add-to-cart" class="action-btn">장바구니</button>
-                <button id="buy-now" class="action-btn">구매하기</button>
+                <button id="add-to-cart" class="action-btn" data-product-id="${mainboard.mainboardId}">장바구니</button>
+                <button id="buy-now" class="action-btn" data-product-id="${mainboard.mainboardId}">구매하기</button>
             </div>
         </div>
     </div>
@@ -186,8 +186,8 @@
                 <strong id="floating-price" th:text="'가격: ' + ${mainboard.formattedPrice}"></strong>
             </div>
             <div class="floating-buttons">
-                <button id="floating-add-to-cart">장바구니</button>
-                <button id="floating-buy-now">구매하기</button>
+                <button id="floating-add-to-cart" data-product-id="${mainboard.mainboardId}">장바구니</button>
+                <button id="floating-buy-now" data-product-id="${mainboard.mainboardId}">구매하기</button>
             </div>
 
         </div>

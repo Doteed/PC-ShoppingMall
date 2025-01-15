@@ -75,9 +75,9 @@
 			</div>
             <div class="product-price">
                 <p th:text="${ssd.formattedPrice}"></p>
-                <form action="/cart" method="post">
+                <form action="/my/cart" method="post">
                     <input type="hidden" name="ssdId" th:value="${ssd.ssdId}">
-                    <button type="submit" class="add-to-cart-btn">장바구니</button>
+                    <button type="submit" class="add-to-cart-btn" th:attr="data-case-id=${ssd.ssdId}">장바구니</button>
                 </form>
             </div>
         </div>

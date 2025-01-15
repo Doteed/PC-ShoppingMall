@@ -45,30 +45,62 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTotalPrice();
     });
 
-	// 버튼 클릭 이벤트 핸들러
-	const handleButtonClick = (event, action) => {
-		if (!isLoggedIn) {
-		   // 로그인 필요 얼트 메시지
-		   const userAction = confirm("로그인이 필요합니다. 로그인하시겠습니까?");
-		   if (userAction) {
-		       window.location.href = '/loginform'; // 로그인 페이지로 이동
+	// 장바구니 버튼 실행
+		addToCartButton.addEventListener('click', () => {
+		    if (!isLoggedIn) {
+		        const userAction = confirm("로그인이 필요합니다. 로그인하시겠습니까?");
+		        if (userAction) {
+		            window.location.href = '/loginform';
+		        }
+		        return;
 		    }
-		    return; // 동작 중단
-		 }
 
-		 if (action === 'add-to-cart') {
-		     const userAction = confirm("장바구니에 담았습니다. 장바구니로 이동 하시겠습니까?");
-		     if (userAction) {
-		         window.location.href = '/cart'; // 장바구니 페이지로 이동
-		     }
-		 } else if (action === 'buy-now') {
-		     window.location.href = '/buynow'; // 구매 페이지로 이동
-		 }
-	};
+		    const productId = addToCartButton.dataset.productId; // data-product-id에서 가져오기
+		    const quantity = parseInt(quantityInput.value, 10); // 수량 가져오기
 
-	// 이벤트 리스너 연결
-	addToCartButton.addEventListener('click', (e) => handleButtonClick(e, 'add-to-cart'));
-	buyNowButton.addEventListener('click', (e) => handleButtonClick(e, 'buy-now'));
+		    fetch('/my/cart', {
+		        method: 'POST',
+		        headers: { 'Content-Type': 'application/json' },
+		        body: JSON.stringify({ productId, quantity }), // 데이터 전송
+		    })
+		    .then(response => {
+		        if (!response.ok) {
+		            throw new Error('Failed to add product to cart');
+		        }
+		        const userAction = confirm("장바구니에 담았습니다. 장바구니로 이동 하시겠습니까?");
+		        if (userAction) {
+		            window.location.href = '/my/cart';
+		        }
+		    })
+		    .catch(error => console.error('Error adding to cart:', error));
+		});
+		
+		// 구매하기 버튼 실행
+		buyNowButton.addEventListener('click', () => {
+		    if (!isLoggedIn) {
+		        const userAction = confirm("로그인이 필요합니다. 로그인하시겠습니까?");
+		        if (userAction) {
+		            window.location.href = '/loginform';
+		        }
+		        return;
+		    }
+
+		    const productId = buyNowButton.dataset.productId; // data-product-id에서 가져오기
+		    const quantity = parseInt(quantityInput.value, 10); // 수량 가져오기
+
+		    fetch('/my/order', {
+		        method: 'POST',
+		        headers: { 'Content-Type': 'application/json' },
+		        body: JSON.stringify({ productId, quantity }), // 데이터 전송
+		    })
+		    .then(response => {
+		        if (!response.ok) {
+		            throw new Error('Failed to proceed to order');
+		        }
+		        window.location.href = '/my/order'; // 성공 시 구매 페이지로 이동
+		    })
+		    .catch(error => console.error('Error processing order:', error));
+		});
 	
 	// 탭 클릭 시 스크롤 이벤트
 	    tabs.forEach(tab => {
