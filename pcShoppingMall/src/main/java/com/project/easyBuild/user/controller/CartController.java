@@ -116,9 +116,11 @@ public class CartController {
 		MemberDto user = (MemberDto) session.getAttribute("dto");
 
 		if (user == null) {
+			System.out.println("User not logged in");
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
 		}
-
+		System.out.println("User ID: " + user.getUserId());
+		
 		int result = cartbiz.insert(productId, quantity, user.getUserId());
 
 		Map<String, Object> response = new HashMap<>();
