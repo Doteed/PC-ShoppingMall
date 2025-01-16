@@ -135,28 +135,27 @@
 			<div class="w-100">
 				<h5>문의/구매평</h5>
 				<table class="table-type-a">
-					<colgroup>
-						<col width="*" />
-						<col width="15%" />
-						<col width="30%" />					
-					</colgroup>
 					<thead>
 						<tr>
 							<th>제목</th>
 							<th>작성자</th>
 							<th>평점</th>
+							<th>작성일</th>
 						</tr>
 					</thead>
-						<tbody>
-						    <tr th:if="${#lists.isEmpty(list)}">
-						        <td colspan="3">----게시물이 없습니다.----</td>
-						    </tr>
-						    <tr th:unless="${#lists.isEmpty(list)}" th:each="sale, iterStat : ${monthlySales}" th:if="${iterStat.index < 5}">
-						        <td th:text="${sale.title}"></td>
-						        <td th:text="${sale.writer}"></td>
-						        <td th:text="${sale.score}"></td>
-						    </tr>
-						</tbody>
+					<tbody>
+						<tr th:if="${#lists.isEmpty(reviewLists)}">
+							<td colspan="5">---- 작성한 리뷰가 없습니다. ----</td>
+						</tr>
+
+						<tr th:each="item : ${reviewLists}"
+							th:unless="${#lists.isEmpty(reviewLists)}">
+							<td class="my-title" th:attr="data-id=${item.reviewId}, data-type='review'" style="cursor: pointer;"><a href="/my/review" th:text="${item.title}"></a></td>
+							<td th:text="${item.userId}" />
+							<td><span th:utext="${#strings.repeat('★', item.rating) + #strings.repeat('☆', 5 - item.rating)}"></span></td>
+							<td th:text="${item.date}" />
+						</tr>
+					</tbody>
 				</table>
 			</div>
 		</div>
@@ -196,7 +195,7 @@
 						<col width="*" />
 						<col width="15%" />
 						<col width="20%" />
-						<col width="15%" />
+						<!-- <col width="15%" /> -->
 						<col width="15%" />
 					</colgroup>
 					 <thead>
@@ -205,7 +204,7 @@
                             <th>제목</th>
                             <th>작성자</th>
                             <th>작성일</th>
-                            <th>비밀 여부</th>
+                           <!--  <th>비밀 여부</th> -->
                             <th>답변 상태</th>
                         </tr>
                     </thead>
@@ -218,10 +217,10 @@
                             <td class="title"><a th:href="@{'/qnas/' + ${qna.qnaId}}" th:text="${qna.title}"></a></td>
                             <td th:text="${qna.userId}"></td>
                             <td th:text="${#temporals.format(qna.createdDate, 'yyyy-MM-dd')}"></td>
-                            <td>
+                            <!-- <td>
                                 <span th:if="${qna.isSecret}" class="badge bg-warning">비밀글</span>
                                 <span th:if="${!qna.isSecret}" class="badge bg-success">공개</span>
-                            </td>
+                            </td> -->
                             <td>
                                 <span th:if="${qna.answer != null}" class="badge bg-success">답변 완료</span>
                                 <span th:if="${qna.answer == null}" class="badge bg-warning">미답변</span>
