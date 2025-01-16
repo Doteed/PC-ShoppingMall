@@ -1,7 +1,11 @@
 package com.project.easyBuild.product.controller;
 
+import com.project.easyBuild.member.dto.MemberDto;
+import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.ssd;
 import com.project.easyBuild.product.service.SsdService;
+
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -31,7 +36,10 @@ public class SsdController {
 
     // 1) 상품 목록을 반환하는 메서드
     @GetMapping("/ssdproducts")
-    public String showSsdProducts(Model model) {
+    public String showSsdProducts(Model model, HttpSession session) {
+    	MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
     	List<ssd> ssds = ssdService.getAllSsds(); // 5개 데이터
         
     	//가격 포맷팅
@@ -61,16 +69,21 @@ public class SsdController {
     }
     // 제품 상세페이지 처리
     @GetMapping("/ssdproducts/{ssdId}")
-    public String getSsdDetail(@PathVariable Long ssdId, Model model) {
-    	ssd ssd = ssdService.getSsdById(ssdId);
-        if (ssd == null) {
+    public String getSsdDetail(@PathVariable Long ssdId, Model model, HttpSession session) {
+    	// 상품 정보 로드
+        Optional<ssd> ssd = ssdService.findById(ssdId);
+        if (ssd.isEmpty()) {
         	model.addAttribute("error", "해당 제품을 찾을 수 없습니다.");
             return "error"; // error.html 템플릿
         }
+        ssd ssdItem = ssd.get();
         // 가격 포맷팅 설정
-        ssd.setFormattedPrice(String.format("%,d원", ssd.getPrice()));
+        ssdItem.setFormattedPrice(String.format("%,d원", ssdItem.getPrice()));
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
         
-        model.addAttribute("ssd", ssd);
+        model.addAttribute("ssd", ssdItem);
         return "product/detail/ssd-details"; // templates/product/detail/ssd-details.html
     }
 

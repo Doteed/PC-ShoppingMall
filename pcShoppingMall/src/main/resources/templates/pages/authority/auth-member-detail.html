@@ -36,8 +36,25 @@
 	        window.location.href = '/auth-member';
 	    }
 	</script>
+	<script
+		src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script>
+	    document.addEventListener('DOMContentLoaded', function() {
+	        fetch('/order/count?')
+	            .then(response => response.json())
+	            .then(data => {
+	                console.log(data);
+	                for (let status in data) {
+	                    document.getElementById("status-" + status).innerText = data[status];
+	                }
+	            })
+	            .catch(error => console.error('Error:', error));
+	    });
+	</script>
 	<script th:src="@{/js/editor.js}"></script>
 	<script th:src="@{/js/mylist.js}"></script>
+	<script type="module" th:src="@{/js/mylist.js}"></script>
+	
     <style>
 		.content-box {
 		    display: flex;
@@ -101,10 +118,6 @@
 						    <td th:text="${member.authId == 1 ? '이용자' : (member.authId == 2 ? '관리자' : '알 수 없음')}"></td>
 						</tr>
 	                    <tr>
-	                        <th>회원 번호</th>
-	                        <td th:text="${member.memberNo}"></td>
-	                    </tr>
-	                    <tr>
 	                        <th>아이디</th>
 	                        <td th:text="${member.userId}"></td>
 	                    </tr>
@@ -131,10 +144,6 @@
 						 <tr>
 						     <th>마지막 업데이트</th>
 						     <td th:text="${#temporals.format(member.lastUpdate, 'yyyy-MM-dd HH:mm:ss')}"></td>
-						 </tr>
-						 <tr>
-						     <th>구매 횟수</th>
-						     <td th:text="${member.purchaseCount}"></td>
 						 </tr>
 						 <tr>
 						     <th>회원 상태</th>
@@ -168,7 +177,8 @@
 							        <td th:text="${item.totalPrice}"></td>
 							        <td th:text="${item.deliveryStatus}"></td>
 							        <td>
-							            <button class="btn btn-primary order-detail-button" th:attr="data-order-id=${item.orderId}">상세보기</button>
+										<button class="btn btn-primary order-detail-button"
+											th:attr="data-order-id=${item.orderId}">상세보기</button>
 							        </td>
 							    </tr>
 							</tbody>

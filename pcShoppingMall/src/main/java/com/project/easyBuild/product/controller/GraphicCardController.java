@@ -11,12 +11,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.easyBuild.member.dto.MemberDto;
+import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.graphicCard;
 import com.project.easyBuild.product.service.GraphicCardService;
+
+import jakarta.servlet.http.HttpSession;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -31,7 +36,11 @@ public class GraphicCardController {
 
     // 1) 상품 목록을 반환하는 메서드
     @GetMapping("/graphicCardproducts")
-    public String showGraphicCardProducts(Model model) {
+    public String showGraphicCardProducts(Model model, HttpSession session) {
+    	MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
+        
     	List<graphicCard> graphicCards = graphicCardService.getAllGraphicCards(); // 5개 데이터
         
     	//가격 포맷팅
@@ -61,16 +70,21 @@ public class GraphicCardController {
     }
     // 제품 상세페이지 처리
     @GetMapping("/graphicCardproducts/{graphicCardId}")
-    public String getGraphicCardDetail(@PathVariable Long graphicCardId, Model model) {
-    	graphicCard graphicCard = graphicCardService.getGraphicCardById(graphicCardId);
-        if (graphicCard == null) {
+    public String getGraphicCardDetail(@PathVariable Long graphicCardId, Model model, HttpSession session) {
+    	// 상품 정보 로드
+        Optional<graphicCard> graphicCard = graphicCardService.findById(graphicCardId);
+        if (graphicCard.isEmpty()) {
         	model.addAttribute("error", "해당 제품을 찾을 수 없습니다.");
             return "error"; // error.html 템플릿
         }
+        graphicCard graphicCardItem = graphicCard.get();
         // 가격 포맷팅 설정
-        graphicCard.setFormattedPrice(String.format("%,d원", graphicCard.getPrice()));
+        graphicCardItem.setFormattedPrice(String.format("%,d원", graphicCardItem.getPrice()));
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
         
-        model.addAttribute("graphicCard", graphicCard);
+        model.addAttribute("graphicCard", graphicCardItem);
         return "product/detail/graphicCard-details"; // templates/product/detail/graphicCard-details.html
     }
 }

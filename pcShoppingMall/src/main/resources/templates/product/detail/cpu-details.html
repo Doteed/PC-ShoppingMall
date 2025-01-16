@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,7 @@
     <link rel="stylesheet" href="/css/product/productDetails.css">
     <link rel="stylesheet" href="/css/product/floatingBar.css">
 </head>
-<body>  
+<body th:attr="data-is-logged-in=${isLoggedIn}">  
     <div id="product-info-section" class="product-detail-container">
         <div class="product-image-section">
             <img id="product-image" th:src="@{'/images/product/cpu/' + 'cpu' + ${product.cpuId} + '.png'}" alt="Product Image">
@@ -24,8 +25,8 @@
             	<strong id="total-price" th:text="'총 합계금액: ' + ${product.formattedPrice}"></strong>
             </div>
             <div class="action-buttons">
-                <button id="add-to-cart" class="action-btn">장바구니</button>
-                <button id="buy-now" class="action-btn">구매하기</button>
+                <button id="add-to-cart" class="action-btn" data-product-id="${product.cpuId}">장바구니</button>
+                <button id="buy-now" class="action-btn" data-product-id="${product.cpuId}">구매하기</button>
             </div>
         </div>
     </div>
@@ -184,8 +185,8 @@
                 <strong id="floating-price" th:text="'가격: ' + ${product.formattedPrice}"></strong>
             </div>
             <div class="floating-buttons">
-                <button id="floating-add-to-cart">장바구니</button>
-                <button id="floating-buy-now">구매하기</button>
+                <button id="floating-add-to-cart" data-product-id="${product.cpuId}">장바구니</button>
+                <button id="floating-buy-now" data-product-id="${product.cpuId}">구매하기</button>
             </div>
         </div>
     </div>

@@ -13,10 +13,12 @@ import com.project.easyBuild.member.dto.MemberDto;
 
 import jakarta.servlet.http.HttpSession;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 @Controller
@@ -39,29 +41,48 @@ public class OrderController {
 
     @GetMapping("/{orderId}")
     @ResponseBody
-    public ResponseEntity<OrderDto> getOrderDetails(@PathVariable int orderId, HttpSession session) {
+    public ResponseEntity<?> getOrderDetails(@PathVariable int orderId, HttpSession session) {
         MemberDto user = (MemberDto) session.getAttribute("dto");
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Map.of("error", "Unauthorized", "redirectUrl", "/loginform"));
         }
-        OrderDto order = orderBiz.listOne(orderId, user.getUserId());
-        if (order != null) {
-            return ResponseEntity.ok(order);
-        } else {
-            return ResponseEntity.notFound().build();
+
+        try {
+            OrderDto order = orderBiz.authListOne(orderId);
+            if (order != null) {
+                // 주문의 userId와 세션의 userId를 비교
+                if (order.getUserId().equals(user.getUserId()) || user.getAuthId() == 2) { // authId 2는 관리자로 가정
+                    return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(order);
+                } else {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(Map.of("error", "Forbidden", "message", "해당 주문에 대한 접근 권한이 없습니다."));
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(Map.of("error", "Not Found", "message", "주문을 찾을 수 없습니다."));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
+
     @PostMapping("/update")
     @ResponseBody
-    public ResponseEntity<?> updateOrder(@RequestBody OrderDto orderDto, HttpSession session) {
-    	MemberDto user = (MemberDto) session.getAttribute("dto");
-		if (user == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
-		}
-		
-    	int result = orderBiz.update(orderDto, user.getUserId());
-    	
+    public ResponseEntity<String> updateOrder(@RequestBody OrderDto orderDto, HttpSession session) {
+        MemberDto user = (MemberDto) session.getAttribute("dto");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+        }
+
+        int result = orderBiz.updateOrder(orderDto, user.getUserId());
         if (result > 0) {
             return ResponseEntity.ok("주문이 성공적으로 업데이트되었습니다.");
         } else {
@@ -83,5 +104,12 @@ public class OrderController {
         } else {
             return ResponseEntity.badRequest().body("주문 취소에 실패했습니다.");
         }
+    }
+    
+    @GetMapping("/monthly-sales/{year}")
+    @ResponseBody
+    public ResponseEntity<List<OrderDto>> getMonthlySales(@PathVariable int year) {
+        List<OrderDto> monthlySales = orderBiz.getMonthlySales(year);
+        return ResponseEntity.ok(monthlySales);
     }
 }

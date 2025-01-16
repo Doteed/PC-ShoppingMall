@@ -5,11 +5,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title layout:fragment="title">case products</title>
+    <title layout:fragment="title">케이스 : Build-Easy</title>
     <link rel="stylesheet" href="/css/product/productCategory.css">
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
+<body th:attr="data-is-logged-in=${isLoggedIn}">
 	<div layout:fragment="content" th:with="pageType='case'">
 	<h2 style="text-align: left;">케이스</h2>
     <!-- 필터 UI -->
@@ -56,7 +56,7 @@
     
     <!-- 13.3.cm베이 -->
     <div>
-        <h4>13.3.cm베이</h4>
+        <h4>13.3cm베이</h4>
         <div class="checkbox-container">
         	<label><input type="checkbox" name="bay13_3CM" value="5"> 5개</label>
         	<label><input type="checkbox" name="bay13_3CM" value="4"> 4개</label>
@@ -107,9 +107,9 @@
 			</div>
             <div class="product-price">
                 <p th:text="${Case.formattedPrice}"></p>
-                <form action="/cart/add" method="post">
+                <form action="/my/cart" method="post">
                     <input type="hidden" name="caseId" th:value="${Case.caseId}">
-                    <button type="submit">장바구니</button>
+                    <button type="submit" class="add-to-cart-btn" th:attr="data-case-id=${Case.caseId}">장바구니</button>
                 </form>
             </div>
         </div>

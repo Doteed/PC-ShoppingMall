@@ -1,7 +1,9 @@
 package com.project.easyBuild.product.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.mainboard;
 import com.project.easyBuild.product.repository.MainboardRepository;
 
@@ -9,12 +11,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
+import java.util.Optional;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 
 @Service
 public class MainboardService {
+	@Autowired
 	private final MainboardRepository mainboardRepository;
 	
 	// 생성자를 직접 작성
@@ -106,9 +110,7 @@ public class MainboardService {
         return mainboards;
                
     }
-    public mainboard getMainboardById(Long mainboardId) {
-    	mainboard result = mainboardRepository.findById(mainboardId).orElse(null);
-        System.out.println("Loaded MAINBOARD by ID " + mainboardId + ": " + result); // 디버깅 로그
-        return result;
+    public Optional<mainboard> findById(Long id) {
+        return mainboardRepository.findById(id);
     }
 }

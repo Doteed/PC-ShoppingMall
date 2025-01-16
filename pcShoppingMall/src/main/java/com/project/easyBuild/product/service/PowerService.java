@@ -1,6 +1,8 @@
 package com.project.easyBuild.product.service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.power;
 import com.project.easyBuild.product.repository.PowerRepository;
 
@@ -8,11 +10,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
+import java.util.Optional;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Service
 public class PowerService {
+	@Autowired
 	private final PowerRepository powerRepository;
 	
 	// 생성자를 직접 작성
@@ -97,9 +101,7 @@ public class PowerService {
         return powers;
                
     }
-    public power getPowerById(Long powerId) {
-    	power result = powerRepository.findById(powerId).orElse(null);
-        System.out.println("Loaded POWER by ID " + powerId + ": " + result); // 디버깅 로그
-        return result;
+    public Optional<power> findById(Long id) {
+        return powerRepository.findById(id);
     }
 }

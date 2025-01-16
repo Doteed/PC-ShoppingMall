@@ -18,13 +18,13 @@ public class MailBiz {
         number = (int) (Math.random() * (900000)) + 100000; // 100000~999999
     }
 
-    public MimeMessage createMail(String email) {  // mail -> email
+    public MimeMessage createMail(String email) {  
         createNumber();
         MimeMessage message = javaMailSender.createMimeMessage();
 
         try {
             message.setFrom(senderEmail);
-            message.setRecipients(MimeMessage.RecipientType.TO, email);  // mail -> email
+            message.setRecipients(MimeMessage.RecipientType.TO, email);  
             message.setSubject("이메일 인증");
             String body = "<h3>요청하신 인증 번호입니다.</h3>"
                     + "<h1>" + number + "</h1>"
@@ -37,8 +37,8 @@ public class MailBiz {
         return message;
     }
 
-    public int sendMail(String email) {  // mail -> email
-        MimeMessage message = createMail(email);  // mail -> email
+    public int sendMail(String email) {  
+        MimeMessage message = createMail(email);  
         javaMailSender.send(message);
         return number;
     }

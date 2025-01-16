@@ -18,6 +18,43 @@
                     }
                 });
             });
+            
+            // 모달 관련 처리
+            const modals = document.querySelectorAll('.modal');
+            
+            modals.forEach(modal => {
+              modal.addEventListener('show.bs.modal', function() {
+                removeExtraBackdrops();
+                disableBodyScroll();
+              });
+              
+              modal.addEventListener('hidden.bs.modal', function() {
+                removeAllBackdrops();
+                enableBodyScroll();
+              });
+            });
+
+            function removeExtraBackdrops() {
+              const backdrops = document.querySelectorAll('.modal-backdrop');
+              if (backdrops.length > 1) {
+                backdrops[0].remove();
+              }
+            }
+
+            function removeAllBackdrops() {
+              const backdrops = document.querySelectorAll('.modal-backdrop');
+              backdrops.forEach(backdrop => backdrop.remove());
+            }
+
+            function disableBodyScroll() {
+              document.body.style.overflow = 'hidden';
+            }
+
+            function enableBodyScroll() {
+              if (document.querySelectorAll('.modal.show').length === 0) {
+                document.body.style.overflow = 'auto';
+              }
+            }
         });
 
         function showOrderDetails(orderId) {
@@ -49,14 +86,20 @@
                     alert('주문 정보를 불러오는데 실패했습니다.');
                 });
         }
-
+        
         function updateOrder() {
-            var formData = new FormData(document.getElementById('orderForm'));
-            fetch('/order/update', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
+			const formData = new FormData(document.getElementById('orderForm'));
+			const orderData = {};
+			formData.forEach((value, key) => { orderData[key] = value; });
+			fetch('/order/update', {
+			    method: 'POST',
+			    headers: {
+			        'Content-Type': 'application/json',
+			    },
+			    body: JSON.stringify(orderData)
+			})
+            .then(response => response.text())
+			.then(data => console.log(data))
             .then(data => {
                 alert('주문이 성공적으로 업데이트되었습니다.');
                 var orderModal = bootstrap.Modal.getInstance(document.getElementById('orderModal'));
@@ -65,6 +108,7 @@
             })
             .catch(error => {
                 alert('주문 업데이트에 실패했습니다.');
+                console.error('Error:', error)
             });
         }
 
@@ -92,8 +136,8 @@
             new daum.Postcode({
                 oncomplete: function(data) {
                     var addr = data.address; // 기본 주소
-                    document.getElementById("addressee").value = addr;
-                    document.getElementById("address").focus(); // 상세주소 입력 필드로 포커스 이동
+                    document.getElementById("address").value = addr;
+                    //document.getElementById("address").focus(); // 상세주소 입력 필드로 포커스 이동
                 }
             }).open();
         }
@@ -110,9 +154,10 @@
                         <th>주문ID</th>
                         <th>배송ID</th>
                         <th>회원ID</th>
-                        <th>상품ID</th>
+                        <th>상품명</th>
                         <th>총 가격</th>
                         <th>결제 방법</th>
+                        <th>배송 상태</th>
                         <th>주문 날짜</th>
                     </tr>
                 </thead>
@@ -124,9 +169,10 @@
                         <td><span class="order-id" th:text="${order.orderId}" th:data-order-id="${order.orderId}" data-bs-toggle="modal" data-bs-target="#orderModal" style="color:#007bff;cursor: pointer;"></span></td>
                         <td th:text="${order.deliveryId}"></td>
                         <td th:text="${order.userId}"></td>
-                        <td th:text="${order.productId}"></td>
+                        <td th:text="${order.productName}"></td>
                         <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
                         <td th:text="${order.paymentMethod}"></td>
+                        <td th:text="${order.deliveryStatus}"></td>
                         <td th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
                     </tr>
                 </tbody>
@@ -175,14 +221,14 @@
 		                    </div>
 		                    <div class="row">
 		                        <div class="col-md-6 mb-3">
-		                            <label for="addressee">주소
+		                            <label for="address">주소
 		                                <button type="button" class="btn btn-primary" style="margin-bottom: 5px;padding: 1px 5px;height: 20px;line-height: 10px;" onclick="execDaumPostcode()">주소 검색</button>
 		                            </label>
-		                            <input type="text" class="form-control" id="addressee" name="addressee" readonly />
+		                            <input type="text" class="form-control" id="address" name="address" readonly />
 		                        </div>
 		                        <div class="col-md-6 mb-3">
-		                            <label for="address">상세주소</label>
-		                            <input type="text" class="form-control" id="address" name="address" />
+		                            <label for="address">수령인</label>
+		                            <input type="text" class="form-control" id="addressee" name="addressee" />
 		                        </div>
 		                    </div>
 		                    <div class="row">

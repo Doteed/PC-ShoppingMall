@@ -74,11 +74,46 @@ document.addEventListener('DOMContentLoaded', () => {
 	                </div>
 	                <div class="product-price">
 	                    <p>${mainboard.formattedPrice}</p>
-	                    <button type="button">장바구니</button>
+	                    <button class="add-to-cart-btn" data-case-id="${mainboard.mainboardId}">장바구니</button>
 	                </div>
 	            </div>
 	        `).join('');
+			// 장바구니 버튼 이벤트 추가
+			addCartButtonEvents();
 	    }
+		// 장바구니 버튼 이벤트 처리 함수
+					function addCartButtonEvents() {
+						const cartButtons = document.querySelectorAll('.add-to-cart-btn');
+						cartButtons.forEach(button => {
+						    button.addEventListener('click', (event) => {
+						        const productId = button.getAttribute('data-case-id');
+						        const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'true';
+								const quantity = 1; // 수량을 1로 고정
+						        if (!isLoggedIn) {
+						            const confirmLogin = confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
+						            if (confirmLogin) {
+						                window.location.href = '/loginform';
+						            }
+						         } else {
+						            fetch(`/cart/insert/${productId}?quantity=${quantity}`, {
+						               method: 'POST',
+						               headers: { 'Content-Type': 'application/json' },
+						               body: JSON.stringify({ productId, quantity }),
+						          })
+						               .then(response => {
+						                   if (!response.ok) {
+						                       throw new Error('Failed to add to cart');
+						                   }
+						                   const confirmCart = confirm("장바구니에 담겼습니다. 장바구니 페이지로 이동하시겠습니까?");
+						                   if (confirmCart) {
+						                       window.location.href = '/my/cart';
+						                   }
+						                })
+						                .catch(error => console.error('Error adding to cart:', error));
+						         }
+						    });
+						 });
+					}
 
     // 초기 요청 실행
     sendFilterRequest();

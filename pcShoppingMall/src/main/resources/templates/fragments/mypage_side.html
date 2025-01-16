@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<div th:fragment="mypageSideNav" class="text-center bg-body-secondary side-nav">
+		<h6 class="m-0 py-3 border-bottom border-secondary-subtle text-body-emphasis">
+			<a href="/membermy">마이페이지</a>
+		</h6>
+		<ul class="p-0 text-center">
+			<li class="mt-2 text-body-emphasis">
+				<a href="/my/order">주문 배송</a>
+			</li>
+			<li class="mt-2 text-body-emphasis">
+				<a href="/my/review">리뷰</a>
+			</li>
+			<li class="mt-2 text-body-emphasis">
+				<a href="/my/qna">Q&A</a>
+			</li>
+			<li class="mt-2 text-body-emphasis">
+				<a th:href="@{'/my/mydetail?userId=' + ${dto.userId}}">계정 상세</a>
+			</li>
+		</ul>
+	</div>
+</body>
+</html>

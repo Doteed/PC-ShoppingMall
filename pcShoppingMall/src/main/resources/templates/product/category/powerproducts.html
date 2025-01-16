@@ -5,11 +5,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title layout:fragment="title">power products</title>
+    <title layout:fragment="title">파워 : Build-Easy</title>
     <link rel="stylesheet" href="/css/product/productCategory.css">
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
+<body th:attr="data-is-logged-in=${isLoggedIn}">
 	<div layout:fragment="content" th:with="pageType='power'">
 	<h2 style="text-align: left;">파워</h2>
     <!-- 필터 UI -->
@@ -101,9 +101,9 @@
 			</div>
             <div class="product-price">
                 <p th:text="${power.formattedPrice}"></p>
-                <form action="/cart/add" method="post">
+                <form action="/my/cart" method="post">
                     <input type="hidden" name="powerId" th:value="${power.powerId}">
-                    <button type="submit">장바구니</button>
+                    <button type="submit" class="add-to-cart-btn" th:attr="data-case-id=${power.powerId}">장바구니</button>
                 </form>
             </div>
         </div>

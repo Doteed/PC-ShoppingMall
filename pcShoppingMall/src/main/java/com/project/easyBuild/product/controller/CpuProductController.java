@@ -1,7 +1,12 @@
 package com.project.easyBuild.product.controller;
 
+import com.project.easyBuild.member.dto.MemberDto;
+import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.cpu;
 import com.project.easyBuild.product.service.CpuProductService;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 
@@ -28,7 +34,11 @@ public class CpuProductController {
 
     // 1) 상품 목록을 반환하는 메서드
     @GetMapping("/cpuproducts")
-    public String showProducts(Model model) {
+    public String showProducts(Model model, HttpSession session) {
+    	MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
+        
     	List<cpu> cpus = productService.getAllCpus(); // 5개 데이터
         
     	//가격 포맷팅
@@ -58,16 +68,22 @@ public class CpuProductController {
     }
     // 제품 상세페이지 처리
     @GetMapping("/cpuproducts/{cpuId}")
-    public String getProductDetail(@PathVariable Long cpuId, Model model) {
-        cpu product = productService.getCpuById(cpuId);
-        if (product == null) {
+    public String getProductDetail(@PathVariable Long cpuId, Model model, HttpSession session) {
+    	// 상품 정보 로드
+        Optional<cpu> product = productService.findById(cpuId);
+        if (product.isEmpty()) {
         	model.addAttribute("error", "해당 제품을 찾을 수 없습니다.");
             return "error"; // error.html 템플릿
         }
+        cpu cpuItem = product.get();
         // 가격 포맷팅 설정
-        product.setFormattedPrice(String.format("%,d원", product.getPrice()));
+        cpuItem.setFormattedPrice(String.format("%,d원", cpuItem.getPrice()));
         
-        model.addAttribute("product", product);
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
+        
+        model.addAttribute("product", cpuItem);
         return "product/detail/cpu-details"; // templates/product/detail/cpu-details.html
     }
 }

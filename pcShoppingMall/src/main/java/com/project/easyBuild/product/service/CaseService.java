@@ -1,5 +1,6 @@
 package com.project.easyBuild.product.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.easyBuild.product.model.Case;
@@ -9,11 +10,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
+import java.util.Optional;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Service
 public class CaseService {
+	@Autowired
 	private final CaseRepository caseRepository;
 	
 	// 생성자를 직접 작성
@@ -98,9 +101,7 @@ public class CaseService {
         return cases;
                
     }
-    public Case getCaseById(Long caseId) {
-    	Case result = caseRepository.findById(caseId).orElse(null);
-        System.out.println("Loaded CASE by ID " + caseId + ": " + result); // 디버깅 로그
-        return result;
+    public Optional<Case> findById(Long id) {
+        return caseRepository.findById(id);
     }
 }

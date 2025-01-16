@@ -1,7 +1,10 @@
 package com.project.easyBuild.product.controller;
 
+import com.project.easyBuild.member.dto.MemberDto;
 import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.service.CaseService;
+
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -30,7 +34,11 @@ public class CaseController {
 
     // 1) 상품 목록을 반환하는 메서드
     @GetMapping("/caseproducts")
-    public String showCaseProducts(Model model) {
+    public String showCaseProducts(Model model, HttpSession session) {
+    	MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
+        
     	List<Case> cases = caseService.getAllCases(); // 5개 데이터
         
     	//가격 포맷팅
@@ -62,16 +70,22 @@ public class CaseController {
     }
     // 제품 상세페이지 처리
     @GetMapping("/caseproducts/{caseId}")
-    public String getCaseDetail(@PathVariable Long caseId, Model model) {
-    	Case Case = caseService.getCaseById(caseId);
-        if (Case == null) {
+    public String getCaseDetail(@PathVariable Long caseId, Model model, HttpSession session) {
+    	// 상품 정보 로드
+        Optional<Case> Case = caseService.findById(caseId);
+        if (Case.isEmpty()) {
         	model.addAttribute("error", "해당 제품을 찾을 수 없습니다.");
             return "error"; // error.html 템플릿
         }
+        Case caseItem = Case.get();
         // 가격 포맷팅 설정
-        Case.setFormattedPrice(String.format("%,d원", Case.getPrice()));
+        caseItem.setFormattedPrice(String.format("%,d원", caseItem.getPrice()));
         
-        model.addAttribute("Case", Case);
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
+        
+        model.addAttribute("Case", caseItem);
         return "product/detail/case-details"; // templates/product/detail/case-details.html
     }
 }

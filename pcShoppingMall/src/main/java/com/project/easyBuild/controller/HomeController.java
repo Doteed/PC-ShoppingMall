@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.project.easyBuild.authority.biz.MemberBoardBiz;
 import com.project.easyBuild.authority.biz.ProductBiz;
@@ -57,7 +58,15 @@ public class HomeController {
 	}
 
 	@GetMapping("/")
-	public String index() {
+	public String index(Model model) {
+        // 최신 공지사항 5개
+        List<Announcement> latestAnnouncements = announcementService.getLatestAnnouncements(5);
+        // 최신 faq 5개
+        List<Faq> latestFaqs = faqService.getLatestFaqs(5);
+
+        // 모델에 데이터를 추가
+        model.addAttribute("latestAnnouncements", latestAnnouncements);
+        model.addAttribute("latestFaqs", latestFaqs);
 		return "index";
 	}
 
@@ -104,6 +113,10 @@ public class HomeController {
         Pageable qnaPageable = PageRequest.of(page, pageSize);
         Page<Qna> qnas = qnaService.getAllQnas(qnaPageable);
         model.addAttribute("qnas", qnas);
+        
+        // review
+        List<ReviewDto> reviewLists = reviewbiz.listAll();
+        model.addAttribute("reviewLists", reviewLists);
 
 	    return "pages/authority/auth-index";
 	}
@@ -225,7 +238,16 @@ public class HomeController {
             return "redirect:/loginform";
         }
         
+        System.out.println("Loading cart for userId=" + user.getUserId());
+        
 		List<CartDto> carts = cartbiz.mylistAll(user.getUserId());
+		
+		if (carts.isEmpty()) {
+	        System.out.println("No items in the cart for userId=" + user.getUserId());
+	    } else {
+	        System.out.println("Cart items: " + carts);
+	    }
+		
 		model.addAttribute("carts", carts);
 		return "pages/mypage/my-cart";
 	}
@@ -283,8 +305,8 @@ public class HomeController {
         return "pages/authority/auth-member-detail"; // Thymeleaf 템플릿 반환
     }
 
-
-
+    
+    
     
     // 회원 탈퇴
     @DeleteMapping("/auth-member/{userId}")
@@ -340,27 +362,73 @@ public class HomeController {
 		return "pages/member/find_pw";
 	}
 	
+	@PostMapping("/find_id")
+    public String find_id(Model model, String userName, String email, MemberDto dto) {
+        try {
+            dto.setUserName(userName);
+            dto.setEmail(email);
+
+            MemberDto id = memberbiz.find_id(dto); // 서비스에서 DAO 호출
+
+            if (id == null) {
+                model.addAttribute("msg", "아이디를 찾을 수 없습니다.");
+            } else {
+                model.addAttribute("findId", id); // findId가 null이 아닐 때 객체 전달
+            }
+        } catch (Exception e) {
+            model.addAttribute("msg", "오류가 발생되었습니다.");
+            e.printStackTrace();
+        }
+        return "pages/member/findIdResult"; // Thymeleaf 템플릿을 반환
+    }
+
+	@PostMapping("/find_pw")
+	public String findPw(MemberDto dto, Model model) throws Exception {
+		System.out.println("memberPw"+dto.getUserId() + dto.getEmail());
+	    if (memberbiz.findPwCheck(dto) == 0) {
+	        model.addAttribute("msg", "아이디와 이메일을 확인해주세요");
+	        return "pages/member/find_pw";  
+	    } else {
+	        memberbiz.findPw(dto.getEmail(), dto.getUserId());
+	        model.addAttribute("member", dto.getEmail());
+	        return "redirect:/loginform";
+	    }
+	}
+	
     @GetMapping("/sign_up")
     public String sign_up() {
     	return "pages/member/sign_up";
     }
     
-    @GetMapping("/sign_up_email")
-    public String sign_up_email() {
-    	return "pages/member/sign_up_email";
-    }
-    
     @GetMapping("/membermy")
     public String membermy(Model model, @SessionAttribute(name = "dto", required = false) MemberDto dto) {
-        // 로그인된 회원 정보가 있을 경우, dto를 모델에 추가
-        if (dto != null) {
-            model.addAttribute("dto", dto);
+        // 로그인된 회원 정보가 없을 경우 loginform으로 리다이렉트
+        if (dto == null) {
+            return "redirect:/loginform";
         }
-        
+
+        // 로그인된 회원 정보가 있을 경우, dto를 모델에 추가
+        model.addAttribute("dto", dto);
         return "pages/member/membermy";
     }
 
-    
+    @GetMapping("delete_member")
+    public String delete_member(String userId, RedirectAttributes redirectAttributes) {
+        try {
+            int res = memberbiz.delete(userId);
+            if (res > 0) {
+                redirectAttributes.addFlashAttribute("message", "회원 탈퇴가 성공적으로 처리되었습니다.");
+                return "redirect:/member/logout";
+            } else {
+                redirectAttributes.addFlashAttribute("error", "해당 회원 정보를 찾을 수 없습니다.");
+                return "pages/member/membermy";
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "회원 탈퇴 처리 중 오류가 발생했습니다.");
+            return "pages/member/membermy";
+        }
+        
+    }
     
     @GetMapping("/my/mydetail")
     public String mydetail(Model model, String userId) {
@@ -387,7 +455,7 @@ public class HomeController {
     }
 
     
-    @GetMapping("/my/member/updateform")
+    @PostMapping("/my/member/updateform")
     public String updateform(String userName,String password, String phone,String userId) {
     	MemberDto dto = new MemberDto();
     	dto.setUserName(userName);
@@ -396,9 +464,9 @@ public class HomeController {
     	dto.setUserId(userId);
     	int res = memberbiz.update(dto);
     	if(res>0) {
-    		return "redirect:/my/mydetail";
+    		return "redirect:/my/mydetail?userId=" + dto.getUserId();
     	}else {
-    		return "redirect:/member/update";
+    		return "redirect:/my/member/update?userId=" + userId;
     	}
     }
 }

@@ -97,7 +97,7 @@
 		                           .map(cb => cb.value);
 		    formData.set('categoryIds', JSON.stringify(categoryIds));
 
-		    fetch('/api/product/auth-product-insert', {
+		    fetch('/product/auth-product-insert', {
 		        method: 'POST',
 		        body: formData
 		    })
@@ -119,7 +119,7 @@
 		    formData.append('file', file);
 		    formData.append('productId', productId);
 
-		    fetch('/api/product/upload-image', {
+		    fetch('/product/upload-image', {
 		        method: 'POST',
 		        body: formData
 		    })
@@ -135,7 +135,7 @@
 <body>
 	<div layout:fragment="content" class="d-flex flex-column gap-3 w-100">
 		<h5>상품 등록</h5>			
-		<form action="/api/product/auth-product-insert" method="post" id="productForm" enctype="multipart/form-data">
+		<form action="/product/auth-product-insert" method="post" id="productForm" enctype="multipart/form-data">
 		    <input type="hidden" id="userId" name="userId" th:value="${userId}">
 		    <input type="hidden" id="authId" name="authId" th:value="${authId}">
 		    

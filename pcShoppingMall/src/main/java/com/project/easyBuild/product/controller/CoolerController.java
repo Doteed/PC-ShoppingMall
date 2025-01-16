@@ -1,7 +1,11 @@
 package com.project.easyBuild.product.controller;
 
+import com.project.easyBuild.member.dto.MemberDto;
+import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.cooler;
 import com.project.easyBuild.product.service.CoolerService;
+
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -31,7 +36,10 @@ public class CoolerController {
 
     // 1) 상품 목록을 반환하는 메서드
     @GetMapping("/coolerproducts")
-    public String showCoolerProducts(Model model) {
+    public String showCoolerProducts(Model model, HttpSession session) {
+    	MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
     	List<cooler> coolers = coolerService.getAllCoolers(); // 5개 데이터
         
     	//가격 포맷팅
@@ -61,16 +69,21 @@ public class CoolerController {
     }
     // 제품 상세페이지 처리
     @GetMapping("/coolerproducts/{coolerId}")
-    public String getCoolerDetail(@PathVariable Long coolerId, Model model) {
-        cooler cooler = coolerService.getCoolerById(coolerId);
-        if (cooler == null) {
+    public String getCoolerDetail(@PathVariable Long coolerId, Model model, HttpSession session) {
+    	// 상품 정보 로드
+        Optional<cooler> cooler = coolerService.findById(coolerId);
+        if (cooler.isEmpty()) {
         	model.addAttribute("error", "해당 제품을 찾을 수 없습니다.");
             return "error"; // error.html 템플릿
         }
+        cooler coolerItem = cooler.get();
         // 가격 포맷팅 설정
-        cooler.setFormattedPrice(String.format("%,d원", cooler.getPrice()));
-        
-        model.addAttribute("cooler", cooler);
+        coolerItem.setFormattedPrice(String.format("%,d원", coolerItem.getPrice()));
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
+    	
+        model.addAttribute("cooler", coolerItem);
         return "product/detail/cooler-details"; // templates/product/detail/cooler-details.html
     }
 

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,6 +19,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
+import com.project.easyBuild.authority.controller.ProductController;
 import com.project.easyBuild.authority.dto.CategoryDto;
 import com.project.easyBuild.entire.dto.OrderDto;
 import com.project.easyBuild.user.dto.OrderRequestDto;
@@ -24,6 +27,7 @@ import com.project.easyBuild.user.dto.OrderRequestDto;
 
 @Repository
 public class OrderDaoImpl implements OrderDao {
+    private final Logger logger = LoggerFactory.getLogger(ProductController.class);
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
@@ -85,7 +89,7 @@ public class OrderDaoImpl implements OrderDao {
 			throw new RuntimeException("주문/배송 조회 중 오류가 발생했습니다.");
 		}
 	}
-
+	
 	// 배송 정보 업데이트(사용자)
 	@Override
 	public int update(OrderDto dto, String userId) {
@@ -263,24 +267,59 @@ public class OrderDaoImpl implements OrderDao {
 	    return result;
 	}
 	
-	public int insert (OrderDto dto) {
-		String sql = " INSERT INTO ORDER_TABLE ot VALUES (orderId, deliveryId, userId, productId, totalPrice,"
-				+ "paymentMethod, orderDate, productName, deliveryStatus, addressee, address, phone) ";
-		return jdbcTemplate.update(sql, 
-				dto.getOrderId(),
-				dto.getDeliveryId(),
-				dto.getUserId(),
-				dto.getAuthId(),
-				dto.getProductId(),
-				dto.getTotalPrice(),
-				dto.getPaymentMethod(),
-				dto.getOrderDate(),
-				dto.getProductName(),
-				dto.getDeliveryStatus(),
-				dto.getAddressee(),
-				dto.getAddress(),
-				dto.getPhone()				
-				);
+	//관리자 주문 수정
+	@Override
+	public int updateOrder(OrderDto dto, String userId) {
+	    logger.info("updateOrder 메서드 시작: OrderId={}, UserId={}", dto.getOrderId(), userId);
+	    
+	    // ORDER_TABLE 업데이트
+	    String sql1 = "UPDATE ORDER_TABLE ot SET ot.TOTAL_PRICE = ?, ot.PAYMENT_METHOD = ? WHERE ot.ORDER_ID = ?";
+	    int result1 = jdbcTemplate.update(sql1, dto.getTotalPrice(), dto.getPaymentMethod(), dto.getOrderId());
+
+	    // DELIVERY 테이블 업데이트
+	    String sql2 = "UPDATE DELIVERY d SET d.ADDRESSEE = ?, d.ADDRESS = ?, d.PHONE = ?, d.DELIVERY_STATUS = ? WHERE d.DELIVERY_ID = (SELECT DELIVERY_ID FROM ORDER_TABLE WHERE ORDER_ID = ?)";
+	    int result2 = jdbcTemplate.update(sql2, dto.getAddressee(), dto.getAddress(), dto.getPhone(), dto.getDeliveryStatus(), dto.getOrderId());
+  
+	    int finalResult = (result1 > 0 && result2 > 0) ? 1 : 0;
+	    logger.info("updateOrder 메서드 종료: 최종 결과={}", finalResult);
+	    return finalResult;
+	}
+	
+	//월별 매출
+	public List<OrderDto> getMonthlySales(int year) {
+	    String sql ="SELECT EXTRACT(MONTH FROM ot.order_date) as month, "
+	    			+ "SUM(CASE WHEN d.delivery_status != '취소' THEN ot.total_price ELSE 0 END) as total_sales, " 
+	    			+ "SUM(CASE WHEN d.delivery_status = '취소' THEN ot.total_price ELSE 0 END) as cancelled_sales " 
+	    			+ "FROM order_table ot " 
+	    			+ "JOIN delivery d ON ot.delivery_id = d.delivery_id " 
+	    			+ "WHERE EXTRACT(YEAR FROM ot.order_date) = ? " 
+	    			+ "GROUP BY EXTRACT(MONTH FROM ot.order_date) ORDER BY month";
+
+	    return jdbcTemplate.query(sql, new Object[]{year}, (rs, rowNum) -> {
+	        OrderDto dto = new OrderDto();
+	        dto.setMonth(rs.getInt("month"));
+	        dto.setTotalPrice(rs.getInt("total_sales"));
+	        dto.setCancelledSales(rs.getInt("cancelled_sales"));
+	        return dto;
+	    });
+	}
+
+	//관리자 리스트 디테일
+	@Override
+	public OrderDto authListOne(int orderId) {
+	    String sql = "SELECT ot.*, p.P_NAME, d.DELIVERY_STATUS, d.ADDRESSEE, d.ADDRESS, d.PHONE"
+	        + " FROM ORDER_TABLE ot "
+	        + " JOIN PRODUCT p ON ot.PRODUCT_ID = p.PRODUCT_ID "
+	        + " JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID "
+	        + " WHERE ot.ORDER_ID = ?";
+	    try {
+	        return jdbcTemplate.queryForObject(sql, orderRowMapper, orderId);
+	    } catch (EmptyResultDataAccessException e) {
+	        return null;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw new RuntimeException("주문/배송 조회 중 오류가 발생했습니다.");
+	    }
 	}
 
 }

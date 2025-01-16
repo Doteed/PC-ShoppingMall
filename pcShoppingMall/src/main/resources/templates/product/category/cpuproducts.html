@@ -1,42 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>상품 목록</title>
+    <title layout:fragment="title">CPU : Build-Easy</title>
     <link rel="stylesheet" href="/css/product/productCategory.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-	
-	<h1>CPU</h1>
+<body th:attr="data-is-logged-in=${isLoggedIn}">
+	<div layout:fragment="content" th:with="pageType='cpu'">
+	<h2 style="text-align: left;">CPU</h2>
     <!-- 필터 UI -->
     <form id="filter-form">
     <!-- 제조사 -->
     <div>
-        <h3>제조사</h3>
-        <label><input type="checkbox" name="manufacturer" value="인텔"> 인텔</label><br>
-        <label><input type="checkbox" name="manufacturer" value="AMD"> AMD</label>
+        <h4>제조사</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="manufacturer" value="인텔"> 인텔</label>
+        	<label><input type="checkbox" name="manufacturer" value="AMD"> AMD</label>
+        </div>
     </div>
 
     <!-- 인텔 CPU 종류 -->
     <div>
-        <h3>인텔 CPU 종류</h3>
-        <label><input type="checkbox" name="intelCpu" value="울트라 9"> 울트라 9</label><br>
-        <label><input type="checkbox" name="intelCpu" value="코어 i7"> 코어 i7</label>
+        <h4>인텔 CPU 종류</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="intelCpu" value="울트라 9"> 울트라 9</label>
+        	<label><input type="checkbox" name="intelCpu" value="코어 i7"> 코어 i7</label>
+        </div>
     </div>
 
     <!-- AMD CPU 종류 -->
     <div>
-        <h3>AMD CPU 종류</h3>
-        <label><input type="checkbox" name="amdCpu" value="라이젠7"> 라이젠7</label><br>
-        <label><input type="checkbox" name="amdCpu" value="라이젠9"> 라이젠9</label>
+        <h4>AMD CPU 종류</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="amdCpu" value="라이젠7"> 라이젠7</label>
+        	<label><input type="checkbox" name="amdCpu" value="라이젠9"> 라이젠9</label>
+        </div>
     </div>
 
     <!-- 소켓 구분 -->
     <div>
-        <h3>소켓 구분</h3>
-        <label><input type="checkbox" name="socket" value="인텔(소켓1851)"> 인텔(소켓1851)</label><br>
-        <label><input type="checkbox" name="socket" value="인텔(소켓1700)"> 인텔(소켓1700)</label>
+        <h4>소켓 구분</h4>
+        <div class="checkbox-container">
+        	<label><input type="checkbox" name="socket" value="인텔(소켓1851)"> 인텔(소켓1851)</label>
+        	<label><input type="checkbox" name="socket" value="인텔(소켓1700)"> 인텔(소켓1700)</label>
+        </div>
     </div>
 	</form>
 	<!-- 세개의 탭 -->
@@ -55,7 +66,7 @@
          				alt="Product Image" style="width:120px; height:120px;">
 			</div>
             <div class="product-info">
-            	<a href="@{/cpuproducts/${cpu.cpuId}}">
+            	<a th:href="@{/cpuproducts/${cpu.cpuId}}">
     				<h2 class="product-name" th:text="${cpu.productName}"></h2>
     			</a>
     			<p th:text="'제조사: ' + ${cpu.manufacturer} + ', CPU 종류: ' + ${cpu.productName} + ', 소켓: ' + ${cpu.socket} + ', 코어: ' + ${cpu.coreTypes} + ', 메모리: ' + ${cpu.supportedMemoryStandard}"></p>
@@ -64,12 +75,13 @@
 			</div>
             <div class="product-price">
                 <p th:text="${cpu.formattedPrice}"></p>
-                <form action="/cart/add" method="post">
+                <form action="/my/cart" method="post">
                     <input type="hidden" name="cpuId" th:value="${cpu.cpuId}">
-                    <button type="submit">장바구니</button>
+                    <button type="submit" class="add-to-cart-btn" th:attr="data-case-id=${cpu.cpuId}">장바구니</button>
                 </form>
             </div>
         </div>
+    </div>
     </div>
     <script src="/js/product/cpuCategoryFilter.js"></script>
 </body>

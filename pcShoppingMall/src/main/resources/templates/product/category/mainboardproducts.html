@@ -5,11 +5,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title layout:fragment="title">mainboard products</title>
+    <title layout:fragment="title">메인보드 : Build-Easy</title>
     <link rel="stylesheet" href="/css/product/productCategory.css">
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
+<body th:attr="data-is-logged-in=${isLoggedIn}">
 	<div layout:fragment="content" th:with="pageType='mainboard'">
 	<h2 style="text-align: left;">메인보드</h2>
     <!-- 필터 UI -->
@@ -110,9 +110,9 @@
 			</div>
             <div class="product-price">
                 <p th:text="${mainboard.formattedPrice}"></p>
-                <form action="/cart/add" method="post">
+                <form action="/my/cart" method="post">
                     <input type="hidden" name="mainboardId" th:value="${mainboard.mainboardId}">
-                    <button type="submit">장바구니</button>
+                    <button type="submit" class="add-to-cart-btn" th:attr="data-case-id=${mainboard.mainboardId}">장바구니</button>
                 </form>
             </div>
         </div>
