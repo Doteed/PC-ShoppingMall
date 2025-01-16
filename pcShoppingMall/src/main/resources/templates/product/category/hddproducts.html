@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="/css/product/productCategory.css">
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-	<div layout:fragment="content" th:with="pageType='hdd'" th:attr="data-is-logged-in=${isLoggedIn}">
+<body th:attr="data-is-logged-in=${isLoggedIn}">
+	<div layout:fragment="content" th:with="pageType='hdd'">
 	<h2 style="text-align: left;">HDD</h2>
     <!-- 필터 UI -->
     <form id="filter-form">

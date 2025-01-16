@@ -1,5 +1,6 @@
 package com.project.easyBuild.product.controller;
 
+import com.project.easyBuild.member.dto.MemberDto;
 import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.cooler;
 import com.project.easyBuild.product.service.CoolerService;
@@ -36,9 +37,9 @@ public class CoolerController {
     // 1) 상품 목록을 반환하는 메서드
     @GetMapping("/coolerproducts")
     public String showCoolerProducts(Model model, HttpSession session) {
-    	// 로그인 상태 확인
-        Boolean isLoggedIn = session.getAttribute("user") != null;
-        model.addAttribute("isLoggedIn", isLoggedIn);
+    	MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
     	List<cooler> coolers = coolerService.getAllCoolers(); // 5개 데이터
         
     	//가격 포맷팅
@@ -78,7 +79,10 @@ public class CoolerController {
         cooler coolerItem = cooler.get();
         // 가격 포맷팅 설정
         coolerItem.setFormattedPrice(String.format("%,d원", coolerItem.getPrice()));
-        
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
+    	
         model.addAttribute("cooler", coolerItem);
         return "product/detail/cooler-details"; // templates/product/detail/cooler-details.html
     }
