@@ -25,6 +25,16 @@ document.addEventListener('DOMContentLoaded', function() {
         totalPriceText.textContent = "총 금액: " + totalPrice + " 원";
     }
 
+    // 전체 선택 체크박스 클릭 시 모든 항목 선택/해제
+    const selectAllCheckbox = document.getElementById("selectAll");
+    selectAllCheckbox.addEventListener("change", function() {
+        const checkboxes = document.querySelectorAll(".item-checkbox");
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+        updateTotalPrice();
+    });
+    
     // 체크박스 클릭 시 즉시 총 금액 계산
     document.querySelectorAll(".item-checkbox").forEach(checkbox => {
         checkbox.addEventListener("change", updateTotalPrice);

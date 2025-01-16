@@ -34,8 +34,10 @@ public class OrderDto {
     private int cancelledSales;		//취소된 매출 저장할 필드
         
     //insert
-    public OrderDto(String paymentMethod, String addressee, String address, String phone) {
-        super();
+    public OrderDto(String userId, int authId, int productId, String paymentMethod, String addressee, String address, String phone) {
+        this.userId = userId;
+        this.authId = authId;
+        this.productId = productId;
         this.paymentMethod = paymentMethod;
         this.addressee = addressee;
         this.address = address;

@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.project.easyBuild.user.dto.OrderRequestDto;
 import com.project.easyBuild.user.dto.PaymentRequest;
 
 import java.util.Base64;
@@ -40,7 +41,10 @@ public class PaymentService {
         requestBody.put("orderName", request.getOrderName());
         requestBody.put("successUrl", request.getSuccessUrl());
         requestBody.put("failUrl", request.getFailUrl());
-
+        //requestBody.put("orderRequestDto", request.getOrderRequestDto());
+        
+        //OrderRequestDto orderRequestDto = request.getOrderRequestDto();
+        
         //httpentity 설정
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
@@ -70,19 +74,24 @@ public class PaymentService {
     public void confirmPayment(Map<String, String> paymentData) {
         String paymentKey = paymentData.get("paymentKey");
         String orderId = paymentData.get("orderId");
-
+        double amount = Double.parseDouble(paymentData.get("amount"));
+        
+        System.out.println(paymentKey);
+        System.out.println(orderId);
+        System.out.println(amount);
         //httpheaders 설정
         String authorizationValue = "Basic " + Base64.getEncoder().encodeToString((SECRET_KEY + ":").getBytes());
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", authorizationValue);
 
         //toss api 결제 확인 url
-        String confirmationUrl = String.format("%s/v1/payments/confirm", TOSS_API_URL);
+        String confirmationUrl = "https://api.tosspayments.com/v1/payments/confirm";
 
         JSONObject requestBody = new JSONObject();
         requestBody.put("paymentKey", paymentKey);
         requestBody.put("orderId", orderId);
-
+        requestBody.put("amount", amount);
+        
         //httpentity 설정
         HttpEntity<String> entity = new HttpEntity<>(requestBody.toString(), headers);
 
@@ -95,7 +104,8 @@ public class PaymentService {
                 JSONObject responseBody = new JSONObject(response.getBody());
                 String paymentStatus = responseBody.getString("status");
 
-                if ("COMPLETED".equals(paymentStatus)) {
+                System.out.println(paymentStatus);
+                if ("DONE".equals(paymentStatus)) {
                     System.out.println("결제 성공: " + responseBody.getString("orderId"));
                 } else {
                     System.out.println("결제 실패: " + responseBody.getString("orderId"));

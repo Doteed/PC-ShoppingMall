@@ -15,7 +15,11 @@ public interface OrderDao {
 	public int cancle(int orderId, String userId, int authId);
 	public Map<String, Integer> count(String userId);
 	public int insertFromCart(OrderRequestDto dto);
+
+	public int insertFromProduct(OrderRequestDto dto);
+
 	public int updateOrder(OrderDto dto, String userId);
 	public List<OrderDto> getMonthlySales(int year);
 	public OrderDto authListOne(int orderId);
+
 }
