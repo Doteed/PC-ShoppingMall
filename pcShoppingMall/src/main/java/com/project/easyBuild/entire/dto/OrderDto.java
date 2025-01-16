@@ -31,8 +31,10 @@ public class OrderDto {
     private String phone;			//전화번호(delivery table)
     
     //insert
-    public OrderDto(String paymentMethod, String addressee, String address, String phone) {
-        super();
+    public OrderDto(String userId, int authId, int productId, String paymentMethod, String addressee, String address, String phone) {
+        this.userId = userId;
+        this.authId = authId;
+        this.productId = productId;
         this.paymentMethod = paymentMethod;
         this.addressee = addressee;
         this.address = address;

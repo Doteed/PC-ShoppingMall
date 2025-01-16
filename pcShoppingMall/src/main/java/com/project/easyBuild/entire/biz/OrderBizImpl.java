@@ -59,4 +59,9 @@ public class OrderBizImpl implements OrderBiz {
 	public int insertFromCart(OrderRequestDto dto) {
 		return dao.insertFromCart(dto);
 	}
+
+	@Override
+	public int insertFromProduct(OrderRequestDto dto) {
+		return dao.insertFromProduct(dto);
+	}
 }

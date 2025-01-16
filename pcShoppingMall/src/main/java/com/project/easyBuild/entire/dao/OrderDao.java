@@ -16,4 +16,5 @@ public interface OrderDao {
 	public Map<String, Integer> count(String userId);
 	public int insert(OrderDto dto);
 	public int insertFromCart(OrderRequestDto dto);
+	public int insertFromProduct(OrderRequestDto dto);
 }

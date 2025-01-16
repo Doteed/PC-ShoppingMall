@@ -16,4 +16,5 @@ public interface OrderBiz {
 	public Map<String, Integer> count(String userId);
 	public int insert(OrderDto order);
 	public int insertFromCart(OrderRequestDto dto);
+	public int insertFromProduct(OrderRequestDto dto);
 }
