@@ -238,6 +238,8 @@ public class HomeController {
         
 		List<CartDto> carts = cartbiz.mylistAll(user.getUserId());
 		
+		System.out.println("Cart items: " + carts);
+		
 		if (carts.isEmpty()) {
 	        System.out.println("No items in the cart for userId=" + user.getUserId());
 	    } else {
