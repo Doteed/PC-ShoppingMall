@@ -234,7 +234,16 @@ public class HomeController {
             return "redirect:/loginform";
         }
         
+        System.out.println("Loading cart for userId=" + user.getUserId());
+        
 		List<CartDto> carts = cartbiz.mylistAll(user.getUserId());
+		
+		if (carts.isEmpty()) {
+	        System.out.println("No items in the cart for userId=" + user.getUserId());
+	    } else {
+	        System.out.println("Cart items: " + carts);
+	    }
+		
 		model.addAttribute("carts", carts);
 		return "pages/mypage/my-cart";
 	}

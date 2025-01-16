@@ -16,6 +16,7 @@ public class CartBizImpl implements CartBiz {
 	
 	@Override
 	public List<CartDto> mylistAll(String userId) {
+		System.out.println("Fetching cart items for userId=" + userId);
 		return dao.mylistAll(userId);
 	}
 
@@ -26,6 +27,7 @@ public class CartBizImpl implements CartBiz {
 	
 	@Override
 	public int insert(int productId, int quantity, String userId) {
+		System.out.println("Inserting to cart: productId=" + productId + ", quantity=" + quantity + ", userId=" + userId);
 		return dao.insert(productId, quantity, userId);
 	}
 	
