@@ -7,16 +7,16 @@
 		</h6>
 		<ul class="p-0 text-center">
 			<li class="mt-2 text-body-emphasis">
-				<a href="order">주문 배송</a>
+				<a href="/my/order">주문 배송</a>
 			</li>
 			<li class="mt-2 text-body-emphasis">
-				<a href="review">리뷰</a>
+				<a href="/my/review">리뷰</a>
 			</li>
 			<li class="mt-2 text-body-emphasis">
-				<a href="qna">Q&A</a>
+				<a href="/my/qna">Q&A</a>
 			</li>
 			<li class="mt-2 text-body-emphasis">
-				<a th:href="@{'mydetail?userId=' + ${dto.userId}}">계정 상세</a>
+				<a th:href="@{'/my/mydetail?userId=' + ${dto.userId}}">계정 상세</a>
 			</li>
 		</ul>
 	</div>
