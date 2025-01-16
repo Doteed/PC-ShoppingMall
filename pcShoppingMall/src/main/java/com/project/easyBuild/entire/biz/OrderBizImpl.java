@@ -69,5 +69,11 @@ public class OrderBizImpl implements OrderBiz {
 	public List<OrderDto> getMonthlySales(int year)  {
         return dao.getMonthlySales(year);
     }
+	
+	//관리자 리스트 디테일
+	@Override
+	public OrderDto authListOne(int orderId)  {
+		return dao.authListOne(orderId);
+	}
 
 }

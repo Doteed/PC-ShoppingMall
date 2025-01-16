@@ -44,18 +44,24 @@ public class OrderController {
     public ResponseEntity<?> getOrderDetails(@PathVariable int orderId, HttpSession session) {
         MemberDto user = (MemberDto) session.getAttribute("dto");
         if (user == null) {
-            // 로그인하지 않은 경우 JSON 형태로 응답
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Map.of("error", "Unauthorized", "redirectUrl", "/loginform"));
         }
 
         try {
-            OrderDto order = orderBiz.listOne(orderId, user.getUserId());
+            OrderDto order = orderBiz.authListOne(orderId);
             if (order != null) {
-                return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(order);
+                // 주문의 userId와 세션의 userId를 비교
+                if (order.getUserId().equals(user.getUserId()) || user.getAuthId() == 2) { // authId 2는 관리자로 가정
+                    return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(order);
+                } else {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(Map.of("error", "Forbidden", "message", "해당 주문에 대한 접근 권한이 없습니다."));
+                }
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -66,6 +72,7 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
 
     @PostMapping("/update")
     @ResponseBody
