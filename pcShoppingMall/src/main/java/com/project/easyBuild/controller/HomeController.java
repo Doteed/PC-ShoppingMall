@@ -113,6 +113,10 @@ public class HomeController {
         Pageable qnaPageable = PageRequest.of(page, pageSize);
         Page<Qna> qnas = qnaService.getAllQnas(qnaPageable);
         model.addAttribute("qnas", qnas);
+        
+        // review
+        List<ReviewDto> reviewLists = reviewbiz.listAll();
+        model.addAttribute("reviewLists", reviewLists);
 
 	    return "pages/authority/auth-index";
 	}
