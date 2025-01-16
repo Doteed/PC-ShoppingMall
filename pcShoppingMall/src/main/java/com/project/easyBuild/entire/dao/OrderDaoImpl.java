@@ -89,7 +89,7 @@ public class OrderDaoImpl implements OrderDao {
 			throw new RuntimeException("주문/배송 조회 중 오류가 발생했습니다.");
 		}
 	}
-
+	
 	// 배송 정보 업데이트(사용자)
 	@Override
 	public int update(OrderDto dto, String userId) {
@@ -252,5 +252,22 @@ public class OrderDaoImpl implements OrderDao {
 	    });
 	}
 
+	//관리자 리스트 디테일
+	@Override
+	public OrderDto authListOne(int orderId) {
+	    String sql = "SELECT ot.*, p.P_NAME, d.DELIVERY_STATUS, d.ADDRESSEE, d.ADDRESS, d.PHONE"
+	        + " FROM ORDER_TABLE ot "
+	        + " JOIN PRODUCT p ON ot.PRODUCT_ID = p.PRODUCT_ID "
+	        + " JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID "
+	        + " WHERE ot.ORDER_ID = ?";
+	    try {
+	        return jdbcTemplate.queryForObject(sql, orderRowMapper, orderId);
+	    } catch (EmptyResultDataAccessException e) {
+	        return null;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw new RuntimeException("주문/배송 조회 중 오류가 발생했습니다.");
+	    }
+	}
 
 }

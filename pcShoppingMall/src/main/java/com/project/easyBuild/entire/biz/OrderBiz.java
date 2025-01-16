@@ -17,4 +17,5 @@ public interface OrderBiz {
 	public int insertFromCart(OrderRequestDto dto);
 	public int updateOrder(OrderDto dto, String userId);
 	public List<OrderDto> getMonthlySales(int year);
+	public OrderDto authListOne(int orderId);
 }

@@ -136,8 +136,8 @@
             new daum.Postcode({
                 oncomplete: function(data) {
                     var addr = data.address; // 기본 주소
-                    document.getElementById("addressee").value = addr;
-                    document.getElementById("address").focus(); // 상세주소 입력 필드로 포커스 이동
+                    document.getElementById("address").value = addr;
+                    //document.getElementById("address").focus(); // 상세주소 입력 필드로 포커스 이동
                 }
             }).open();
         }
@@ -221,14 +221,14 @@
 		                    </div>
 		                    <div class="row">
 		                        <div class="col-md-6 mb-3">
-		                            <label for="addressee">주소
+		                            <label for="address">주소
 		                                <button type="button" class="btn btn-primary" style="margin-bottom: 5px;padding: 1px 5px;height: 20px;line-height: 10px;" onclick="execDaumPostcode()">주소 검색</button>
 		                            </label>
-		                            <input type="text" class="form-control" id="addressee" name="addressee" readonly />
+		                            <input type="text" class="form-control" id="address" name="address" readonly />
 		                        </div>
 		                        <div class="col-md-6 mb-3">
-		                            <label for="address">상세주소</label>
-		                            <input type="text" class="form-control" id="address" name="address" />
+		                            <label for="address">수령인</label>
+		                            <input type="text" class="form-control" id="addressee" name="addressee" />
 		                        </div>
 		                    </div>
 		                    <div class="row">
