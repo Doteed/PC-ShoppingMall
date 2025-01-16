@@ -1,5 +1,6 @@
 package com.project.easyBuild.product.controller;
 
+import com.project.easyBuild.member.dto.MemberDto;
 import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.hdd;
 import com.project.easyBuild.product.service.HddService;
@@ -36,9 +37,9 @@ public class HddController {
     // 1) 상품 목록을 반환하는 메서드
     @GetMapping("/hddproducts")
     public String showHddProducts(Model model, HttpSession session) {
-    	// 로그인 상태 확인
-        Boolean isLoggedIn = session.getAttribute("user") != null;
-        model.addAttribute("isLoggedIn", isLoggedIn);
+    	MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
     	List<hdd> hdds = hddService.getAllHdds(); // 5개 데이터
         
     	//가격 포맷팅
@@ -79,9 +80,9 @@ public class HddController {
         hdd hddItem = hdd.get();
         // 가격 포맷팅 설정
         hddItem.setFormattedPrice(String.format("%,d원", hddItem.getPrice()));
-        // 로그인 상태 확인
-        Boolean isLoggedIn = session.getAttribute("user") != null;
-        model.addAttribute("isLoggedIn", isLoggedIn);
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
         
         model.addAttribute("hdd", hddItem);
         return "product/detail/hdd-details"; // templates/product/detail/hdd-details.html

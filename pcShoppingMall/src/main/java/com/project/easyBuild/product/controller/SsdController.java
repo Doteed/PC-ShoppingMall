@@ -1,5 +1,6 @@
 package com.project.easyBuild.product.controller;
 
+import com.project.easyBuild.member.dto.MemberDto;
 import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.ssd;
 import com.project.easyBuild.product.service.SsdService;
@@ -36,9 +37,9 @@ public class SsdController {
     // 1) 상품 목록을 반환하는 메서드
     @GetMapping("/ssdproducts")
     public String showSsdProducts(Model model, HttpSession session) {
-    	// 로그인 상태 확인
-        Boolean isLoggedIn = session.getAttribute("user") != null;
-        model.addAttribute("isLoggedIn", isLoggedIn);
+    	MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
     	List<ssd> ssds = ssdService.getAllSsds(); // 5개 데이터
         
     	//가격 포맷팅
@@ -78,9 +79,9 @@ public class SsdController {
         ssd ssdItem = ssd.get();
         // 가격 포맷팅 설정
         ssdItem.setFormattedPrice(String.format("%,d원", ssdItem.getPrice()));
-     // 로그인 상태 확인
-        Boolean isLoggedIn = session.getAttribute("user") != null;
-        model.addAttribute("isLoggedIn", isLoggedIn);
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
         
         model.addAttribute("ssd", ssdItem);
         return "product/detail/ssd-details"; // templates/product/detail/ssd-details.html

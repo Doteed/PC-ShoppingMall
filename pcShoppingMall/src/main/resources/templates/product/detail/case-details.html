@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,7 @@
     <link rel="stylesheet" href="/css/product/productDetails.css">
     <link rel="stylesheet" href="/css/product/floatingBar.css">
 </head>
-<body>  
+<body th:attr="data-is-logged-in=${isLoggedIn}">  
     <div id="product-info-section" class="product-detail-container">
         <div class="product-image-section">
             <img id="product-image" th:src="@{'/images/product/case/' + 'case' + ${Case.caseId} + '.png'}" alt="Product Image">

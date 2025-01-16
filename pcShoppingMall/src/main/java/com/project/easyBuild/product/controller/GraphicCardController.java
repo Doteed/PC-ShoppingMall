@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.easyBuild.member.dto.MemberDto;
 import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.graphicCard;
 import com.project.easyBuild.product.service.GraphicCardService;
@@ -36,9 +37,9 @@ public class GraphicCardController {
     // 1) 상품 목록을 반환하는 메서드
     @GetMapping("/graphicCardproducts")
     public String showGraphicCardProducts(Model model, HttpSession session) {
-    	// 로그인 상태 확인
-        Boolean isLoggedIn = session.getAttribute("user") != null;
-        model.addAttribute("isLoggedIn", isLoggedIn);
+    	MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
         
     	List<graphicCard> graphicCards = graphicCardService.getAllGraphicCards(); // 5개 데이터
         
@@ -79,9 +80,9 @@ public class GraphicCardController {
         graphicCard graphicCardItem = graphicCard.get();
         // 가격 포맷팅 설정
         graphicCardItem.setFormattedPrice(String.format("%,d원", graphicCardItem.getPrice()));
-        // 로그인 상태 확인
-        Boolean isLoggedIn = session.getAttribute("user") != null;
-        model.addAttribute("isLoggedIn", isLoggedIn);
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
         
         model.addAttribute("graphicCard", graphicCardItem);
         return "product/detail/graphicCard-details"; // templates/product/detail/graphicCard-details.html

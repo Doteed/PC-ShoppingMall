@@ -1,5 +1,6 @@
 package com.project.easyBuild.product.controller;
 
+import com.project.easyBuild.member.dto.MemberDto;
 import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.memory;
 import com.project.easyBuild.product.service.MemoryService;
@@ -36,9 +37,9 @@ public class MemoryController {
     // 1) 상품 목록을 반환하는 메서드
     @GetMapping("/memoryproducts")
     public String showMemoryProducts(Model model, HttpSession session) {
-    	// 로그인 상태 확인
-        Boolean isLoggedIn = session.getAttribute("user") != null;
-        model.addAttribute("isLoggedIn", isLoggedIn);
+    	MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
     	List<memory> memorys = memoryService.getAllMemorys(); // 5개 데이터
         
     	//가격 포맷팅
@@ -79,9 +80,9 @@ public class MemoryController {
         memory memoryItem = memory.get();
         // 가격 포맷팅 설정
         memoryItem.setFormattedPrice(String.format("%,d원", memoryItem.getPrice()));
-     // 로그인 상태 확인
-        Boolean isLoggedIn = session.getAttribute("user") != null;
-        model.addAttribute("isLoggedIn", isLoggedIn);
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
         
         model.addAttribute("memory", memoryItem);
         return "product/detail/memory-details"; // templates/product/detail/memory-details.html

@@ -1,5 +1,6 @@
 package com.project.easyBuild.product.controller;
 
+import com.project.easyBuild.member.dto.MemberDto;
 import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.cpu;
 import com.project.easyBuild.product.service.CpuProductService;
@@ -34,9 +35,9 @@ public class CpuProductController {
     // 1) 상품 목록을 반환하는 메서드
     @GetMapping("/cpuproducts")
     public String showProducts(Model model, HttpSession session) {
-    	// 로그인 상태 확인
-        Boolean isLoggedIn = session.getAttribute("user") != null;
-        model.addAttribute("isLoggedIn", isLoggedIn);
+    	MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
         
     	List<cpu> cpus = productService.getAllCpus(); // 5개 데이터
         
@@ -78,9 +79,9 @@ public class CpuProductController {
         // 가격 포맷팅 설정
         cpuItem.setFormattedPrice(String.format("%,d원", cpuItem.getPrice()));
         
-        // 로그인 상태 확인
-        Boolean isLoggedIn = session.getAttribute("user") != null;
-        model.addAttribute("isLoggedIn", isLoggedIn);
+        MemberDto loggedInUser = (MemberDto) session.getAttribute("dto");
+    	Boolean isLoggedIn = loggedInUser != null; // null 여부 확인
+    	model.addAttribute("isLoggedIn", isLoggedIn);
         
         model.addAttribute("product", cpuItem);
         return "product/detail/cpu-details"; // templates/product/detail/cpu-details.html
