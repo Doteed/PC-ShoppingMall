@@ -112,4 +112,21 @@ public class OrderController {
         List<OrderDto> monthlySales = orderBiz.getMonthlySales(year);
         return ResponseEntity.ok(monthlySales);
     }
+    
+    // 주문 상태 카운팅
+ 	@GetMapping("/authCount")
+ 	public ResponseEntity<?> getCount(HttpSession session) {
+ 		MemberDto user = (MemberDto) session.getAttribute("dto");
+ 		if (user == null) {
+ 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
+ 		}
+ 		
+ 		try {
+ 			Map<String, Integer> statusCount = orderBiz.authCount();
+ 			return ResponseEntity.ok(statusCount);
+ 		} catch (Exception e) {
+ 			e.printStackTrace();
+ 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+ 		}
+ 	}
 }

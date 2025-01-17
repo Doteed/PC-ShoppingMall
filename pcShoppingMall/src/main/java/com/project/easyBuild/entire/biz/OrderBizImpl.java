@@ -83,4 +83,8 @@ public class OrderBizImpl implements OrderBiz {
 		return dao.authListOne(orderId);
 	}
 
+	//관리자 카운트
+	public Map<String, Integer> authCount() {
+		return dao.authCount();		
+	}
 }
