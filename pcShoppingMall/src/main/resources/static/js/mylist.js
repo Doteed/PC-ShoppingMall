@@ -6,35 +6,35 @@ export function formatDate(timestamp) {
 
 // 번호 포맷팅
 export function formatPhone(phone) {
-    // 숫자만 남기기
-    const digits = phone.replace(/[^0-9]/g, '');
-    let formattedPhone = '';
+	// 숫자만 남기기
+	const digits = phone.replace(/[^0-9]/g, '');
+	let formattedPhone = '';
 
-    if (digits.length <= 3) {
-        formattedPhone = digits;
-    } else if (digits.length <= 7) {
-        formattedPhone = `${digits.slice(0, 3)}-${digits.slice(3)}`;
-    } else {
-        formattedPhone = `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
-    }
+	if (digits.length <= 3) {
+		formattedPhone = digits;
+	} else if (digits.length <= 7) {
+		formattedPhone = `${digits.slice(0, 3)}-${digits.slice(3)}`;
+	} else {
+		formattedPhone = `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
+	}
 
-    return formattedPhone;
+	return formattedPhone;
 }
 
 /*export function initializeAddressSearch(inputElementId) {
-    new daum.Postcode({
-        oncomplete: function(data) {
-            const fullAddress = data.address;
-            const inputElement = document.getElementById(inputElementId);
-            if (inputElement) {
-                inputElement.value = fullAddress;
-            }
-        }
-    }).open();
+	new daum.Postcode({
+		oncomplete: function(data) {
+			const fullAddress = data.address;
+			const inputElement = document.getElementById(inputElementId);
+			if (inputElement) {
+				inputElement.value = fullAddress;
+			}
+		}
+	}).open();
 }*/
 
 document.addEventListener('DOMContentLoaded', function() {
-	console.log("aaa");
+
 	// QnA & Review
 	const entityTitles = document.querySelectorAll('.my-title');
 	entityTitles.forEach((title) => {
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						message.textContent = '취소된 주문은 수정하거나 취소할 수 없습니다.';
 						popupWindow.document.body.appendChild(message);
 					}
-					
+
 					//다음 주소 API
 					const searchAddressBtn = popupWindow.document.getElementById('searchAddressBtn');
 					searchAddressBtn.addEventListener('click', () => {
@@ -302,41 +302,4 @@ document.addEventListener('DOMContentLoaded', function() {
 //팝업 창 닫기
 function closeWindow() {
 	window.close();
-}
-
-//tab
-const key = "${param.key}";
-
-const writtenTab = document.getElementById("written-myreviews-tab");
-const writeTab = document.getElementById("write-myreviews-tab");
-const writtenContent = document.getElementById("written-myreviews");
-const writeContent = document.getElementById("write-myreviews");
-const entityDetailContainer = document.getElementById("entityDetailContainer");
-
-if (key === "write-myreviews") {
-	//작성할 탭
-	console.log("123");
-	writtenTab.classList.remove("active");
-	writeTab.classList.add("active");
-
-	writtenContent.classList.remove("show", "active");
-	writeContent.classList.add("show", "active");
-
-	writtenContent.style.display = "none";
-	writeContent.style.display = "block";
-
-	entityDetailContainer.style.setProperty('display', 'none', 'important');
-} else if (key === "written-myreviews") {
-	//작성된 탭
-
-	writeTab.classList.remove("active");
-	writtenTab.classList.add("active");
-
-	writeContent.classList.remove("show", "active");
-	writtenContent.classList.add("show", "active");
-
-	writeContent.style.display = "none";
-	writtenContent.style.display = "block";
-
-	entityDetailContainer.style.display = "block";
 }
