@@ -110,9 +110,9 @@
 			</div>
             <div class="product-price">
                 <p th:text="${mainboard.formattedPrice}"></p>
-                <form action="/my/cart" method="post">
+                <form action="/cart/insert/${productId}?quantity=${quantity}" method="post">
                     <input type="hidden" name="mainboardId" th:value="${mainboard.mainboardId}">
-                    <button type="submit" class="add-to-cart-btn" th:attr="data-case-id=${mainboard.mainboardId}">장바구니</button>
+                    <button type="button" class="add-to-cart-btn" th:attr="data-case-id=${mainboard.mainboardId}">장바구니</button>
                 </form>
             </div>
         </div>

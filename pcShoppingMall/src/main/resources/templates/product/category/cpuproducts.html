@@ -75,7 +75,7 @@
 			</div>
             <div class="product-price">
                 <p th:text="${cpu.formattedPrice}"></p>
-                <form action="/my/cart" method="post">
+                <form action="/cart/insert/${productId}?quantity=${quantity}" method="post">
                     <input type="hidden" name="cpuId" th:value="${cpu.cpuId}">
                     <button type="submit" class="add-to-cart-btn" th:attr="data-case-id=${cpu.cpuId}">장바구니</button>
                 </form>

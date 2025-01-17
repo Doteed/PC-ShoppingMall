@@ -1,7 +1,6 @@
 package com.project.easyBuild.product.controller;
 
 import com.project.easyBuild.member.dto.MemberDto;
-import com.project.easyBuild.product.model.Case;
 import com.project.easyBuild.product.model.cpu;
 import com.project.easyBuild.product.service.CpuProductService;
 
@@ -17,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 
@@ -48,6 +49,7 @@ public class CpuProductController {
         
         // 모델에 데이터 추가
         model.addAttribute("cpus", cpus);
+        model.addAttribute("pageType", "cpu"); // pageType 설정
         model.addAttribute("manufacturers", List.of("인텔", "AMD"));
         model.addAttribute("intelCpuTypes", List.of("울트라 9", "코어 i7"));
         model.addAttribute("amdCpuTypes", List.of("라이젠9", "라이젠7"));

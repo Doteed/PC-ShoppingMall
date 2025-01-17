@@ -25,8 +25,8 @@
             	<strong id="total-price" th:text="'총 합계금액: ' + ${graphicCard.formattedPrice}"></strong>
             </div>
             <div class="action-buttons">
-                <button id="add-to-cart" class="action-btn" data-product-id="${graphicCard.graphicCardId}">장바구니</button>
-                <button id="buy-now" class="action-btn" data-product-id="${graphicCard.graphicCardId}">구매하기</button>
+                <button id="add-to-cart" class="action-btn" th:attr="data-case-id=${graphicCard.graphicCardId}">장바구니</button>
+                <button id="buy-now" class="action-btn" th:attr="data-case-id=${graphicCard.graphicCardId}">구매하기</button>
             </div>
         </div>
     </div>
@@ -179,8 +179,8 @@
                 <strong id="floating-price" th:text="'가격: ' + ${graphicCard.formattedPrice}"></strong>
             </div>
             <div class="floating-buttons">
-                <button id="floating-add-to-cart" data-product-id="${graphicCard.graphicCardId}">장바구니</button>
-                <button id="floating-buy-now" data-product-id="${graphicCard.graphicCardId}">구매하기</button>
+                <button id="floating-add-to-cart" th:attr="data-case-id=${graphicCard.graphicCardId}">장바구니</button>
+                <button id="floating-buy-now" th:attr="data-case-id=${graphicCard.graphicCardId}">구매하기</button>
             </div>
         </div>
     </div>
