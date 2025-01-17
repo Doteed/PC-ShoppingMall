@@ -20,3 +20,14 @@
     padding: 30px;
     display: none;
 }
+
+#myTabContent .tab-pane {
+    display: none;
+    height: 0;
+    overflow: hidden;
+}
+
+#myTabContent .tab-pane.show {
+    display: block; /* 활성화된 탭만 보이게*/
+    height: auto;
+}
