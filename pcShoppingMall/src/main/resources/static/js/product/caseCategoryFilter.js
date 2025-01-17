@@ -86,15 +86,24 @@ document.addEventListener('DOMContentLoaded', () => {
 				const cartButtons = document.querySelectorAll('.add-to-cart-btn');
 				cartButtons.forEach(button => {
 				    button.addEventListener('click', (event) => {
+						event.preventDefault(); // 기본 폼 제출 동작 방지
+						
 				        const productId = button.getAttribute('data-case-id');
 				        const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'true';
 						const quantity = 1; // 수량을 1로 고정
+						
+						if (!productId) {
+						    console.error('Product ID is missing');
+						    return;
+						}
+									
 				        if (!isLoggedIn) {
 				            const confirmLogin = confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
 				            if (confirmLogin) {
 				                window.location.href = '/loginform';
 				            }
-				         } else {
+							return;
+				         }
 				            fetch(`/cart/insert/${productId}?quantity=${quantity}`, {
 				               method: 'POST',
 				               headers: { 'Content-Type': 'application/json' },
@@ -110,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				                   }
 				                })
 				                .catch(error => console.error('Error adding to cart:', error));
-				         }
 				    });
 				 });
 			}

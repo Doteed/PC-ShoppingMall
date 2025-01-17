@@ -101,9 +101,9 @@
 			</div>
             <div class="product-price">
                 <p th:text="${power.formattedPrice}"></p>
-                <form action="/my/cart" method="post">
+                <form action="/cart/insert/${productId}?quantity=${quantity}" method="post">
                     <input type="hidden" name="powerId" th:value="${power.powerId}">
-                    <button type="submit" class="add-to-cart-btn" th:attr="data-case-id=${power.powerId}">장바구니</button>
+                    <button type="button" class="add-to-cart-btn" th:attr="data-case-id=${power.powerId}">장바구니</button>
                 </form>
             </div>
         </div>

@@ -82,9 +82,12 @@ public class CartController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
 		}
 		System.out.println("User ID: " + user.getUserId());
+		System.out.println("Product ID: " + productId + ", Quantity: " + quantity);
 		
 		int result = cartbiz.insert(productId, quantity, user.getUserId());
-
+		
+		System.out.println("Insert result: " + result);
+		
 		Map<String, Object> response = new HashMap<>();
 		if (result > 0) {
 			response.put("success", true);

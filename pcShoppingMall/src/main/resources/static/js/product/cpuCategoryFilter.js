@@ -2,7 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabs = document.querySelectorAll('.tab-button');
     const filterForm = document.getElementById('filter-form');
     const productList = document.querySelector('.product-list');
-
+	
+	if (!filterForm || !tabs || !productList) {		
+	    console.error('필요한 DOM 요소를 찾을 수 없습니다.', { filterForm, tabs, productList });
+	    return;
+	}
     // 초기 정렬 조건
     let currentSort = 'newest';
 
@@ -29,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 필터 및 정렬 조건을 서버로 보내는 함수
     function sendFilterRequest() {
         // 폼 데이터를 가져와 JSON 객체로 변환
-        const formData = new FormData(filterForm);
+		const formData = new FormData(filterForm);
         const filterData = {};
 
         formData.forEach((value, key) => {
@@ -54,14 +58,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 return response.json();
             })
-			.then(data => updateProductList(data))
+			.then(data => {
+				console.log('Received data from server:', data);
+				updateProductList(data);
+			})
             .catch(error => console.error('Error fetching filtered products:', error));
     }
 
     // 제품 목록을 업데이트하는 함수
 	function updateProductList(products) {
 	        productList.innerHTML = products.map(cpu => `
-	            <div class="product-item">
+				<div class="product-item">
 	                <div class="product-image">
 	                    <img src="/images/product/cpu/cpu${cpu.cpuId}.png" alt="Product Image" style="width:120px; height:120px;">
 	                </div>
@@ -76,44 +83,44 @@ document.addEventListener('DOMContentLoaded', () => {
 	                    <p>${cpu.formattedPrice}</p>
 	                    <button class="add-to-cart-btn" data-case-id="${cpu.cpuId}">장바구니</button>
 	                </div>
-	            </div>
+				</div>
 	        `).join('');
 			// 장바구니 버튼 이벤트 추가
 			addCartButtonEvents();
 	    }
 		// 장바구니 버튼 이벤트 처리 함수
-					function addCartButtonEvents() {
-						const cartButtons = document.querySelectorAll('.add-to-cart-btn');
-						cartButtons.forEach(button => {
-						    button.addEventListener('click', (event) => {
-						        const productId = button.getAttribute('data-case-id');
-						        const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'true';
-								const quantity = 1; // 수량을 1로 고정
-						        if (!isLoggedIn) {
-						            const confirmLogin = confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
-						            if (confirmLogin) {
-						                window.location.href = '/loginform';
-						            }
-						         } else {
-						            fetch(`/cart/insert/${productId}?quantity=${quantity}`, {
-						               method: 'POST',
-						               headers: { 'Content-Type': 'application/json' },
-						               body: JSON.stringify({ productId, quantity }),
-						          })
-						               .then(response => {
-						                   if (!response.ok) {
-						                       throw new Error('Failed to add to cart');
-						                   }
-						                   const confirmCart = confirm("장바구니에 담겼습니다. 장바구니 페이지로 이동하시겠습니까?");
-						                   if (confirmCart) {
-						                       window.location.href = '/my/cart';
-						                   }
-						                })
-						                .catch(error => console.error('Error adding to cart:', error));
-						         }
-						    });
-						 });
-					}
+			function addCartButtonEvents() {
+				const cartButtons = document.querySelectorAll('.add-to-cart-btn');
+				cartButtons.forEach(button => {
+				    button.addEventListener('click', (event) => {
+				        const productId = button.getAttribute('data-case-id');
+				        const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'true';
+						const quantity = 1; // 수량을 1로 고정
+				        if (!isLoggedIn) {
+				            const confirmLogin = confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
+				            if (confirmLogin) {
+				                window.location.href = '/loginform';
+				            }
+				         } else {
+				            fetch(`/cart/insert/${productId}?quantity=${quantity}`, {
+				               method: 'POST',
+				               headers: { 'Content-Type': 'application/json' },
+				               body: JSON.stringify({ productId, quantity }),
+				          })
+				               .then(response => {
+				                   if (!response.ok) {
+				                       throw new Error('Failed to add to cart');
+				                   }
+				                   const confirmCart = confirm("장바구니에 담겼습니다. 장바구니 페이지로 이동하시겠습니까?");
+				                   if (confirmCart) {
+				                       window.location.href = '/my/cart';
+				                   }
+				                })
+				                .catch(error => console.error('Error adding to cart:', error));
+				         }
+				    });
+				 });
+			}
 
     // 초기 요청 실행
     sendFilterRequest();

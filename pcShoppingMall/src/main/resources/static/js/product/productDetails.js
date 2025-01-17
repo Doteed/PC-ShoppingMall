@@ -4,8 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const quantityInput = document.getElementById('quantity');
     const totalPriceElement = document.getElementById('total-price');
 	const tabs = document.querySelectorAll('.tab');
-	// 로그인 상태 확인
-	const isLoggedIn = document.body.dataset.loggedIn === "true";
+	const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'true';
 	// 장바구니 및 구매하기 버튼
 	const addToCartButton = document.getElementById('add-to-cart');
 	const buyNowButton = document.getElementById('buy-now');
@@ -47,17 +46,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	// 장바구니 버튼 실행
 		addToCartButton.addEventListener('click', () => {
-		    if (!isLoggedIn) {
+			
+			if (!isLoggedIn) {
 		        const userAction = confirm("로그인이 필요합니다. 로그인하시겠습니까?");
 		        if (userAction) {
 		            window.location.href = '/loginform';
 		        }
 		        return;
 		    }
-
-		    const productId = addToCartButton.dataset.productId; // data-product-id에서 가져오기
-		    const quantity = parseInt(quantityInput.value, 10); // 수량 가져오기
-
+			const productId = addToCartButton.getAttribute('data-case-id');
+			const quantity = parseInt(quantityInput.value, 10); // 수량 가져오기
+			
 		    fetch(`/cart/insert/${productId}?quantity=${quantity}`, {
 		        method: 'POST',
 		        headers: { 'Content-Type': 'application/json' },
@@ -85,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		        return;
 		    }
 
-		    const productId = buyNowButton.dataset.productId; // data-product-id에서 가져오기
+		    const productId = buyNowButton.getAttribute('data-case-id');
 		    const quantity = parseInt(quantityInput.value, 10); // 수량 가져오기
 
 		    fetch(`/cart/insert/${productId}?quantity=${quantity}`, {
