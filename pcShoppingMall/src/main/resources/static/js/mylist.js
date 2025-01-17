@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						const confirmCancel = confirm('정말 주문을 취소하시겠습니까?');
 						if (!confirmCancel) return;
 
-						fetch(`/order/cancle?orderId=${data.orderId}`, {
+						fetch(`/order/cancle?orderId=${data.order.orderId}`, {
 							method: 'PUT',
 							headers: {
 								'Content-Type': 'application/json',
