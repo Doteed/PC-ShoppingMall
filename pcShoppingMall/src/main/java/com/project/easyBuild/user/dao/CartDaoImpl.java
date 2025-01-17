@@ -127,4 +127,18 @@ public class CartDaoImpl implements CartDao {
 	    
 		return jdbcTemplate.update(sql.toString(), params.toArray());
 	}
+	
+    @Override
+    public int deleteAll(String userId) {
+        String sql = " DELETE FROM CART WHERE USER_ID = ? ";
+
+        return jdbcTemplate.update(sql, userId);
+    }
+
+	@Override
+	public boolean isCartNotEmpty(String userId) {
+		 String sql = "SELECT EXISTS (SELECT 1 FROM CART WHERE USER_ID = ?)";
+	     
+		 return jdbcTemplate.queryForObject(sql, new Object[]{userId}, Boolean.class);
+	}
 }
