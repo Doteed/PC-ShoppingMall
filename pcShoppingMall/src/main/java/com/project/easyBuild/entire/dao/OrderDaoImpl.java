@@ -1,6 +1,8 @@
 package com.project.easyBuild.entire.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -209,61 +211,50 @@ public class OrderDaoImpl implements OrderDao {
 	
 	@Override
 	public int insertFromCart(OrderRequestDto dto) {
-		System.out.println(dto.getCartIds());
-	    //delivery insert
-	    String deliverySql = " INSERT INTO DELIVERY " +
-	                         " VALUES (SEQ_DELIVERY.NEXTVAL, ?, ?, ?, ?)";
+	    System.out.println(dto.getCartIds());
 
-	    GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-	    jdbcTemplate.update(connection -> {
-	        PreparedStatement ps = connection.prepareStatement(deliverySql, new String[]{"DELIVERY_ID"});
-	        ps.setString(1, dto.getAddressee());
-	        ps.setString(2, dto.getAddress());
-	        ps.setString(3, dto.getPhone());
-	        ps.setString(4, dto.getPaymentMethod().equals("카드")? "결제완료" : "입금대기");
-	        return ps;
-	    }, keyHolder);
-
-	    Number deliveryId = keyHolder.getKey();
-	    System.out.println("delivery id : " + deliveryId);
-	    if (deliveryId == null) {
-	        throw new RuntimeException("배송 정보를 삽입을 실패했습니다.");
-	    }
-	    
-	    //order_table insert
-	    String orderSql = "INSERT INTO ORDER_TABLE " +
-	                      " (ORDER_ID, DELIVERY_ID, USER_ID, AUTH_ID, PRODUCT_ID, TOTAL_PRICE, PAYMENT_METHOD, ORDER_DATE) " +
-	                      " SELECT SEQ_ORDER_TABLE.NEXTVAL, :deliveryId, :userId, :authId, c.PRODUCT_ID, (c.QUANTITY * p.P_PRICE), :paymentMethod, SYSDATE " +
-	                      " FROM CART c " +
-	                      " JOIN PRODUCT p ON c.PRODUCT_ID = p.PRODUCT_ID " +
-	                      " WHERE c.CART_ID IN (:cartIds)";
-
-	    System.out.println("order sql : " + orderSql);
-	    
-	    //cartIds 바인딩
-	    MapSqlParameterSource parameters = new MapSqlParameterSource();
-	    parameters.addValue("deliveryId", deliveryId.intValue());
-	    parameters.addValue("userId", dto.getUserId());
-	    parameters.addValue("authId", dto.getAuthId());
-	    parameters.addValue("paymentMethod", dto.getPaymentMethod());
-	    parameters.addValue("cartIds", dto.getCartIds());
-
-	    NamedParameterJdbcTemplate namedJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
 	    int result = 0;
-	    try {
-	        result = namedJdbcTemplate.update(orderSql, parameters);
-	        System.out.println("SQL executed successfully, result: " + result);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        System.out.println("SQL execution failed: " + e.getMessage());
+
+	    //각 주문에 대해 별도로 delivery_id를 생성하여 삽입
+	    for (Integer cartId : dto.getCartIds()) {
+	        String deliverySql = "INSERT INTO DELIVERY (DELIVERY_ID, ADDRESSEE, ADDRESS, PHONE, DELIVERY_STATUS) " +
+	                             "VALUES (SEQ_DELIVERY.NEXTVAL, ?, ?, ?, ?)";
+
+	        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+	        jdbcTemplate.update(connection -> {
+	            PreparedStatement ps = connection.prepareStatement(deliverySql, new String[]{"DELIVERY_ID"});
+	            ps.setString(1, dto.getAddressee());
+	            ps.setString(2, dto.getAddress());
+	            ps.setString(3, dto.getPhone());
+	            ps.setString(4, dto.getPaymentMethod().equals("카드") ? "결제완료" : "입금대기");
+	            return ps;
+	        }, keyHolder);
+
+	        Integer deliveryId = keyHolder.getKey().intValue();
+
+	        //order_table insert
+	        String orderSql = "INSERT INTO ORDER_TABLE " +
+	                          " (ORDER_ID, DELIVERY_ID, USER_ID, AUTH_ID, PRODUCT_ID, TOTAL_PRICE, PAYMENT_METHOD, ORDER_DATE) " +
+	                          " SELECT SEQ_ORDER_TABLE.NEXTVAL, ?, ?, ?, c.PRODUCT_ID, (c.QUANTITY * p.P_PRICE), ?, SYSDATE " +
+	                          " FROM CART c " +
+	                          " JOIN PRODUCT p ON c.PRODUCT_ID = p.PRODUCT_ID " +
+	                          " WHERE c.CART_ID = ?";
+
+	        try (Connection connection = jdbcTemplate.getDataSource().getConnection()) {
+	            PreparedStatement orderStatement = connection.prepareStatement(orderSql);
+	            orderStatement.setInt(1, deliveryId);
+	            orderStatement.setString(2, dto.getUserId());
+	            orderStatement.setInt(3, dto.getAuthId());
+	            orderStatement.setString(4, dto.getPaymentMethod());
+	            orderStatement.setInt(5, cartId);
+
+	            result += orderStatement.executeUpdate();
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	            throw new RuntimeException("주문 삽입 실패", e);
+	        }
 	    }
 
-//	    if (result > 0) {
-//	    	//결제된 cart 데이터 삭제
-////	        String deleteCartSql = "DELETE FROM CART WHERE CART_ID IN (:cartIds)";
-////	        namedJdbcTemplate.update(deleteCartSql, parameters);
-//	    }
-	    
 	    return result;
 	}
 	
