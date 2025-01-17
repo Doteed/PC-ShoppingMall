@@ -58,9 +58,15 @@ public class CartController {
 //	}
 
 	@GetMapping("/checkCart")
-    public ResponseEntity<Boolean> checkCart(HttpSession session) {
+    public ResponseEntity<?> checkCart(HttpSession session) {
 		MemberDto user = (MemberDto) session.getAttribute("dto");
+		
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
+		}
+		
 		boolean cartNotEmpty = cartbiz.isCartNotEmpty(user.getUserId());
+		System.out.println(cartNotEmpty);
 		return ResponseEntity.ok(cartNotEmpty);
     }
 	

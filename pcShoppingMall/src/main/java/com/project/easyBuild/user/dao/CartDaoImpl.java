@@ -137,8 +137,7 @@ public class CartDaoImpl implements CartDao {
 
 	@Override
 	public boolean isCartNotEmpty(String userId) {
-		 String sql = "SELECT EXISTS (SELECT 1 FROM CART WHERE USER_ID = ?)";
-	     
-		 return jdbcTemplate.queryForObject(sql, new Object[]{userId}, Boolean.class);
+		String sql = "SELECT CASE WHEN EXISTS (SELECT 1 FROM CART WHERE USER_ID = ?) THEN 1 ELSE 0 END AS result FROM dual";
+		return jdbcTemplate.queryForObject(sql, Boolean.class, userId);
 	}
 }
