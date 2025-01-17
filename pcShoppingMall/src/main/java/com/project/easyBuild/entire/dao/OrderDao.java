@@ -21,5 +21,6 @@ public interface OrderDao {
 	public int updateOrder(OrderDto dto, String userId);
 	public List<OrderDto> getMonthlySales(int year);
 	public OrderDto authListOne(int orderId);
+	public Map<String, Integer> authCount();
 
 }

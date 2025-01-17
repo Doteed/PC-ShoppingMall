@@ -321,5 +321,29 @@ public class OrderDaoImpl implements OrderDao {
 	        throw new RuntimeException("주문/배송 조회 중 오류가 발생했습니다.");
 	    }
 	}
+	
+	//관리자 카운트
+	@Override
+	public Map<String, Integer> authCount() {
+	    String sql = "SELECT DELIVERY_STATUS, COUNT(*) FROM ORDER_TABLE ot "
+	            + "JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID "
+	            + "GROUP BY DELIVERY_STATUS";
+
+	    // Initialize with predefined statuses
+	    List<String> predefinedStatuses = List.of("입금대기", "결제완료", "배송중", "배송완료", "취소");
+	    Map<String, Integer> result = predefinedStatuses.stream()
+	            .collect(Collectors.toMap(status -> status, status -> 0));
+
+	    jdbcTemplate.query(sql, rs -> {
+	        while (rs.next()) {
+	            String status = rs.getString("DELIVERY_STATUS");
+	            int count = rs.getInt("COUNT(*)");
+	            result.put(status, count);
+	        }
+	        return null; // Just for updating
+	    });
+
+	    return result;
+	}
 
 }
