@@ -13,7 +13,7 @@ p{margin-bottom:0;}
 .main-nav:hover .nav-col{border-bottom:1px solid #dee2e6;height: 410px;background-color:#ffffff;}
 .main-nav .nav-col .nav-main-depth{display:block;width: 100%;}
 .main-nav .nav-col:hover .nav-main-depth{font-weight:700; color: #0c43a4;}
-.main-nav .nav-col .nav-sub-depth{position:absolute;z-index:999;border-bottom:#dee2e6;padding-left:0;width:100%;height: 300px;background-color:#ffffff;}
+.main-nav .nav-col .nav-sub-depth{position:absolute;z-index:999;border-bottom:#dee2e6;padding-left:0;width:100%;height:100%;min-height:300px;background-color:#ffffff;}
 .main-nav .nav-col .nav-sub-depth .nav-sub-depth-col:hover{position:relative;color: #0c43a4;}
 .main-nav .nav-col .nav-sub-depth .nav-sub-depth-col:hover::after{content:"";position:absolute;bottom:0;width:100%;height:1px;background-color:#0c43a4;}
 .main-nav .nav-col .nav-sub-depth .nav-sub-depth-col a{width:100%;}
@@ -38,11 +38,10 @@ p{margin-bottom:0;}
 .section-box:last-child {margin-right: 0;}
 .section-box h2 {margin-bottom: 10px;border-bottom: 2px solid #333;padding-bottom: 5px;font-size: 1.5rem;}
 .section-box ul {padding: 0;list-style: none;}
-.section-box li {margin: 5px 0;}
-.section-box a {text-decoration: none;color: #007bff;}
+.section-box li { display: flex;justify-content: space-between;align-items: center;margin: 5px 0;}
+.section-box a {flex-grow: 1;text-decoration: none;color: #007bff;}
 .section-box a:hover {text-decoration: underline;}
-.section-box span {float: right;font-size: 0.9rem;color: #999;}
-.section-box span::aftoer{display:block;clear:both;}
+.section-box span {margin-left: 10px;font-size: 0.9rem;color: #999;white-space: nowrap;}
 
 /* table type A - 관리자페이지, 상품관리, 주문관리 */
 .table-type-a{width: 100%;}

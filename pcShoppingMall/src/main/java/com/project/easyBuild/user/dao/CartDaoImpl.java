@@ -26,7 +26,6 @@ public class CartDaoImpl implements CartDao {
 		cart.setUserId(rs.getString("user_id"));
 		cart.setProductId(rs.getInt("product_id"));
 		cart.setQuantity(rs.getInt("quantity"));
-		cart.setSelected(rs.getString("selected"));
 		cart.setCartDate(rs.getDate("cart_date"));
 
 		//product
@@ -75,32 +74,11 @@ public class CartDaoImpl implements CartDao {
 	    
 	    return jdbcTemplate.update(sql.toString(), params.toArray());
 	}
-	
-	@Override
-	public int update(String userId, List<Integer> cartIds, List<String> selecteds) {
-		StringBuilder sql = new StringBuilder("UPDATE CART SET SELECTED = CASE ");
-	  
-		//cartIds와 selecteds을 동적으로 추가
-	    for(int i = 0; i < cartIds.size(); i++) {
-	        sql.append("WHEN CART_ID = ? THEN ? ");
-	    }
-
-	    sql.append("ELSE SELECTED END WHERE USER_ID = ?");
-
-	    List<Object> params = new ArrayList<>();
-	    for(int i = 0; i < cartIds.size(); i++) {
-	        params.add(cartIds.get(i));
-	        params.add(selecteds.get(i));
-	    }
-	    params.add(userId);
-	    
-	    return jdbcTemplate.update(sql.toString(), params.toArray());
-	}
 
 	@Override
     public int insert(int productId, int quantity, String userId) {
         String sql = " INSERT INTO CART "
-                   + " VALUES (SEQ_CART.NEXTVAL, ?, ?, ?, SYSDATE, 'N')";
+                   + " VALUES (SEQ_CART.NEXTVAL, ?, ?, ?, SYSDATE)";
 
         return jdbcTemplate.update(sql, userId, productId, quantity);
     }
@@ -126,5 +104,18 @@ public class CartDaoImpl implements CartDao {
 	    params.add(userId);
 	    
 		return jdbcTemplate.update(sql.toString(), params.toArray());
+	}
+	
+    @Override
+    public int deleteAll(String userId) {
+        String sql = " DELETE FROM CART WHERE USER_ID = ? ";
+
+        return jdbcTemplate.update(sql, userId);
+    }
+
+	@Override
+	public boolean isCartNotEmpty(String userId) {
+		String sql = "SELECT CASE WHEN EXISTS (SELECT 1 FROM CART WHERE USER_ID = ?) THEN 1 ELSE 0 END AS result FROM dual";
+		return jdbcTemplate.queryForObject(sql, Boolean.class, userId);
 	}
 }

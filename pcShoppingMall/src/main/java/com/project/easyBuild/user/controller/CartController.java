@@ -1,6 +1,7 @@
 package com.project.easyBuild.user.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,6 @@ import com.project.easyBuild.entire.dto.OrderDto;
 import com.project.easyBuild.member.dto.MemberDto;
 import com.project.easyBuild.user.biz.CartBiz;
 import com.project.easyBuild.user.dto.CartDto;
-import com.project.easyBuild.user.dto.ReviewDto;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -34,45 +34,6 @@ public class CartController {
 	@Autowired
 	private CartBiz cartbiz;
 
-//	@PostMapping("/order")
-//	public String order(@RequestBody OrderDto orderDto, HttpSession session) {
-//	    
-//	    MemberDto user = (MemberDto) session.getAttribute("dto");
-//
-//	    if (user == null) {
-//	        return "redirect:/loginform";
-//	    }
-//
-//	    String userId = user.getUserId();
-//
-//	    List<CartDto> selectedCartItems = cartbiz.getSelectedItems(userId);
-//
-//	    // OrderDto 리스트로 변환
-//	    List<OrderDto> orders = new ArrayList<>();
-//	    for (CartDto cart : selectedCartItems) {
-//	        OrderDto order = new OrderDto(
-//	            orderDto.getPaymentMethod(),
-//	            orderDto.getAddressee(),
-//	            orderDto.getAddress(),
-//	            orderDto.getPhone()
-//	        );
-//	        order.setUserId(userId);
-//	        order.setAuthId(user.getAuthId());
-//	        order.setProductId(cart.getProductId());
-//	        order.setTotalPrice(cart.getTotalPrice());
-//	        orders.add(order);
-//	    }
-//
-//	    // 여러 개의 주문 처리
-//	    int result = orderDao.insert(orders);
-//
-//	    if (result > 0) {
-//	        return "orderSuccess"; // 주문 성공 페이지
-//	    } else {
-//	        return "orderFail"; // 주문 실패 페이지
-//	    }
-//	}
-//
 //	@PutMapping("/update")
 //	public ResponseEntity<?> update(@RequestBody ReviewDto reviewDto, HttpSession session) {
 //		MemberDto user = (MemberDto) session.getAttribute("dto");
@@ -95,19 +56,20 @@ public class CartController {
 //			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 //		}
 //	}
-//
-//	@GetMapping("/insert-editor")
-//	public ResponseEntity<Map<String, Object>> insertEditor() {
-//		Map<String, Object> response = new HashMap<>();
-//
-//		// 초기화
-//		response.put("title", "");
-//		response.put("content", "");
-//		response.put("rating", 5);
-//
-//		return ResponseEntity.ok(response);
-//	}
 
+	@GetMapping("/checkCart")
+    public ResponseEntity<?> checkCart(HttpSession session) {
+		MemberDto user = (MemberDto) session.getAttribute("dto");
+		
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
+		}
+		
+		boolean cartNotEmpty = cartbiz.isCartNotEmpty(user.getUserId());
+		System.out.println(cartNotEmpty);
+		return ResponseEntity.ok(cartNotEmpty);
+    }
+	
 	@PostMapping("/insert/{productId}")
 	public ResponseEntity<?> insert(@PathVariable("productId") int productId,
 			@RequestParam("quantity") int quantity,
@@ -171,50 +133,18 @@ public class CartController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 		}
 	}
-
-	//체크박스 업데이트
-	@PutMapping("/update/selected")
-	public ResponseEntity<?> updateSelected(
-			@RequestParam("cartIds") List<Integer> cartIds,
-	        @RequestParam("selecteds") List<String> selecteds,
-	        HttpSession session) {
-	    MemberDto user = (MemberDto) session.getAttribute("dto");
-
-	    if (user == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
-	    }
-
-	    //명시적 검증
-	    if (cartIds.size() != selecteds.size()) {
-	        Map<String, Object> response = new HashMap<>();
-	        response.put("success", false);
-	        response.put("message", "잘못된 입력입니다.");
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-	    }
-
-	    int result = cartbiz.update(user.getUserId(), cartIds, selecteds);
-
-	    Map<String, Object> response = new HashMap<>();
-	    if (result > 0) {
-	        response.put("success", true);
-	        response.put("message", "체크 박스 업데이트가 성공적으로 처리되었습니다.");
-	        return ResponseEntity.ok(response);
-	    } else {
-	        response.put("success", false);
-	        response.put("message", "체크 박스 업데이트에 실패했습니다.");
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-	    }
-	}
 	
 	// 삭제
-	@PutMapping("/delete")
-	public ResponseEntity<?> delete(@RequestParam List<Integer> cartIds, HttpSession session) {
+	@DeleteMapping("/delete")
+	public ResponseEntity<?> delete(@RequestBody Map<String, List<Integer>> requestBody, HttpSession session) {
 		MemberDto user = (MemberDto) session.getAttribute("dto");
 
 		if (user == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
 		}
 
+		List<Integer> cartIds = requestBody.get("cartIds");
+		
 		int result = cartbiz.delete(cartIds, user.getUserId());
 
 		Map<String, String> response = new HashMap<>();
@@ -225,5 +155,26 @@ public class CartController {
 			response.put("message", "선택된 항목 삭제를 실패하였습니다.");
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 		}
+	}
+	
+	// 전체 삭제
+	@DeleteMapping("/deleteAll")
+	public ResponseEntity<?> deleteAll(HttpSession session) {
+	    MemberDto user = (MemberDto) session.getAttribute("dto");
+
+	    if (user == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
+	    }
+
+	    int result = cartbiz.deleteAll(user.getUserId());
+
+	    Map<String, String> response = new HashMap<>();
+	    if (result > 0) {
+	        response.put("message", "장바구니의 모든 항목이 성공적으로 삭제되었습니다.");
+	        return ResponseEntity.ok(response);
+	    } else {
+	        response.put("message", "장바구니 항목 전체 삭제를 실패하였습니다.");
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+	    }
 	}
 }

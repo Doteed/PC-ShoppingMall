@@ -19,11 +19,6 @@ public class CartBizImpl implements CartBiz {
 		System.out.println("Fetching cart items for userId=" + userId);
 		return dao.mylistAll(userId);
 	}
-
-	@Override
-	public int delete(List<Integer> cartIds, String userId) {
-		return dao.delete(cartIds, userId);
-	}
 	
 	@Override
 	public int insert(int productId, int quantity, String userId) {
@@ -37,7 +32,17 @@ public class CartBizImpl implements CartBiz {
 	}
 
 	@Override
-	public int update(String userId, List<Integer> cartIds, List<String> selecteds) {
-		return dao.update(userId, cartIds, selecteds);
+	public int delete(List<Integer> cartIds, String userId) {
+		return dao.delete(cartIds, userId);
+	}
+	
+    @Override
+    public int deleteAll(String userId) {
+        return dao.deleteAll(userId);
+    }
+
+	@Override
+	public boolean isCartNotEmpty(String userId) {
+		return dao.isCartNotEmpty(userId);
 	}
 }

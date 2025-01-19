@@ -8,28 +8,129 @@
 <script
 	src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // 총 금액 출력
-    function updateTotalPrice() {
-        let totalPrice = 0;
-        const selectedItems = document.querySelectorAll(".item-checkbox:checked");
-        selectedItems.forEach(item => {
-            const row = item.closest("tr");
-            const price = parseFloat(row.querySelector("td:nth-child(4)").textContent.replace(/[^\d.-]/g, ""));
-            const quantity = parseInt(row.querySelector("td:nth-child(5)").textContent, 10);
-            totalPrice += price * quantity;
+    document.addEventListener("DOMContentLoaded", function () {
+        // 장바구니 전체 삭제
+        document.getElementById("deleteAll").addEventListener("click", function () {
+            isCartEmpty();
+
+            function isCartEmpty() {
+                fetch("/cart/checkCart", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then((response) => response.json())
+                    .then((cartNotEmpty) => {
+                        if (!cartNotEmpty) {
+                            alert("장바구니에 항목이 없습니다.");
+                        } else {
+                            // 카트에 항목이 있으면 삭제
+                            cartDeleteAll();
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("카트 목록 조회 중 오류 발생", error);
+                    });
+            }
+
+            function cartDeleteAll() {
+                if (confirm("정말 장바구니를 비우시겠습니까?")) {
+                    fetch("/cart/deleteAll", {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    })
+                        .then((response) => {
+                            if (response.ok) {
+                                alert("장바구니를 성공적으로 비웠습니다.");
+                                location.reload();
+                            } else {
+                                alert("오류가 발생했습니다.");
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error:", error);
+                            alert("서버와의 통신 중 문제가 발생했습니다.");
+                        });
+                }
+            }
         });
 
-        // 총 금액을 totalPriceText에 업데이트
-        const totalPriceText = document.getElementById("totalPriceText");
-        totalPriceText.textContent = "총 금액: " + totalPrice + " 원";
-    }
+        // 선택 항목 삭제
+        document.getElementById("deleteSelected").addEventListener("click", function () {
+            const selectedCheckboxes = document.querySelectorAll(".item-checkbox:checked");
 
-    // 체크박스 클릭 시 즉시 총 금액 계산
-    document.querySelectorAll(".item-checkbox").forEach(checkbox => {
-        checkbox.addEventListener("change", updateTotalPrice);
+            if (selectedCheckboxes.length === 0) {
+                alert("선택한 항목이 없습니다.");
+                return;
+            }
+
+            const cartIds = Array.from(selectedCheckboxes).map((checkbox) =>
+                checkbox.getAttribute("data-cart-id")
+            );
+
+            if (confirm("정말 해당 상품을 삭제하시겠습니까?")) {
+                fetch("/cart/delete", {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ cartIds: cartIds }),
+                })
+                    .then((response) => {
+                        if (response.ok) {
+                            alert("선택한 상품을 성공적으로 삭제했습니다.");
+                            location.reload();
+                        } else {
+                            alert("삭제 중 오류가 발생했습니다.");
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                        alert("서버와의 통신 중 문제가 발생했습니다.");
+                    });
+            }
+        });
+
+        // 총 금액 출력
+        function updateTotalPrice() {
+            let totalPrice = 0;
+            const selectedItems = document.querySelectorAll(".item-checkbox:checked");
+            selectedItems.forEach((item) => {
+                const row = item.closest("tr");
+                const price = parseFloat(
+                    row.querySelector("td:nth-child(4)").textContent.replace(/[^\d.-]/g, "")
+                );
+                const quantity = parseInt(
+                    row.querySelector("td:nth-child(5)").textContent,
+                    10
+                );
+                totalPrice += price * quantity;
+            });
+
+            // 총 금액을 totalPriceText에 업데이트
+            const totalPriceText = document.getElementById("totalPriceText");
+            totalPriceText.textContent = "총 금액: " + totalPrice + " 원";
+        }
+
+        // 전체 선택 체크박스 클릭 시 모든 항목 선택/해제
+        const selectAllCheckbox = document.getElementById("selectAll");
+        selectAllCheckbox.addEventListener("change", function () {
+            const checkboxes = document.querySelectorAll(".item-checkbox");
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+            updateTotalPrice();
+        });
+
+        // 체크박스 클릭 시 즉시 총 금액 계산
+        document.querySelectorAll(".item-checkbox").forEach((checkbox) => {
+            checkbox.addEventListener("change", updateTotalPrice);
+        });
     });
-});
+</script>
 </script>
 <script src="https://js.tosspayments.com/v1"></script>
 <script th:src="@{/js/editor.js}"></script>
@@ -74,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
 								<!-- 상품별 체크박스 -->
 								<td><input type="checkbox" class="item-checkbox"
 									th:attr="data-cart-id=${item.cartId}" /></td>
-								<td><img th:src="${item.productImageUrl}" style="width: 100px; height: auto;" />
+								<td><img th:src="${item.productImageUrl}" alt="Product Image" style="width: 100px; height: auto;"/>
 								<td th:text="${item.productName}" />
 								<td th:text="${item.productPrice}" />
 								<td th:text="${item.quantity}" />

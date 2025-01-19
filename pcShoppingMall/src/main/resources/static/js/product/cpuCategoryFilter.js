@@ -93,7 +93,19 @@ document.addEventListener('DOMContentLoaded', () => {
 				const cartButtons = document.querySelectorAll('.add-to-cart-btn');
 				cartButtons.forEach(button => {
 				    button.addEventListener('click', (event) => {
-				        const productId = button.getAttribute('data-case-id');
+						const currentUrl = window.location.href; //현재 URL http://localhost:8080/coolerproducts/3
+						const urlParts = currentUrl.split('/');
+						const categoryWithProducts = urlParts[3];  //coolerproducts 부분 추출
+						const category = categoryWithProducts.replace('products', ''); //products를 제거
+									
+						const categoryNames = ["cpu", "ssd", "cooler", "graphicCard", "hdd", "power", 'memory', "mainboard", "case"];
+									
+						// 카테고리의 번호(인덱스)를 찾기
+						const categoryIndex = categoryNames.indexOf(category);
+									
+						const partsId = button.getAttribute('data-case-id');
+						const productId = (5 * categoryIndex) + parseInt(partsId, 10);
+						
 				        const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'true';
 						const quantity = 1; // 수량을 1로 고정
 				        if (!isLoggedIn) {

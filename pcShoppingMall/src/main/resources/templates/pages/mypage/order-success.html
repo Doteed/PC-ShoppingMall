@@ -3,9 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentKey = urlParams.get("paymentKey");
+    const orderId = urlParams.get("orderId");
+    const amount = urlParams.get("amount");
+
+    if (paymentKey && orderId && amount) {
+        try {
+            //결제 검증 요청
+            const response = await fetch("/api/payment/confirm", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ paymentKey, orderId, amount })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log("결제 검증 성공:", result);
+
+                //세션 스토리지에서 orderData 가져오기
+                const orderData = JSON.parse(sessionStorage.getItem("orderData"));
+                if (orderData) {
+                    console.log("세션에서 가져온 주문 데이터:", orderData);
+
+                    //insert
+                    await fetch("/order/insertFromCart", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(orderData)
+                    });
+
+                    sessionStorage.removeItem("orderData");
+                 	
+                    //카운트 다운
+                    let seconds = 5;
+                    
+                    const countdownElement = document.getElementById("countdownMessage");
+
+                    // 카운트다운 진행
+                    const countdownInterval = setInterval(() => {
+                        countdownElement.textContent = `잠시 후 장바구니 페이지로 이동됩니다. (${seconds}초)`;
+                        seconds--;
+
+                        if (seconds < 0) {
+                            clearInterval(countdownInterval);
+                            window.location.href = "/my/cart";
+                        }
+                    }, 1000);
+                } else {
+                    alert("주문 데이터가 유효하지 않습니다.");
+                }
+            } else {
+                throw new Error("결제 검증 실패");
+            }
+        } catch (error) {
+            console.error("결제 확인 중 오류 발생:", error);
+            alert("결제 처리에 실패했습니다.");
+        }
+    } else {
+        alert("결제 데이터가 누락되었습니다.");
+    }
+});
+</script> 
 </head>
 <body>
 	<h1>결제 성공</h1>
     <p>결제가 성공적으로 처리되었습니다.</p>
+    <p id="countdownMessage"></p>
 </body>
 </html>

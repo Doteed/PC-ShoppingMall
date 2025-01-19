@@ -14,7 +14,18 @@
 <script th:src="@{/js/editor.js}"></script>
 <script type="module" th:src="@{/js/mylist.js}"></script>
 <link rel="stylesheet" th:href="@{/css/my-detail.css}">
-
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const writeTab = document.getElementById('write-myreviews-tab');
+		const entityDetailContainer = document
+				.getElementById('entityDetailContainer');
+		if (writeTab && entityDetailContainer) {
+			writeTab.addEventListener('click', function() {
+				entityDetailContainer.style.display = 'none';
+			});
+		}
+	});
+</script>
 </head>
 <body>
 	<section layout:fragment="content" class="content-box d-flex"
@@ -50,7 +61,7 @@
 			<div class="my-content" id="myTabContent">
 				<div class="tab-pane fade show active" id="write-myreviews"
 					role="tabpanel" aria-labelledby="write-myreviews-tab">
-                    <table class="table-type-a">
+					<table class="table-type-a">
 						<thead>
 							<tr>
 								<th>주문번호</th>
@@ -67,9 +78,9 @@
 								<td th:text="${item.orderId}">주문 번호</td>
 								<td th:text="${item.productName}">상품 이름</td>
 								<td>
-								<button class="btn btn-primary"
-									th:onclick="|openEditPopup('review', ${item.orderId}, 'insert')|">
-									리뷰 작성</button>
+									<button class="btn btn-primary"
+										th:onclick="|openEditPopup('review', ${item.orderId}, 'insert')|">
+										리뷰 작성</button>
 								</td>
 							</tr>
 						</tbody>
@@ -78,7 +89,7 @@
 
 				<div class="tab-pane fade" id="written-myreviews" role="tabpanel"
 					aria-labelledby="written-myreviews-tab">
-                    <table class="table-type-a">
+					<table class="table-type-a">
 						<thead>
 							<tr>
 								<th>상품명</th>

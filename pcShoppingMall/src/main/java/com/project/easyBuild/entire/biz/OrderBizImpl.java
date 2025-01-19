@@ -1,5 +1,6 @@
 package com.project.easyBuild.entire.biz;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +56,13 @@ public class OrderBizImpl implements OrderBiz {
 	public int insertFromCart(OrderRequestDto dto) {
 		return dao.insertFromCart(dto);
 	}
+
+
+	@Override
+	public int insertFromProduct(OrderRequestDto dto) {
+		return dao.insertFromProduct(dto);
+	}
+
 	
 	//관리자 주문 수정
 	@Override
@@ -62,5 +70,21 @@ public class OrderBizImpl implements OrderBiz {
 	public int updateOrder(OrderDto dto, String userId) {
 	    return dao.updateOrder(dto, userId);
 	}
+	
+	//월별 매출
+	@Override
+	public List<OrderDto> getMonthlySales(int year)  {
+        return dao.getMonthlySales(year);
+    }
+	
+	//관리자 리스트 디테일
+	@Override
+	public OrderDto authListOne(int orderId)  {
+		return dao.authListOne(orderId);
+	}
 
+	//관리자 카운트
+	public Map<String, Integer> authCount() {
+		return dao.authCount();		
+	}
 }

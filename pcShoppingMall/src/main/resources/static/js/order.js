@@ -71,6 +71,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				const paymentMethod =
 					popupWindow.document.getElementById("paymentMethod").value;
 
+				const flag = document.getElementById("placeOrderBtn").dataset.flag;
 				const orderData = {
 					cartIds: selectedCartIds,
 					paymentMethod,
@@ -89,9 +90,22 @@ document.addEventListener("DOMContentLoaded", function() {
 		try {
 			console.log("결제 요청 시작:", orderData);
 
-			// 서버에 결제 요청
-			await requestTossPayment(orderData);
-			popupWindow.close();
+			const responseData = await requestTossPayment(orderData);
+
+			if (responseData && responseData.status === "READY") {
+				window.location.href = responseData.url;
+				popupWindow.close();
+
+				window.addEventListener('load', async () => {
+					try {
+						await confirmPayment(responseData.paymentKey, responseData.orderId, orderData.amount);
+						alert("주문이 완료되었습니다.");
+					} catch (error) {
+						console.error("주문 완료 처리 중 오류 발생:", error);
+					}
+				});
+			}
+
 		} catch (error) {
 			console.error("결제 처리 중 오류 발생:", error);
 			alert("결제 처리 중 오류 발생: " + error.message);
@@ -102,7 +116,9 @@ document.addEventListener("DOMContentLoaded", function() {
 	async function requestTossPayment(orderData) {
 		try {
 			console.log("orderData:", orderData);
-
+			// orderData를 세션 스토리지에 저장
+			sessionStorage.setItem("orderData", JSON.stringify(orderData));
+			
 			// 서버로 결제 요청
 			const response = await fetch("/api/payment/request", {
 				method: "POST",
@@ -116,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function() {
 					orderName: "장바구니 결제",
 					customerName: orderData.addressee,
 					successUrl: "http://localhost:8080/payment/success",
-					failUrl: "http://localhost:8080/payment/fail"
+					failUrl: "http://localhost:8080/payment/fail",
 				}),
 			});
 
@@ -124,8 +140,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			console.log("결제 응답 데이터 :", responseData);
 
 			if (response.ok && responseData.status === "READY") {
-				window.location.href = responseData.url;
-				await insertOrderData(orderData);
+				return responseData;
 			} else {
 				console.error("결제 실패:", responseData);
 				throw new Error(responseData.message || "결제 요청 실패");
@@ -133,78 +148,6 @@ document.addEventListener("DOMContentLoaded", function() {
 		} catch (error) {
 			console.error("결제 요청 중 오류 발생:", error);
 			alert("결제 요청 중 오류가 발생했습니다.");
-			throw error;
-		}
-	}
-
-	/*
-	async function completeOrder(orderData) {
-		try {
-			const response = await fetch("order/insertFromCart", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					body: JSON.stringify(orderData),
-				}),
-			});
-
-			if (!response.ok) {
-				const errorData = await response.json();
-				throw new Error(errorData.message || "주문 저장 실패");
-			}
-
-			const responseBody = await response.json();
-			console.log("주문 저장 성공:", responseBody);
-		} catch (error) {
-			console.error("주문 저장 중 오류 발생:", error);
-			throw error;
-		}
-	}*/
-
-	async function confirmPayment(paymentKey, orderId, amount, orderData) {
-		console.log("confirmPayment 호출 전 데이터:", { paymentKey, orderId, amount, orderData });
-		try {
-			const response = await fetch("/api/payment/confirm", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ paymentKey, orderId, amount }),
-			});
-
-			if (!response.ok) {
-				throw new Error(`결제 확인 실패: ${await response.text()}`);
-			}
-
-			alert("결제가 성공적으로 처리되었습니다");
-
-			await insertOrderData(orderData);
-		} catch (error) {
-			console.error("결제 확인 중 오류:", error);
-			alert("결제 확인 중 오류가 발생했습니다");
-		}
-	}
-
-	async function insertOrderData(orderData) {
-		try {
-			const response = await fetch("/order/insertFromCart", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify(orderData)
-			});
-
-			if (!response.ok) {
-				throw new Error("주문 저장 실패");
-			}
-
-			console.log("주문 데이터 저장 성공");
-
-			// 주문 저장 후 5초 후 my/cart로 이동
-			setTimeout(() => {
-				window.location.href = "/my/cart";
-			}, 5000); // 5초 대기
-		} catch (error) {
-			console.error("주문 저장 중 오류 발생:", error);
 			throw error;
 		}
 	}

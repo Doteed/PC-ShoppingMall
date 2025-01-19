@@ -16,9 +16,9 @@ import lombok.ToString;
 public class ProductDto {
     private int productId;      // 상품 아이디
     private String userId;      // 유저 아이디
-    private int categoryId1;	// 카테고리 아이디
-    private int categoryId2;	// 카테고리 아이디
-    private int categoryId3;    // 카테고리 아이디
+    private Integer categoryId1;	// 카테고리 아이디
+    private Integer categoryId2;	// 카테고리 아이디
+    private Integer categoryId3;    // 카테고리 아이디
     private int authId;         // 권한 식별자
     private int pPrice;         // 가격
     private String pName;       // 상품명
