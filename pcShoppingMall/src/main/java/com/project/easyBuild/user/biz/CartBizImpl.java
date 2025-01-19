@@ -32,11 +32,6 @@ public class CartBizImpl implements CartBiz {
 	}
 
 	@Override
-	public int update(String userId, List<Integer> cartIds, List<String> selecteds) {
-		return dao.update(userId, cartIds, selecteds);
-	}
-	
-	@Override
 	public int delete(List<Integer> cartIds, String userId) {
 		return dao.delete(cartIds, userId);
 	}

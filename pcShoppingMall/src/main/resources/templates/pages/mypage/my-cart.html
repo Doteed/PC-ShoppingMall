@@ -175,7 +175,7 @@
 								<!-- 상품별 체크박스 -->
 								<td><input type="checkbox" class="item-checkbox"
 									th:attr="data-cart-id=${item.cartId}" /></td>
-								<td th:text="${item.productImageUrl}" />
+								<td><img th:src="${item.productImageUrl}" alt="Product Image" style="width: 100px; height: auto;"/>
 								<td th:text="${item.productName}" />
 								<td th:text="${item.productPrice}" />
 								<td th:text="${item.quantity}" />
