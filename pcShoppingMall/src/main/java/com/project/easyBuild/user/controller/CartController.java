@@ -133,40 +133,6 @@ public class CartController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 		}
 	}
-
-	//체크박스 업데이트
-	@PutMapping("/update/selected")
-	public ResponseEntity<?> updateSelected(
-			@RequestParam("cartIds") List<Integer> cartIds,
-	        @RequestParam("selecteds") List<String> selecteds,
-	        HttpSession session) {
-	    MemberDto user = (MemberDto) session.getAttribute("dto");
-
-	    if (user == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
-	    }
-
-	    //명시적 검증
-	    if (cartIds.size() != selecteds.size()) {
-	        Map<String, Object> response = new HashMap<>();
-	        response.put("success", false);
-	        response.put("message", "잘못된 입력입니다.");
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-	    }
-
-	    int result = cartbiz.update(user.getUserId(), cartIds, selecteds);
-
-	    Map<String, Object> response = new HashMap<>();
-	    if (result > 0) {
-	        response.put("success", true);
-	        response.put("message", "체크 박스 업데이트가 성공적으로 처리되었습니다.");
-	        return ResponseEntity.ok(response);
-	    } else {
-	        response.put("success", false);
-	        response.put("message", "체크 박스 업데이트에 실패했습니다.");
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-	    }
-	}
 	
 	// 삭제
 	@DeleteMapping("/delete")
