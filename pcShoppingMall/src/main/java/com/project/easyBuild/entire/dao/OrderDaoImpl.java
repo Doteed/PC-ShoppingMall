@@ -55,13 +55,14 @@ public class OrderDaoImpl implements OrderDao {
 		order.setDeliveryStatus(rs.getString("DELIVERY_STATUS"));
 		order.setAddressee(rs.getString("ADDRESSEE"));
 		order.setAddress(rs.getString("ADDRESS"));
+		order.setDetailAddress(rs.getString("DETAIL_ADDRESS"));
 		order.setPhone(rs.getString("PHONE"));
 		return order;
 	};
 
 	@Override
 	public List<OrderDto> mylistAll(String userId) {
-		String sql = "SELECT ot.*, p.P_NAME, d.DELIVERY_STATUS, d.ADDRESSEE, d.ADDRESS, d.PHONE "
+		String sql = "SELECT ot.*, p.P_NAME, d.DELIVERY_STATUS, d.ADDRESSEE, d.ADDRESS, d.DETAIL_ADDRESS, d.PHONE "
 				+ " FROM ORDER_TABLE ot " + " JOIN PRODUCT p ON ot.PRODUCT_ID = p.PRODUCT_ID "
 				+ " JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID " + " WHERE ot.USER_ID = ? "
 				+ " ORDER BY ot.ORDER_ID DESC";
@@ -70,7 +71,7 @@ public class OrderDaoImpl implements OrderDao {
 
 	@Override
 	public List<OrderDto> listAll() {
-		String sql = "SELECT ot.*, p.P_NAME, d.DELIVERY_STATUS, d.ADDRESSEE, d.ADDRESS, d.PHONE"
+		String sql = "SELECT ot.*, p.P_NAME, d.DELIVERY_STATUS, d.ADDRESSEE, d.ADDRESS, d.DETAIL_ADDRESS, d.PHONE"
 				+ " FROM ORDER_TABLE ot " + " JOIN PRODUCT p ON ot.PRODUCT_ID = p.PRODUCT_ID "
 				+ " JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID " + " ORDER BY ot.ORDER_ID DESC";
 		return jdbcTemplate.query(sql, orderRowMapper);
@@ -78,7 +79,7 @@ public class OrderDaoImpl implements OrderDao {
 
 	@Override
 	public OrderDto listOne(int orderId, String userId) {
-		String sql = "SELECT ot.*, p.P_NAME, d.DELIVERY_STATUS, d.ADDRESSEE, d.ADDRESS, d.PHONE"
+		String sql = "SELECT ot.*, p.P_NAME, d.DELIVERY_STATUS, d.ADDRESSEE, d.ADDRESS, d.DETAIL_ADDRESS, d.PHONE"
 				+ " FROM ORDER_TABLE ot " + " JOIN PRODUCT p ON ot.PRODUCT_ID = p.PRODUCT_ID "
 				+ " JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID " + " WHERE ot.ORDER_ID = ? AND ot.USER_ID = ?";
 
@@ -95,16 +96,15 @@ public class OrderDaoImpl implements OrderDao {
 	// 배송 정보 업데이트(사용자)
 	@Override
 	public int update(OrderDto dto, String userId) {
-		String sql = "UPDATE DELIVERY d SET d.ADDRESSEE = ?, d.ADDRESS = ?, d.PHONE = ? "
+		String sql = "UPDATE DELIVERY d SET d.ADDRESSEE = ?, d.ADDRESS = ?, d.DETAIL_ADDRESS, d.PHONE = ? "
 				+ " WHERE d.DELIVERY_ID = ? AND d.DELIVERY_ID IN ( "
 				+ " SELECT DELIVERY_ID FROM ORDER_TABLE ot WHERE ot.USER_ID = ?)";
 
 		System.out.println(dto);
-		return jdbcTemplate.update(sql, dto.getAddressee(), dto.getAddress(), dto.getPhone(), dto.getDeliveryId(),
+		return jdbcTemplate.update(sql, dto.getAddressee(), dto.getAddress(), dto.getDetailAddress(), dto.getPhone(), dto.getDeliveryId(),
 				userId);
 	}
 
-	// TODO: 컨트롤러에서 관리자인지 확인 필요.
 	// 배송 상태 업데이트(관리자)
 	@Override
 	public int update(int deliveryId, String deliveryStatus) {
@@ -217,16 +217,17 @@ public class OrderDaoImpl implements OrderDao {
 
 	    //각 주문에 대해 별도로 delivery_id를 생성하여 삽입
 	    for (Integer cartId : dto.getCartIds()) {
-	        String deliverySql = "INSERT INTO DELIVERY (DELIVERY_ID, ADDRESSEE, ADDRESS, PHONE, DELIVERY_STATUS) " +
-	                             "VALUES (SEQ_DELIVERY.NEXTVAL, ?, ?, ?, ?)";
+	        String deliverySql = "INSERT INTO DELIVERY (DELIVERY_ID, ADDRESSEE, ADDRESS, DETAIL_ADDRESS, PHONE, DELIVERY_STATUS) " +
+	                             "VALUES (SEQ_DELIVERY.NEXTVAL, ?, ?, ?, ?, ?)";
 
 	        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 	        jdbcTemplate.update(connection -> {
 	            PreparedStatement ps = connection.prepareStatement(deliverySql, new String[]{"DELIVERY_ID"});
 	            ps.setString(1, dto.getAddressee());
 	            ps.setString(2, dto.getAddress());
-	            ps.setString(3, dto.getPhone());
-	            ps.setString(4, dto.getPaymentMethod().equals("카드") ? "결제완료" : "입금대기");
+	            ps.setString(3, dto.getDetailAddress());
+	            ps.setString(4, dto.getPhone());
+	            ps.setString(5, dto.getPaymentMethod().equals("카드") ? "결제완료" : "입금대기");
 	            return ps;
 	        }, keyHolder);
 

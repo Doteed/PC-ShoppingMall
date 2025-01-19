@@ -41,24 +41,24 @@
 				<li class="mt-2 text-body-emphasis"><a href="qna">내 Q&A</a></li>
 			</ul>
 		</div>
-		<div>
-			<!-- 탭 -->
-			<ul class="nav nav-tabs" id="myTab" role="tablist">
-				<li class="nav-item" role="presentation">
-					<button class="nav-link active" id="write-myreviews-tab"
-						data-bs-toggle="tab" data-bs-target="#write-myreviews"
-						type="button" role="tab" aria-controls="write-myreviews"
-						aria-selected="true">작성할 리뷰</button>
-				</li>
-				<li class="nav-item" role="presentation">
-					<button class="nav-link" id="written-myreviews-tab"
-						data-bs-toggle="tab" data-bs-target="#written-myreviews"
-						type="button" role="tab" aria-controls="written-myreviews"
-						aria-selected="false">작성한 리뷰</button>
-				</li>
-			</ul>
+		<div class="my-content" id="myTabContent">
+			<div>
+				<!-- 탭 -->
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link active" id="write-myreviews-tab"
+							data-bs-toggle="tab" data-bs-target="#write-myreviews"
+							type="button" role="tab" aria-controls="write-myreviews"
+							aria-selected="true">작성할 리뷰</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="written-myreviews-tab"
+							data-bs-toggle="tab" data-bs-target="#written-myreviews"
+							type="button" role="tab" aria-controls="written-myreviews"
+							aria-selected="false">작성한 리뷰</button>
+					</li>
+				</ul>
 
-			<div class="my-content" id="myTabContent">
 				<div class="tab-pane fade show active" id="write-myreviews"
 					role="tabpanel" aria-labelledby="write-myreviews-tab">
 					<table class="table-type-a">
@@ -95,8 +95,6 @@
 								<th>상품명</th>
 								<th>평점</th>
 								<th>제목</th>
-								<th>내용</th>
-								<th>작성일</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -106,15 +104,15 @@
 
 							<tr th:each="item : ${writtenReviews}"
 								th:unless="${#lists.isEmpty(writtenReviews)}">
-								<td th:text="${item.productName}" />
+								<td th:text="${item.productName}"
+									style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" />
 								<td><span> <span
 										th:utext="${#strings.repeat('★', item.rating) + #strings.repeat('☆', 5 - item.rating)}"></span>
 								</span></td>
 								<td class="my-title"
 									th:attr="data-id=${item.reviewId}, data-type='review'"
-									style="cursor: pointer;" th:text="${item.title}" />
-								<td th:text="${item.content}" />
-								<td th:text="${item.date}" />
+									style="cursor: pointer; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+									th:text="${item.title}" />
 							</tr>
 						</tbody>
 					</table>

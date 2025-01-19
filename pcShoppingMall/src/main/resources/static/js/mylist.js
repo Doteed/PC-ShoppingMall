@@ -34,7 +34,10 @@ export function formatPhone(phone) {
 }*/
 
 document.addEventListener('DOMContentLoaded', function() {
-
+	const link = document.createElement('link');
+	link.rel = 'stylesheet';
+	link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
+	document.head.appendChild(link);
 	// QnA & Review
 	const entityTitles = document.querySelectorAll('.my-title');
 	entityTitles.forEach((title) => {
@@ -63,6 +66,12 @@ document.addEventListener('DOMContentLoaded', function() {
 							contentHTML += `
 								<td>${formatDate(data.createdDate)}</td>
 							    </tr>
+								<tr>
+									<td><strong>비밀글</strong></td>
+								    <td>
+								    ${data.isSecret === 1 ? '<i class="fas fa-lock"></i> 비밀글' : '일반글'}
+								</td>
+								</tr>
                                 <tr>
                                     <td><strong>내용</strong></td>
                                     <td>${data.content}</td>
@@ -83,6 +92,10 @@ document.addEventListener('DOMContentLoaded', function() {
 						} else if (entityType === 'review') {
 							contentHTML += `
 								<td>${formatDate(data.date)}</td>
+								</tr>
+								<tr>
+									<td><strong>상품명</strong></td>
+								    <td>${data.productName}</td>
 								</tr>
                                 <tr>
                                     <td><strong>평점</strong></td>
@@ -111,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// Order 팝업
 	let popupWindow = null;
-	const orderDetailButtons = document.querySelectorAll('.order-detail-button');
+	const orderDetailButtons = document.querySelectorAll('.detail-button');
 	orderDetailButtons.forEach((button) => {
 		button.addEventListener('click', function(event) {
 			const orderId = event.target.getAttribute('data-order-id');
@@ -192,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						               </tr>
 						               <tr>
 						                   <td>상세주소</td>
-						                   <td colspan="3"><input type="text" class="form-control" id="addressDetail" value="${data.order.addressDetail || ''}" required></td>
+						                   <td colspan="3"><input type="text" class="form-control" id="addressDetail" value="${data.order.detailAddress || ''}" required></td>
 						               </tr>
 						           </tbody>
 						       </table>

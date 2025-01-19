@@ -22,6 +22,7 @@
 </script>
 <script th:src="@{/js/editor.js}"></script>
 <script type="module" th:src="@{/js/mylist.js}"></script>
+<link rel="stylesheet" th:href="@{/css/my-detail.css}">
 </head>
 <body>
 	<section layout:fragment="content" class="content-box d-flex"
@@ -81,14 +82,15 @@
 								<td colspan="2">---- 구매내역이 없습니다. ----</td>
 							</tr>
 							<tr th:each="item : ${orders}"
-								th:unless="${#lists.isEmpty(orders)}">
+								th:unless="${#lists.isEmpty(orders)}"
+								th:classappend="${item.deliveryStatus == '취소' ? 'cancelled' : ''}">
 								<td th:text="${item.orderId}" />
 								<td th:text="${item.orderDate}" />
 								<td th:text="${item.productName}" />
 								<td th:text="${item.totalPrice}" />
 								<td th:text="${item.deliveryStatus}" />
 								<td>
-									<button class="btn btn-primary order-detail-button"
+									<button class="btn btn-primary detail-button"
 										th:attr="data-order-id=${item.orderId}">상세보기</button>
 								</td>
 							</tr>

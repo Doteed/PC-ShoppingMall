@@ -28,6 +28,7 @@ public class OrderDto {
 	private String deliveryStatus;	//주문상태(delivery table)
 	private String addressee;		//수령인(delivery table)
 	private String address;			//주소(delivery table)
+	private String detailAddress;	//상세 주소(delivery table)
     private String phone;			//전화번호(delivery table)
     
     private int month; 				//주문 월을 저장할 필드

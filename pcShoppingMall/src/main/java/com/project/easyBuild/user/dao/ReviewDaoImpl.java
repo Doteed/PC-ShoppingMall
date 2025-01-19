@@ -51,8 +51,10 @@ public class ReviewDaoImpl implements ReviewDao {
 	@Override
 	public List<ReviewDto> writeListAll(String userId) {
 		String sql = "SELECT o.ORDER_ID, p.P_NAME FROM ORDER_TABLE o "
+				+ " JOIN DELIVERY d ON o.DELIVERY_ID = d.DELIVERY_ID "
 				+ " JOIN PRODUCT p ON o.PRODUCT_ID = p.PRODUCT_ID "
 				+ " WHERE o.USER_ID = ? "
+				+ " AND d.DELIVERY_STATUS != '취소' "
 				+ " AND NOT EXISTS ( "
 				+ " 	SELECT 1 FROM REVIEW r "
 				+ "		WHERE r.ORDER_ID = o.ORDER_ID "
