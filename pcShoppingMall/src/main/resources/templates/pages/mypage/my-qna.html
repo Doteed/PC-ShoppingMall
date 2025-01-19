@@ -33,7 +33,7 @@
 		</div>
 		<div class="my-content" id="myQAContent">
 			<div>
-                    <table class="table-type-a">
+				<table class="table-type-a">
 					<thead>
 						<tr>
 							<th>문의일</th>
@@ -50,17 +50,19 @@
 							<td th:text="${item.createdDate}" />
 							<td class="my-title"
 								th:attr="data-id=${item.qnaId}, data-type='qna'"
-								style="cursor: pointer;" th:text="${item.title}" />
+								style="cursor: pointer; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+								th:text="${item.title}" />
 							<td>
-								<span th:style="'color: ' + (${item.answer == null} ? 'red' : 'green')">●</span>
-								<span th:text="${item.answer == null ? '답변대기' : '답변완료'}" />
+							<span
+								th:style="'color: ' + (${item.answer == null} ? 'red' : 'green')">●</span>
+							<span th:text="${item.answer == null ? '답변대기' : '답변완료'}" />
 							</td>
 						</tr>
 					</tbody>
 				</table>
 				<div class="write-button">
-        			<a href="/qnas/new?source=my" class="btn btn-primary">문의하기</a>
-    			</div>
+					<a href="/qnas/new?source=my" class="btn btn-primary">문의하기</a>
+				</div>
 			</div>
 
 			<div id="entityDetailContainer">

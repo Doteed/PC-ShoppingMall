@@ -23,6 +23,7 @@ public class OrderRequestDto {
     private String paymentMethod;
     private String addressee;
     private String address;
+    private String detailAddress;
     private String phone;
     private double amount;
 }

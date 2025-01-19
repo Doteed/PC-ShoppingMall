@@ -41,9 +41,18 @@ document.addEventListener("DOMContentLoaded", function() {
             <td><input type="text" id="addressee" required /></td>
           </tr>
           <tr>
-            <td>주소</td>
-            <td><input type="text" id="address" required /></td>
-          </tr>
+		  	<td>주소</td>
+		  	<td colspan="3">
+		  		<div class="input-group">
+		  			<input type="text" class="form-control" id="address" readonly required>
+		  			<button type="button" class="btn btn-secondary" id="searchAddressBtn">주소 검색</button>
+		  		</div>
+		  	</td>
+		  </tr>
+		  <tr>
+		  	<td>상세주소</td>
+		  	<td colspan="3"><input type="text" class="form-control" id="detailAddress" required></td>
+		  </tr>
           <tr>
             <td>전화번호</td>
             <td><input type="text" id="phone" required /></td>
@@ -56,6 +65,16 @@ document.addEventListener("DOMContentLoaded", function() {
         </tbody>
       </table>
     `;
+		//다음 주소 API
+		const searchAddressBtn = popupWindow.document.getElementById('searchAddressBtn');
+		searchAddressBtn.addEventListener('click', () => {
+			new daum.Postcode({
+				oncomplete: function(data) {
+					const fullAddress = data.address;
+					popupWindow.document.getElementById('address').value = fullAddress;
+				}
+			}).open();
+		});
 
 		setTimeout(() => {
 			const submitOrderBtn = popupWindow.document.getElementById(
@@ -67,6 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
 					"addressee"
 				).value;
 				const address = popupWindow.document.getElementById("address").value;
+				const detailAddress = popupWindow.document.getElementById("detailAddress").value;
 				const phone = popupWindow.document.getElementById("phone").value;
 				const paymentMethod =
 					popupWindow.document.getElementById("paymentMethod").value;
@@ -77,6 +97,7 @@ document.addEventListener("DOMContentLoaded", function() {
 					paymentMethod,
 					addressee,
 					address,
+					detailAddress,
 					phone,
 					amount: totalPrice,
 				};
@@ -118,7 +139,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			console.log("orderData:", orderData);
 			// orderData를 세션 스토리지에 저장
 			sessionStorage.setItem("orderData", JSON.stringify(orderData));
-			
+
 			// 서버로 결제 요청
 			const response = await fetch("/api/payment/request", {
 				method: "POST",

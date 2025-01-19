@@ -1,6 +1,24 @@
 @charset "UTF-8";
 
-/* mypage */
+.my-title {
+    cursor: pointer;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #007bff;
+    font-weight: bold;
+}
+
+.my-title:hover {
+    color: #0056b3;
+    text-decoration: underline; /* 제목 밑줄 추가 */
+}
+
+.cancelled {
+    text-decoration: line-through;
+}
+
 .my-content {
     position: relative;
 }
@@ -10,6 +28,7 @@
     word-break: break-all;
     white-space: normal;
 }
+
 /* 상세내용이 내 목록의 오른쪽에 뜨게 */
 #entityDetailContainer {
     position: absolute;
