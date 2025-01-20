@@ -96,7 +96,7 @@ public class OrderDaoImpl implements OrderDao {
 	// 배송 정보 업데이트(사용자)
 	@Override
 	public int update(OrderDto dto, String userId) {
-		String sql = "UPDATE DELIVERY d SET d.ADDRESSEE = ?, d.ADDRESS = ?, d.DETAIL_ADDRESS, d.PHONE = ? "
+		String sql = "UPDATE DELIVERY d SET d.ADDRESSEE = ?, d.ADDRESS = ?, d.DETAIL_ADDRESS = ?, d.PHONE = ? "
 				+ " WHERE d.DELIVERY_ID = ? AND d.DELIVERY_ID IN ( "
 				+ " SELECT DELIVERY_ID FROM ORDER_TABLE ot WHERE ot.USER_ID = ?)";
 
@@ -269,8 +269,8 @@ public class OrderDaoImpl implements OrderDao {
 	    int result1 = jdbcTemplate.update(sql1, dto.getTotalPrice(), dto.getPaymentMethod(), dto.getOrderId());
 
 	    // DELIVERY 테이블 업데이트
-	    String sql2 = "UPDATE DELIVERY d SET d.ADDRESSEE = ?, d.ADDRESS = ?, d,DETAIL_ADDRESS, d.PHONE = ?, d.DELIVERY_STATUS = ? WHERE d.DELIVERY_ID = (SELECT DELIVERY_ID FROM ORDER_TABLE WHERE ORDER_ID = ?)";
-	    int result2 = jdbcTemplate.update(sql2, dto.getAddressee(), dto.getAddress(), dto.getPhone(), dto.getDeliveryStatus(), dto.getOrderId());
+	    String sql2 = "UPDATE DELIVERY d SET d.ADDRESSEE = ?, d.ADDRESS = ?, d.DETAIL_ADDRESS = ?, d.PHONE = ?, d.DELIVERY_STATUS = ? WHERE d.DELIVERY_ID = (SELECT DELIVERY_ID FROM ORDER_TABLE WHERE ORDER_ID = ?)";
+	    int result2 = jdbcTemplate.update(sql2, dto.getAddressee(), dto.getAddress(), dto.getDetailAddress(), dto.getPhone(), dto.getDeliveryStatus(), dto.getOrderId());
   
 	    int finalResult = (result1 > 0 && result2 > 0) ? 1 : 0;
 	    logger.info("updateOrder 메서드 종료: 최종 결과={}", finalResult);
