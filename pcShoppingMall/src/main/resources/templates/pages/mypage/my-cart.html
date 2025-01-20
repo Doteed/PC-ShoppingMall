@@ -9,6 +9,63 @@
 	src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+    	document.querySelectorAll("#updateQuantityBtn").forEach(button => {
+            button.addEventListener("click", function () {
+            	const cartId = this.getAttribute('data-cart-id');  // 버튼에서 data-cart-id 값 읽기
+                const quantityInput = document.querySelector(`input[data-cart-id="${cartId}"]`)
+                const newQuantity = parseInt(quantityInput.value, 10);
+                
+                // 수량이 1 이상일 때만
+                if (newQuantity < 1) {
+                    alert("수량은 1 이상이어야 합니다.");
+                    return;
+                }
+
+                fetch(`/cart/update`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                    	cartId: cartId,
+                        quantity: newQuantity
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("서버와의 통신 중 문제가 발생했습니다.");
+                });
+            });
+        });
+
+        // +- 버튼 클릭
+        document.querySelectorAll("#decreaseQuantityBtn, #increaseQuantityBtn").forEach(button => {
+            button.addEventListener("click", function () {
+                const action = this.getAttribute("data-action");
+                const cartId = this.getAttribute("data-cart-id");
+                const quantityInput = document.querySelector(`input[data-cart-id="${cartId}"]`);
+                let currentQuantity = parseInt(quantityInput.value, 10);
+
+                if (action === "decrease" && currentQuantity > 1) {
+                    currentQuantity--;
+                } else if (action === "increase") {
+                    currentQuantity++;
+                }
+
+                // 수량이 1 미만 불가
+                quantityInput.value = currentQuantity;
+            });
+        });
+        
         // 장바구니 전체 삭제
         document.getElementById("deleteAll").addEventListener("click", function () {
             isCartEmpty();
@@ -129,8 +186,124 @@
         document.querySelectorAll(".item-checkbox").forEach((checkbox) => {
             checkbox.addEventListener("change", updateTotalPrice);
         });
+        
+        document.getElementById("checkCompatibilityBtn").addEventListener("click", async () => {
+        	  const [cpuList, mainboardList, memoryList, powerList, gpuList, caseList] = await Promise.all([
+        	    fetch('/api/cpu/list').then(res => res.json()),
+        	    fetch('/api/mainboard/list').then(res => res.json()),
+        	    fetch('/api/memory/list').then(res => res.json()),
+        	    fetch('/api/power/list').then(res => res.json()),
+        	    fetch('/api/gpu/list').then(res => res.json()),
+        	    fetch('/api/case/list').then(res => res.json())
+        	  ]);
+
+        	  console.log(cpuList, mainboardList, memoryList, powerList, gpuList, caseList);
+        	  
+        	  const popupWindow = window.open("", "compatibilityPopup", "width=800,height=800");
+
+        	  popupWindow.document.body.innerHTML = `
+        		  <h3>호환성 체크</h3>
+        		  <div id="selectionArea" style="display: flex; flex-direction: column; gap: 10px;">
+        		    <div>
+        		      <label for="cpuDropdown">CPU 선택:</label>
+        		      <select id="cpuDropdown" class="form-select"></select>
+        		    </div>
+        		    <div>
+        		      <label for="mainboardDropdown">메인보드 선택:</label>
+        		      <select id="mainboardDropdown" class="form-select"></select>
+        		    </div>
+        		    <div>
+        		      <label for="memoryDropdown">메모리 선택:</label>
+        		      <select id="memoryDropdown" class="form-select"></select>
+        		    </div>
+        		    <div>
+        		      <label for="powerDropdown">파워 선택:</label>
+        		      <select id="powerDropdown" class="form-select"></select>
+        		    </div>
+        		    <div>
+        		      <label for="gpuDropdown">그래픽카드 선택:</label>
+        		      <select id="gpuDropdown" class="form-select"></select>
+        		    </div>
+        		    <div>
+      		      	  <label for="caseDropdown">케이스 선택:</label>
+      		          <select id="caseDropdown" class="form-select"></select>
+      		    	</div>
+        		  	</div>
+        		  <button class="btn btn-success" id="checkBtn" style="margin-top: 20px;">호환성 체크</button>
+        		  <div id="resultArea" style="margin-top: 20px;"></div>
+        		`;
+
+        	  const populateDropdown = (dropdownId, dataList) => {
+        	    const dropdown = popupWindow.document.getElementById(dropdownId);
+        	    dataList.forEach(item => {
+        	      const option = document.createElement('option');
+        	      option.value = item.productId;
+        	      option.textContent = `${item.productName}`;
+        	      dropdown.appendChild(option);
+        	    });
+        	  };
+
+        	  const categoryNames = ["cpu", "ssd", "cooler", "graphicCard", "hdd", "power", "memory", "mainboard", "case"];
+        	  
+        	  //productid로 부품id을 구함
+        	  const calculatePartsId = (productId, categoryName) => {
+        		  const categoryIndex = categoryNames.indexOf(categoryName);
+        		  if (categoryIndex === -1) {
+        		    throw new Error(`Invalid category name: ${categoryName}`);
+        		  }
+        		  return productId - (5 * categoryIndex);
+        		  };
+
+        		
+        	  populateDropdown('cpuDropdown', cpuList);
+        	  populateDropdown('mainboardDropdown', mainboardList);
+        	  populateDropdown('memoryDropdown', memoryList);
+        	  populateDropdown('powerDropdown', powerList);
+        	  populateDropdown('gpuDropdown', gpuList);
+        	  populateDropdown('caseDropdown', caseList);
+
+        	  popupWindow.document.getElementById('checkBtn').addEventListener('click', async () => {
+        	    const selectedCpu = popupWindow.document.getElementById('cpuDropdown').value;
+        	    const selectedMainboard = popupWindow.document.getElementById('mainboardDropdown').value;
+        	    const selectedMemory = popupWindow.document.getElementById('memoryDropdown').value;
+        	    const selectedPower = popupWindow.document.getElementById('powerDropdown').value;
+        	    const selectedGpu = popupWindow.document.getElementById('gpuDropdown').value;
+        	    const selectedCase = popupWindow.document.getElementById('caseDropdown').value;
+
+        	    const cpuId = calculatePartsId(selectedCpu, "cpu");
+        	    const mainboardId = calculatePartsId(selectedMainboard, "mainboard");
+        	    const memoryId = calculatePartsId(selectedMemory, "memory");
+        	    const powerId = calculatePartsId(selectedPower, "power");
+        	    const gpuId = calculatePartsId(selectedGpu, "graphicCard");
+        	    const caseId = calculatePartsId(selectedCase, "case");
+        	    
+        	    console.log({ cpuId, mainboardId, memoryId, powerId, gpuId, caseId })
+        	    
+        	    const response = await fetch(`/api/compatibility/check`, {
+        	      method: 'POST',
+        	      headers: { 'Content-Type': 'application/json' },
+        	      body: JSON.stringify({
+        	        cpuId: cpuId,
+        	        mainboardId: mainboardId,
+        	        memoryId: memoryId,
+        	        powerId: powerId,
+        	        gpuId: gpuId,
+        	        caseId: caseId
+        	      })
+        	    });
+
+        	    const compatibilityResults = await response.json();
+
+        	    const resultArea = popupWindow.document.getElementById('resultArea');
+        	    resultArea.innerHTML = `
+        	      <h4>호환성 체크 결과</h4>
+        	      <ul>
+        	        ${compatibilityResults.map(result => `<li>${result.criteria}: ${result.status ? "호환됨" : "호환되지 않음"}</li>`).join('')}
+        	      </ul>
+        	    `;
+        	  });
+        	});
     });
-</script>
 </script>
 <script src="https://js.tosspayments.com/v1"></script>
 <script th:src="@{/js/editor.js}"></script>
@@ -175,7 +348,9 @@
 								<!-- 상품별 체크박스 -->
 								<td><input type="checkbox" class="item-checkbox"
 									th:attr="data-cart-id=${item.cartId}" /></td>
-								<td><img th:src="${item.productImageUrl}" alt="Product Image" style="width: 100px; height: auto;"/>
+
+								<td><img th:src="${item.productImageUrl}"
+									alt="Product Image" style="width: 100px; height: auto;" />
 								<td th:text="${item.productName}" />
 								<td th:text="${item.productPrice}" />
 								<td th:text="${item.quantity}" />
