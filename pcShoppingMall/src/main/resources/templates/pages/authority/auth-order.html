@@ -75,6 +75,7 @@
                     document.getElementById('paymentMethod').value = order.paymentMethod;
                     document.getElementById('phone').value = order.phone;
                     document.getElementById('address').value = order.address;
+                    document.getElementById('detailAddress').value = order.detailAddress;
                     document.getElementById('addressee').value = order.addressee;
                     document.getElementById('deliveryStatus').value = order.deliveryStatus;
                     
@@ -137,7 +138,7 @@
                 oncomplete: function(data) {
                     var addr = data.address; // 기본 주소
                     document.getElementById("address").value = addr;
-                    //document.getElementById("address").focus(); // 상세주소 입력 필드로 포커스 이동
+                    document.getElementById("detailAddress").focus(); // 상세주소 입력 필드로 포커스 이동
                 }
             }).open();
         }
@@ -173,7 +174,7 @@
                         <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
                         <td th:text="${order.paymentMethod}"></td>
                         <td th:text="${order.deliveryStatus}"></td>
-                        <td th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                        <td th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd')}"></td>
                     </tr>
                 </tbody>
             </table>
@@ -227,18 +228,24 @@
 		                            <input type="text" class="form-control" id="address" name="address" readonly />
 		                        </div>
 		                        <div class="col-md-6 mb-3">
+		                            <label for="address">상세주소</label>
+		                            <input type="text" class="form-control" id="detailAddress" name="detailAddress" />
+		                        </div>
+		                    </div>
+		                    <div class="row">
+		                        <div class="col-md-6 mb-3">
 		                            <label for="address">수령인</label>
 		                            <input type="text" class="form-control" id="addressee" name="addressee" />
+		                        </div>
+		                        <div class="col-md-6 mb-3">
+		                            <label for="deliveryStatus">배송 상태</label>
+		                            <input type="text" class="form-control" id="deliveryStatus" name="deliveryStatus" />
 		                        </div>
 		                    </div>
 		                    <div class="row">
 		                        <div class="col-md-6 mb-3">
 		                            <label for="phone">전화번호</label>
 		                            <input type="text" class="form-control" id="phone" name="phone" />
-		                        </div>
-		                        <div class="col-md-6 mb-3">
-		                            <label for="deliveryStatus">배송 상태</label>
-		                            <input type="text" class="form-control" id="deliveryStatus" name="deliveryStatus" />
 		                        </div>
 		                    </div>
 		                </form>

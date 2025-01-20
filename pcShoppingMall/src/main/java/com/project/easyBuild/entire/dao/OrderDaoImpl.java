@@ -269,7 +269,7 @@ public class OrderDaoImpl implements OrderDao {
 	    int result1 = jdbcTemplate.update(sql1, dto.getTotalPrice(), dto.getPaymentMethod(), dto.getOrderId());
 
 	    // DELIVERY 테이블 업데이트
-	    String sql2 = "UPDATE DELIVERY d SET d.ADDRESSEE = ?, d.ADDRESS = ?, d.PHONE = ?, d.DELIVERY_STATUS = ? WHERE d.DELIVERY_ID = (SELECT DELIVERY_ID FROM ORDER_TABLE WHERE ORDER_ID = ?)";
+	    String sql2 = "UPDATE DELIVERY d SET d.ADDRESSEE = ?, d.ADDRESS = ?, d,DETAIL_ADDRESS, d.PHONE = ?, d.DELIVERY_STATUS = ? WHERE d.DELIVERY_ID = (SELECT DELIVERY_ID FROM ORDER_TABLE WHERE ORDER_ID = ?)";
 	    int result2 = jdbcTemplate.update(sql2, dto.getAddressee(), dto.getAddress(), dto.getPhone(), dto.getDeliveryStatus(), dto.getOrderId());
   
 	    int finalResult = (result1 > 0 && result2 > 0) ? 1 : 0;
@@ -299,7 +299,7 @@ public class OrderDaoImpl implements OrderDao {
 	//관리자 리스트 디테일
 	@Override
 	public OrderDto authListOne(int orderId) {
-	    String sql = "SELECT ot.*, p.P_NAME, d.DELIVERY_STATUS, d.ADDRESSEE, d.ADDRESS, d.PHONE"
+	    String sql = "SELECT ot.*, p.P_NAME, d.DELIVERY_STATUS, d.ADDRESSEE, d.ADDRESS, d.DETAIL_ADDRESS, d.PHONE"
 	        + " FROM ORDER_TABLE ot "
 	        + " JOIN PRODUCT p ON ot.PRODUCT_ID = p.PRODUCT_ID "
 	        + " JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID "
