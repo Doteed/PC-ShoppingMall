@@ -30,7 +30,7 @@ public class CompatibilityRepository {
 	public List<CompatibilityResultDto> checkCompatibility(CompatibilityCheckRequest request) {
 		List<CompatibilityResultDto> results = new ArrayList<>();
 
-		//CPU 소켓 == 메인보드의 CPU소켓
+		//CPU - Mainboard
 		boolean cpuMainboardCompatible = checkCpuMainboardCompatibility(request.getCpuId(), request.getMainboardId());
 		results.add(new CompatibilityResultDto("CPU-메인보드 호환성", cpuMainboardCompatible));
 
@@ -49,8 +49,8 @@ public class CompatibilityRepository {
 		results.add(new CompatibilityResultDto("메인보드-케이스 호환성", mainboardCaseCompatible));
 
 		//Power - Case
-		//boolean powerCaseCompatible = checkPowerCaseCompatibility(request.getPowerId(), request.getCaseId());
-		//results.add(new CompatibilityResultDto("파워-케이스 호환성", powerCaseCompatible));
+		boolean powerCaseCompatible = checkPowerCaseCompatibility(request.getPowerId(), request.getCaseId());
+		results.add(new CompatibilityResultDto("파워-케이스 호환성", powerCaseCompatible));
 
 		//GPU - Case
 		boolean gpuCaseCompatible = checkGpuCaseCompatibility(request.getGpuId(), request.getCaseId());
@@ -61,7 +61,10 @@ public class CompatibilityRepository {
 
 	//CPU 소켓 == 메인보드의 CPU소켓
 	private boolean checkCpuMainboardCompatibility(int cpuId, int mainboardId) {
-		String query = "SELECT COUNT(*) FROM CPU c JOIN MAINBOARD m ON c.SOCKET = m.SOCKET WHERE c.CPU_ID = ? AND m.MAINBOARD_ID = ?";
+		//c.SOCKET = AM5, m.SOCKET = AMD(소켓AM5) 
+		String query = "SELECT COUNT(*) FROM CPU c "
+				+ " JOIN MAINBOARD m ON m.SOCKET LIKE '%' || c.SOCKET || '%' "
+	            + " WHERE c.CPU_ID = ? AND m.MAINBOARD_ID = ?";
 		return jdbcTemplate.queryForObject(query, new Object[] { cpuId, mainboardId }, Integer.class) > 0;
 	}
 
@@ -80,15 +83,24 @@ public class CompatibilityRepository {
 
 	//메인보드 폼팩터 == 케이스 지원보드규격
 	private boolean checkMainboardCaseCompatibility(int mainboardId, int caseId) {
-		String query = "SELECT COUNT(*) FROM MAINBOARD m JOIN CASE c ON m.FORM_FACTOR = c.SUPPORTED_BOARD_STANDARD WHERE m.MAINBOARD_ID = ? AND c.CASE = ?";
+		//m.FORM_FACTOR = ATX, c.SUPPORTED_BOARD_STANDARD = ATX, M-ATX, ITX
+		//구분자 ,로 비교
+		String query = "SELECT COUNT(*) "
+                + " FROM MAINBOARD m "
+                + " JOIN CASE c ON REGEXP_LIKE(c.SUPPORTED_BOARD_STANDARD, '^' || m.FORM_FACTOR || '(,|$)') "
+                + " WHERE m.MAINBOARD_ID = ? AND c.CASE = ? ";
 		return jdbcTemplate.queryForObject(query, new Object[] { mainboardId, caseId }, Integer.class) > 0;
 	}
 
-	/*//파워 제품분류 == 케이스 지원파워규격
+	//파워 제품분류 == 케이스 지원파워규격
 	private boolean checkPowerCaseCompatibility(int powerId, int caseId) {
-		String query = "SELECT COUNT(*) FROM POWER p JOIN CASE c ON p.PSU_STANDARD = c.POWER_SUPPLY_STANDARD WHERE p.POWER_ID = ? AND c.CASE = ?";
+		//p.PSU_STANDARD = ATX, c.POWER_SUPPLY_STANDARD = 표준-ATX
+		String query = "SELECT COUNT(*) "
+				+ " FROM POWER p "
+				+ " JOIN CASE c ON REPLACE(c.POWER_SUPPLY_STANDARD, '표준-', '') = p.PSU_STANDARD "
+				+ " WHERE p.POWER_ID = ? AND c.CASE = ?";
 		return jdbcTemplate.queryForObject(query, new Object[] { powerId, caseId }, Integer.class) > 0;
-	}*/
+	}
 
 	//그래픽카드 길이 == 케이스 VGA장착길이
 	private boolean checkGpuCaseCompatibility(int gpuId, int caseId) {

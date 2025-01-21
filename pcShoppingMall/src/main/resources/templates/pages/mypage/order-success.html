@@ -28,8 +28,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                 if (orderData) {
                     console.log("세션에서 가져온 주문 데이터:", orderData);
 
+                    let orderInsertUrl = orderData.cartIds ? "/order/insertFromCart" : "/order/insertFromProduct";
+                    
                     //insert
-                    await fetch("/order/insertFromCart", {
+                    await fetch(orderInsertUrl, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(orderData)
@@ -44,12 +46,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                     // 카운트다운 진행
                     const countdownInterval = setInterval(() => {
-                        countdownElement.textContent = `잠시 후 장바구니 페이지로 이동됩니다. (${seconds}초)`;
+                        countdownElement.textContent = `잠시 후 주문내역 페이지로 이동됩니다. (${seconds}초)`;
                         seconds--;
 
                         if (seconds < 0) {
                             clearInterval(countdownInterval);
-                            window.location.href = "/my/cart";
+                            window.location.href = "/my/order";
                         }
                     }, 1000);
                 } else {

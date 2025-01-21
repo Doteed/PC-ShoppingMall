@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						               </tr>
 						               <tr>
 						                   <td>상세주소</td>
-						                   <td colspan="3"><input type="text" class="form-control" id="addressDetail" value="${data.order.detailAddress || ''}" required></td>
+						                   <td colspan="3"><input type="text" class="form-control" id="detailAddress" value="${data.order.detailAddress || ''}" required></td>
 						               </tr>
 						           </tbody>
 						       </table>
@@ -252,6 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						const addressee = popupWindow.document.getElementById('addressee').value;
 						const phone = popupWindow.document.getElementById('phone').value;
 						const address = popupWindow.document.getElementById('address').value;
+						const detailAddress = popupWindow.document.getElementById('detailAddress').value;
 
 						fetch(`/order/update`, {
 							method: 'PUT',
@@ -263,6 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
 								addressee,
 								phone,
 								address,
+								detailAddress,
 							}),
 						})
 							.then((response) => {

@@ -42,6 +42,7 @@ public class OrderDto {
         this.paymentMethod = paymentMethod;
         this.addressee = addressee;
         this.address = address;
+        this.address = detailAddress;
         this.phone = phone;
     }
     
@@ -51,6 +52,7 @@ public class OrderDto {
 		this.deliveryId = deliveryId;
 		this.addressee = addressee;
 		this.address = address;
+		this.address = detailAddress;
 		this.phone = phone;
 	}
 	

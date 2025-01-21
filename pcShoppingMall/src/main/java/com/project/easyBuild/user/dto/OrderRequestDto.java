@@ -20,6 +20,7 @@ public class OrderRequestDto {
     private int authId;
     private List<Integer> cartIds; //장바구니에서 체크된 cartid
     private int productId;
+    private int quantity;
     private String paymentMethod;
     private String addressee;
     private String address;

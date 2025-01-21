@@ -1,9 +1,14 @@
 document.addEventListener("DOMContentLoaded", function() {
 	document.getElementById("placeOrderBtn").addEventListener("click", function() {
 		const selectedCartIds = [];
+		const selectedProductDetails = []; // 제품 정보 저장
 		const selectedItems = document.querySelectorAll(".item-checkbox:checked");
 		selectedItems.forEach((item) => {
 			selectedCartIds.push(item.dataset.cartId);
+			const row = item.closest("tr");
+			const productName = row.querySelector("td:nth-child(3)").textContent;
+			const quantity = row.querySelector("td:nth-child(5)").textContent.trim();
+			selectedProductDetails.push(`${productName} (${quantity}개)`);
 		});
 
 		if (selectedCartIds.length === 0) {
@@ -21,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			return;
 		}
 
-		const popupWindow = window.open("", "orderPopup", "width=400,height=600");
+		const popupWindow = window.open("", "orderPopup", "width=600,height=600");
 
 		popupWindow.document.body.innerHTML = `
       <h3>주문</h3>
@@ -57,6 +62,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <td>전화번호</td>
             <td><input type="text" id="phone" required /></td>
           </tr>
+		  <tr id="orderDetailsRow"></tr>
           <tr>
             <td colspan="2" style="text-align: center;">
               <button type="button" id="submitOrderBtn">결제 진행</button>
@@ -65,6 +71,22 @@ document.addEventListener("DOMContentLoaded", function() {
         </tbody>
       </table>
     `;
+
+		const detailsRow = popupWindow.document.getElementById("orderDetailsRow");
+		if (detailsRow) {
+			detailsRow.innerHTML = `
+	       <td colspan="2">
+	         <h4>주문 내역</h4>
+	         <ul>
+	           ${selectedProductDetails.map((detail) => `<li>${detail}</li>`).join("")}
+	         </ul>
+	         <p>총 금액: <strong>${totalPrice.toLocaleString()} 원</strong></p>
+	       </td>
+	     `;
+		} else {
+			console.error("주문 내역을 표시할 <tr> 요소를 찾을 수 없습니다.");
+		}
+
 		//다음 주소 API
 		const searchAddressBtn = popupWindow.document.getElementById('searchAddressBtn');
 		searchAddressBtn.addEventListener('click', () => {

@@ -79,7 +79,7 @@
                 })
                     .then((response) => response.json())
                     .then((cartNotEmpty) => {
-                        if (!cartNotEmpty) {
+                        if (cartNotEmpty < 1) {
                             alert("장바구니에 항목이 없습니다.");
                         } else {
                             // 카트에 항목이 있으면 삭제
@@ -187,7 +187,20 @@
             checkbox.addEventListener("change", updateTotalPrice);
         });
         
-        document.getElementById("checkCompatibilityBtn").addEventListener("click", async () => {
+        document.getElementById("checkCompatibilityBtn").addEventListener("click", async () => { 
+        	const cartCount = await fetch("/cart/checkCart", {
+		        method: "GET",
+		        headers: {
+		            "Content-Type": "application/json",
+		        },
+		    });
+		    const cartNotEmpty = await cartCount.json();
+
+		    //카트에 값이 2개 미만일 경우 호환성 체크 불가
+		    if (cartNotEmpty < 2) {
+		    	alert("장바구니에 상품을 2개 이상 담아주세요.");
+		        return;
+		    }
         	  const [cpuList, mainboardList, memoryList, powerList, gpuList, caseList] = await Promise.all([
         	    fetch('/api/cpu/list').then(res => res.json()),
         	    fetch('/api/mainboard/list').then(res => res.json()),
@@ -199,7 +212,7 @@
 
         	  console.log(cpuList, mainboardList, memoryList, powerList, gpuList, caseList);
         	  
-        	  const popupWindow = window.open("", "compatibilityPopup", "width=800,height=800");
+        	  const popupWindow = window.open("", "compatibilityPopup", "width=900,height=800");
 
         	  popupWindow.document.body.innerHTML = `
         		  <h3>호환성 체크</h3>
@@ -231,6 +244,7 @@
         		  	</div>
         		  <button class="btn btn-success" id="checkBtn" style="margin-top: 20px;">호환성 체크</button>
         		  <div id="resultArea" style="margin-top: 20px;"></div>
+        	      <div id="warningArea" style="margin-top: 20px; font-weight: bold;"></div>
         		`;
 
         	  const populateDropdown = (dropdownId, dataList) => {
@@ -263,45 +277,111 @@
         	  populateDropdown('caseDropdown', caseList);
 
         	  popupWindow.document.getElementById('checkBtn').addEventListener('click', async () => {
-        	    const selectedCpu = popupWindow.document.getElementById('cpuDropdown').value;
-        	    const selectedMainboard = popupWindow.document.getElementById('mainboardDropdown').value;
-        	    const selectedMemory = popupWindow.document.getElementById('memoryDropdown').value;
-        	    const selectedPower = popupWindow.document.getElementById('powerDropdown').value;
-        	    const selectedGpu = popupWindow.document.getElementById('gpuDropdown').value;
-        	    const selectedCase = popupWindow.document.getElementById('caseDropdown').value;
+        		  const selectedCpu = popupWindow.document.getElementById('cpuDropdown').value;
+        	      const selectedMainboard = popupWindow.document.getElementById('mainboardDropdown').value;
+        	      const selectedMemory = popupWindow.document.getElementById('memoryDropdown').value;
+        	      const selectedPower = popupWindow.document.getElementById('powerDropdown').value;
+        	      const selectedGpu = popupWindow.document.getElementById('gpuDropdown').value;
+        	      const selectedCase = popupWindow.document.getElementById('caseDropdown').value;
 
-        	    const cpuId = calculatePartsId(selectedCpu, "cpu");
-        	    const mainboardId = calculatePartsId(selectedMainboard, "mainboard");
-        	    const memoryId = calculatePartsId(selectedMemory, "memory");
-        	    const powerId = calculatePartsId(selectedPower, "power");
-        	    const gpuId = calculatePartsId(selectedGpu, "graphicCard");
-        	    const caseId = calculatePartsId(selectedCase, "case");
+        	      const cpuId = calculatePartsId(selectedCpu, "cpu");
+        	      const mainboardId = calculatePartsId(selectedMainboard, "mainboard");
+        	      const memoryId = calculatePartsId(selectedMemory, "memory");
+        	      const powerId = calculatePartsId(selectedPower, "power");
+        	      const gpuId = calculatePartsId(selectedGpu, "graphicCard");
+        	      const caseId = calculatePartsId(selectedCase, "case");
         	    
-        	    console.log({ cpuId, mainboardId, memoryId, powerId, gpuId, caseId })
+        	      console.log({ cpuId, mainboardId, memoryId, powerId, gpuId, caseId })
         	    
-        	    const response = await fetch(`/api/compatibility/check`, {
-        	      method: 'POST',
-        	      headers: { 'Content-Type': 'application/json' },
-        	      body: JSON.stringify({
-        	        cpuId: cpuId,
-        	        mainboardId: mainboardId,
-        	        memoryId: memoryId,
-        	        powerId: powerId,
-        	        gpuId: gpuId,
-        	        caseId: caseId
+        	      const response = await fetch(`/api/compatibility/check`, {
+        	    	  method: 'POST',
+        	      	  headers: { 'Content-Type': 'application/json' },
+        	          body: JSON.stringify({
+        	          cpuId: cpuId,
+        	          mainboardId: mainboardId,
+        	          memoryId: memoryId,
+        	          powerId: powerId,
+        	          gpuId: gpuId,
+        	          caseId: caseId
         	      })
         	    });
 
-        	    const compatibilityResults = await response.json();
+        	      const compatibilityResults = await response.json();
+        	      
+        	      //부품이 선택되지 않은 경우
+        	      const missingParts = [];
+				  if (!selectedCpu) missingParts.push("CPU");
+				  if (!selectedMainboard) missingParts.push("메인보드");
+				  if (!selectedMemory) missingParts.push("메모리");
+				  if (!selectedPower) missingParts.push("파워");
+				  if (!selectedGpu) missingParts.push("그래픽카드");
+				  if (!selectedCase) missingParts.push("케이스");
+				
+				  console.log("Missing Parts:", missingParts);
+				  
+				  const results = compatibilityResults.map(result => {
+				    const criteria = result.criteria || "";
+				    let status = result.status;
+				    
+				 	//파워-케이스 호환성을 파워, 케이스로 분리
+				    const criteriaParts = criteria.split("-");
+				    
+				    let missingCriteria = false;
+				    
+				    //criteriaParts에서 missingParts에 포함된 부품이 있는지
+				    if (missingParts.some(part => criteria.includes(part))) {
+				    	status = -1;
+			        } else {
+			            status = (status === true) ? 1 : 0;
+			        }
 
-        	    const resultArea = popupWindow.document.getElementById('resultArea');
-        	    resultArea.innerHTML = `
-        	      <h4>호환성 체크 결과</h4>
-        	      <ul>
-        	        ${compatibilityResults.map(result => `<li>${result.criteria}: ${result.status ? "호환됨" : "호환되지 않음"}</li>`).join('')}
-        	      </ul>
-        	    `;
+				    //부품이 선택되지 않은 경우
+				    if (missingCriteria) {
+				      status = -1;
+				    }
+
+				    console.log(`Criteria: ${criteria}, Status: ${status}`);
+
+				    return {
+				      criteria: status === -1 ? `${criteria} 선택되지 않음` : criteria,
+				      status: status  
+				    };
+				  });
+
+				  const resultArea = popupWindow.document.getElementById('resultArea');
+				  resultArea.innerHTML = `
+				    <h4>호환성 체크 결과</h4>
+				    <table>
+				      <tbody>
+				        ${results.map(result => {
+				          const criteria = result.criteria || "";
+				          const status = result.status;
+
+				          return `
+				            <tr>
+				              <td>${criteria}</td>
+				              <td>
+				              ${status === -1
+				                ? "<span class='text-warning'>⚠️ 선택되지 않음</span>"
+				                : status === 1
+				                ? "<span class='text-success'>✅ 호환됨</span>"
+				                : status === 0
+				                ? "<span class='text-danger'>❌ 호환되지 않음</span>"
+				                : ""}
+				             </td>
+				            </tr>
+				          `;
+				        }).join('')}
+                    </tbody>
+                </table>
+                `;
         	  });
+        	  const warningArea = popupWindow.document.getElementById('warningArea');
+              warningArea.innerHTML = `
+                  <p>호환성 체크는 CPU, 메인보드, 메모리, 케이스, 그래픽카드, 파워를 대상으로 합니다.</p>
+                  <p>본 서비스는 제조사의 상품정보를 기반으로 제공되며, 일부 상품은 호환성 체크 대상에서 제외될 수 있습니다.</p>
+                  <p>호환성 체크 결과는 단순 참고용이며, 자세한 내용은 판매점 또는 제조사에 재확인 필요할 수 있습니다.</p>
+              `;
         	});
     });
 </script>

@@ -16,6 +16,7 @@ public class CartDto {
 	private int cartId;
 	private String userId;
 	private int productId;
+	private String productType;
 	private int quantity;
 	private Date cartDate;
 	
@@ -24,4 +25,10 @@ public class CartDto {
     private String productImageUrl;
     
     private double avgRating;
+
+	public CartDto(int cartId, int quantity) {
+		super();
+		this.cartId = cartId;
+		this.quantity = quantity;
+	}
 }

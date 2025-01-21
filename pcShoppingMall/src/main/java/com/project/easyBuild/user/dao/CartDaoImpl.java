@@ -55,32 +55,20 @@ public class CartDaoImpl implements CartDao {
 	}
 
 	@Override
-	public int update(List<Integer> cartIds, List<Integer> quantities, String userId) {
-		StringBuilder sql = new StringBuilder("UPDATE CART SET QUANTITY = CASE ");
-	  
-	    for (int i = 0; i < cartIds.size(); i++) {
-	        sql.append("WHEN CART_ID = ? THEN ? ");
-	    }
+	public int update(int cartId, int quantity, String userId) {
+		String sql = "UPDATE CART SET QUANTITY = ? WHERE CART_ID = ? AND USER_ID = ?";
 
-	    sql.append("ELSE QUANTITY END WHERE USER_ID = ?");
-
-	    //cartIds와 quantities을 동적으로 추가
-	    List<Object> params = new ArrayList<>();
-	    for (int i = 0; i < cartIds.size(); i++) {
-	        params.add(cartIds.get(i));
-	        params.add(quantities.get(i));
-	    }
-	    params.add(userId);
-	    
-	    return jdbcTemplate.update(sql.toString(), params.toArray());
+	    return jdbcTemplate.update(sql, quantity, cartId, userId);
 	}
 
 	@Override
-    public int insert(int productId, int quantity, String userId) {
+    public int insert(int productId, String productType, int quantity, String userId) {
         String sql = " INSERT INTO CART "
-                   + " VALUES (SEQ_CART.NEXTVAL, ?, ?, ?, SYSDATE)";
+                   + " VALUES (SEQ_CART.NEXTVAL, ?, ?, ?, ?, SYSDATE)";
 
-        return jdbcTemplate.update(sql, userId, productId, quantity);
+        String upperProductType = productType.toUpperCase();
+        
+        return jdbcTemplate.update(sql, userId, productId, upperProductType.equals("GRAPHICCARD")? "GRAPHIC_CARD" : upperProductType, quantity);
     }
 	
 	@Override
@@ -113,9 +101,9 @@ public class CartDaoImpl implements CartDao {
         return jdbcTemplate.update(sql, userId);
     }
 
-	@Override
-	public boolean isCartNotEmpty(String userId) {
-		String sql = "SELECT CASE WHEN EXISTS (SELECT 1 FROM CART WHERE USER_ID = ?) THEN 1 ELSE 0 END AS result FROM dual";
-		return jdbcTemplate.queryForObject(sql, Boolean.class, userId);
-	}
+    @Override
+    public int getCartItemCount(String userId) {
+        String sql = "SELECT COUNT(*) FROM CART WHERE USER_ID = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, userId);
+    }
 }
