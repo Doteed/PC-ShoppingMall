@@ -116,10 +116,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				            }
 							return;
 				         }
-				            fetch(`/cart/insert/${productId}?quantity=${quantity}`, {
+				            fetch(`/cart/insert/${productId}?quantity=${quantity}&productType=${category}`, {
 				               method: 'POST',
 				               headers: { 'Content-Type': 'application/json' },
-				               body: JSON.stringify({ productId, quantity }),
 				          })
 				               .then(response => {
 				                   if (!response.ok) {

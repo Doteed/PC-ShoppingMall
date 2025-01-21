@@ -78,6 +78,27 @@ public class UserOrderController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", e.getMessage()));
 	    }
 	}
+	
+	@PostMapping("/insertFromProduct")
+	public ResponseEntity<?> insertFromProduct(@RequestBody OrderRequestDto orderRequestDto, HttpSession session) {
+		System.out.println("Product - OrderRequestDto: " + orderRequestDto);
+		MemberDto user = (MemberDto) session.getAttribute("dto");
+	    if (user == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("redirectUrl", "/loginform"));
+	    }
+
+	    orderRequestDto.setUserId(user.getUserId());
+	    orderRequestDto.setAuthId(user.getAuthId());
+	    System.out.println("Product - OrderRequestDto: " + orderRequestDto);
+	    try {
+	        int result = orderbiz.insertFromProduct(orderRequestDto);
+	        return result > 0 ?
+	                ResponseEntity.ok(Map.of("success", true, "message", "주문이 성공적으로 처리되었습니다.")) :
+	                ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("success", false, "message", "주문 처리가 실패하였습니다."));
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", e.getMessage()));
+	    }
+	}
 
 	@PutMapping("/update") // 주소 변경
 	public ResponseEntity<?> myUpdate(@RequestBody OrderDto orderDto, HttpSession session) {

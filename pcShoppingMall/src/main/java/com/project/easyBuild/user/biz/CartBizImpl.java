@@ -21,14 +21,14 @@ public class CartBizImpl implements CartBiz {
 	}
 	
 	@Override
-	public int insert(int productId, int quantity, String userId) {
+	public int insert(int productId, String productType, int quantity, String userId) {
 		System.out.println("Inserting to cart: productId=" + productId + ", quantity=" + quantity + ", userId=" + userId);
-		return dao.insert(productId, quantity, userId);
+		return dao.insert(productId, productType, quantity, userId);
 	}
 	
 	@Override
-	public int update(List<Integer> cartIds, List<Integer> quantities, String userId) {
-	    return dao.update(cartIds, quantities, userId);
+	public int update(int cartId, int quantity, String userId) {
+	    return dao.update(cartId, quantity, userId);
 	}
 
 	@Override
@@ -41,8 +41,8 @@ public class CartBizImpl implements CartBiz {
         return dao.deleteAll(userId);
     }
 
-	@Override
-	public boolean isCartNotEmpty(String userId) {
-		return dao.isCartNotEmpty(userId);
-	}
+    @Override
+    public int getCartItemCount(String userId) {
+    	return dao.getCartItemCount(userId);
+    }
 }
