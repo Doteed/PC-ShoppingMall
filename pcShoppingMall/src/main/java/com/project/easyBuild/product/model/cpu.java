@@ -43,7 +43,7 @@ public class cpu {
     
     @Column(name = "RELEASE_DATE", nullable = false)
     private LocalDate releaseDate;
-    
+    @Transient
     private String formattedReleaseDate;
     @Transient
     private String formattedPrice;

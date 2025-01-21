@@ -273,20 +273,19 @@ public class OrderDaoImpl implements OrderDao {
 	// 관리자 주문 수정
 	@Override
 	public int updateOrder(OrderDto dto, String userId) {
-		logger.info("updateOrder 메서드 시작: OrderId={}, UserId={}", dto.getOrderId(), userId);
+	    logger.info("updateOrder 메서드 시작: OrderId={}, UserId={}", dto.getOrderId(), userId);
+	    
+	    // ORDER_TABLE 업데이트
+	    String sql1 = "UPDATE ORDER_TABLE ot SET ot.TOTAL_PRICE = ?, ot.PAYMENT_METHOD = ? WHERE ot.ORDER_ID = ?";
+	    int result1 = jdbcTemplate.update(sql1, dto.getTotalPrice(), dto.getPaymentMethod(), dto.getOrderId());
 
-		// ORDER_TABLE 업데이트
-		String sql1 = "UPDATE ORDER_TABLE ot SET ot.TOTAL_PRICE = ?, ot.PAYMENT_METHOD = ? WHERE ot.ORDER_ID = ?";
-		int result1 = jdbcTemplate.update(sql1, dto.getTotalPrice(), dto.getPaymentMethod(), dto.getOrderId());
-
-		// DELIVERY 테이블 업데이트
-		String sql2 = "UPDATE DELIVERY d SET d.ADDRESSEE = ?, d.ADDRESS = ?, d.PHONE = ?, d.DELIVERY_STATUS = ? WHERE d.DELIVERY_ID = (SELECT DELIVERY_ID FROM ORDER_TABLE WHERE ORDER_ID = ?)";
-		int result2 = jdbcTemplate.update(sql2, dto.getAddressee(), dto.getAddress(), dto.getPhone(),
-				dto.getDeliveryStatus(), dto.getOrderId());
-
-		int finalResult = (result1 > 0 && result2 > 0) ? 1 : 0;
-		logger.info("updateOrder 메서드 종료: 최종 결과={}", finalResult);
-		return finalResult;
+	    // DELIVERY 테이블 업데이트
+	    String sql2 = "UPDATE DELIVERY d SET d.ADDRESSEE = ?, d.ADDRESS = ?, d.DETAIL_ADDRESS = ?, d.PHONE = ?, d.DELIVERY_STATUS = ? WHERE d.DELIVERY_ID = (SELECT DELIVERY_ID FROM ORDER_TABLE WHERE ORDER_ID = ?)";
+	    int result2 = jdbcTemplate.update(sql2, dto.getAddressee(), dto.getAddress(), dto.getDetailAddress(), dto.getPhone(), dto.getDeliveryStatus(), dto.getOrderId());
+  
+	    int finalResult = (result1 > 0 && result2 > 0) ? 1 : 0;
+	    logger.info("updateOrder 메서드 종료: 최종 결과={}", finalResult);
+	    return finalResult;
 	}
 
 	// 월별 매출
@@ -310,17 +309,19 @@ public class OrderDaoImpl implements OrderDao {
 	// 관리자 리스트 디테일
 	@Override
 	public OrderDto authListOne(int orderId) {
-		String sql = "SELECT ot.*, p.P_NAME, d.DELIVERY_STATUS, d.ADDRESSEE, d.ADDRESS, d.PHONE"
-				+ " FROM ORDER_TABLE ot " + " JOIN PRODUCT p ON ot.PRODUCT_ID = p.PRODUCT_ID "
-				+ " JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID " + " WHERE ot.ORDER_ID = ?";
-		try {
-			return jdbcTemplate.queryForObject(sql, orderRowMapper, orderId);
-		} catch (EmptyResultDataAccessException e) {
-			return null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException("주문/배송 조회 중 오류가 발생했습니다.");
-		}
+	    String sql = "SELECT ot.*, p.P_NAME, d.DELIVERY_STATUS, d.ADDRESSEE, d.ADDRESS, d.DETAIL_ADDRESS, d.PHONE"
+	        + " FROM ORDER_TABLE ot "
+	        + " JOIN PRODUCT p ON ot.PRODUCT_ID = p.PRODUCT_ID "
+	        + " JOIN DELIVERY d ON ot.DELIVERY_ID = d.DELIVERY_ID "
+	        + " WHERE ot.ORDER_ID = ?";
+	    try {
+	        return jdbcTemplate.queryForObject(sql, orderRowMapper, orderId);
+	    } catch (EmptyResultDataAccessException e) {
+	        return null;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw new RuntimeException("주문/배송 조회 중 오류가 발생했습니다.");
+	    }
 	}
 
 	// 관리자 카운트
